@@ -1,0 +1,571 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4412EFCB2BB140B500B0E415 /* InnealApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCA2BB140B500B0E415 /* InnealApp.swift */; };
+		4412EFCD2BB140B500B0E415 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCC2BB140B500B0E415 /* ChatView.swift */; };
+		4412EFCF2BB140B600B0E415 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4412EFCE2BB140B600B0E415 /* Assets.xcassets */; };
+		4412EFD22BB140B600B0E415 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4412EFD12BB140B600B0E415 /* Preview Assets.xcassets */; };
+		4412EFDA2BB1571A00B0E415 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFD92BB1571A00B0E415 /* MessageCell.swift */; };
+		4412EFDE2BB1578300B0E415 /* SwiftDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFDD2BB1578300B0E415 /* SwiftDataModels.swift */; };
+		4412EFE02BB157BE00B0E415 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFDF2BB157BE00B0E415 /* ViewModel.swift */; };
+		4412EFE42BB2238C00B0E415 /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFE32BB2238C00B0E415 /* ChatsView.swift */; };
+		4412EFE62BB2356E00B0E415 /* CreateChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFE52BB2356E00B0E415 /* CreateChatView.swift */; };
+		4412EFE92BB2750B00B0E415 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFE82BB2750B00B0E415 /* SettingsView.swift */; };
+		441E4D592BCD14A400BDF5DF /* HordeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441E4D582BCD14A400BDF5DF /* HordeAPI.swift */; };
+		441E4D5F2BCD26EF00BDF5DF /* HordeDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441E4D5E2BCD26EE00BDF5DF /* HordeDefaults.swift */; };
+		44259EDA2BBFC7FC00623171 /* CharactersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44259ED92BBFC7FC00623171 /* CharactersView.swift */; };
+		44259EDC2BBFCA2F00623171 /* ImportCharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44259EDB2BBFCA2F00623171 /* ImportCharacterView.swift */; };
+		44259EDF2BBFCC1900623171 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44259EDE2BBFCC1900623171 /* Utilities.swift */; };
+		44259EE12BC08AB700623171 /* PreviewDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44259EE02BC08AB700623171 /* PreviewDataController.swift */; };
+		44259EE32BC0963B00623171 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44259EE22BC0963B00623171 /* Preferences.swift */; };
+		44329E912BD5C0670011A2C8 /* TextEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44329E902BD5C0670011A2C8 /* TextEditorView.swift */; };
+		44330EE52BCDDF1900E5E4DF /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44330EE42BCDDF1900E5E4DF /* HelpView.swift */; };
+		44330EE72BCE363100E5E4DF /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 44330EE62BCE363100E5E4DF /* PrivacyInfo.xcprivacy */; };
+		44330EEA2BCF762A00E5E4DF /* IntroductionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44330EE92BCF762A00E5E4DF /* IntroductionView.swift */; };
+		444441A72BC8F73E009E9F3B /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444441A62BC8F73E009E9F3B /* Logging.swift */; };
+		4492E4382BC3B3B800B130F2 /* ChatSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */; };
+		4493BDA82BC670DD0043D523 /* HordeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDA72BC670DD0043D523 /* HordeModels.swift */; };
+		4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDA92BC6719C0043D523 /* TavernModels.swift */; };
+		4493BDAD2BC671C10043D523 /* ChubModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAC2BC671C10043D523 /* ChubModels.swift */; };
+		4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAE2BC671E70043D523 /* OpenAIModels.swift */; };
+		44ED93CC2BBE99EA001F6E72 /* CharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */; };
+		44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79422BD777AC0000C79C /* CharacterHelpView.swift */; };
+		44FA79452BD9D10A0000C79C /* GenerationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4412EFC72BB140B500B0E415 /* Inneal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inneal.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4412EFCA2BB140B500B0E415 /* InnealApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnealApp.swift; sourceTree = "<group>"; };
+		4412EFCC2BB140B500B0E415 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		4412EFCE2BB140B600B0E415 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4412EFD12BB140B600B0E415 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4412EFD82BB156CF00B0E415 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4412EFD92BB1571A00B0E415 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
+		4412EFDD2BB1578300B0E415 /* SwiftDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModels.swift; sourceTree = "<group>"; };
+		4412EFDF2BB157BE00B0E415 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		4412EFE32BB2238C00B0E415 /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
+		4412EFE52BB2356E00B0E415 /* CreateChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateChatView.swift; sourceTree = "<group>"; };
+		4412EFE82BB2750B00B0E415 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		441E4D582BCD14A400BDF5DF /* HordeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HordeAPI.swift; sourceTree = "<group>"; };
+		441E4D5E2BCD26EE00BDF5DF /* HordeDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HordeDefaults.swift; sourceTree = "<group>"; };
+		44259ED92BBFC7FC00623171 /* CharactersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharactersView.swift; sourceTree = "<group>"; };
+		44259EDB2BBFCA2F00623171 /* ImportCharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCharacterView.swift; sourceTree = "<group>"; };
+		44259EDE2BBFCC1900623171 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		44259EE02BC08AB700623171 /* PreviewDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewDataController.swift; sourceTree = "<group>"; };
+		44259EE22BC0963B00623171 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		44329E902BD5C0670011A2C8 /* TextEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditorView.swift; sourceTree = "<group>"; };
+		44330EE42BCDDF1900E5E4DF /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
+		44330EE62BCE363100E5E4DF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		44330EE82BCF205F00E5E4DF /* Inneal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Inneal.entitlements; sourceTree = "<group>"; };
+		44330EE92BCF762A00E5E4DF /* IntroductionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionView.swift; sourceTree = "<group>"; };
+		444441A62BC8F73E009E9F3B /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSettingsView.swift; sourceTree = "<group>"; };
+		4493BDA72BC670DD0043D523 /* HordeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HordeModels.swift; sourceTree = "<group>"; };
+		4493BDA92BC6719C0043D523 /* TavernModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TavernModels.swift; sourceTree = "<group>"; };
+		4493BDAC2BC671C10043D523 /* ChubModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChubModels.swift; sourceTree = "<group>"; };
+		4493BDAE2BC671E70043D523 /* OpenAIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModels.swift; sourceTree = "<group>"; };
+		44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterView.swift; sourceTree = "<group>"; };
+		44FA79422BD777AC0000C79C /* CharacterHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterHelpView.swift; sourceTree = "<group>"; };
+		44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationDetailsView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4412EFC42BB140B500B0E415 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4412EFBE2BB140B500B0E415 = {
+			isa = PBXGroup;
+			children = (
+				4412EFC92BB140B500B0E415 /* Inneal */,
+				4412EFC82BB140B500B0E415 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4412EFC82BB140B500B0E415 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4412EFC72BB140B500B0E415 /* Inneal.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4412EFC92BB140B500B0E415 /* Inneal */ = {
+			isa = PBXGroup;
+			children = (
+				44330EE82BCF205F00E5E4DF /* Inneal.entitlements */,
+				4412EFD82BB156CF00B0E415 /* Info.plist */,
+				4412EFCE2BB140B600B0E415 /* Assets.xcassets */,
+				44330EE62BCE363100E5E4DF /* PrivacyInfo.xcprivacy */,
+				4412EFCA2BB140B500B0E415 /* InnealApp.swift */,
+				4493BDB02BC672160043D523 /* Models */,
+				4412EFE22BB220E400B0E415 /* Views */,
+				441E4D5D2BCD26C600BDF5DF /* External APIs */,
+				441E4D602BCD277C00BDF5DF /* Utils */,
+				4412EFD02BB140B600B0E415 /* Preview Content */,
+				4493BDB12BC672320043D523 /* Preview Support */,
+			);
+			path = Inneal;
+			sourceTree = "<group>";
+		};
+		4412EFD02BB140B600B0E415 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4412EFD12BB140B600B0E415 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4412EFE12BB220C900B0E415 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				4412EFCC2BB140B500B0E415 /* ChatView.swift */,
+				4412EFDF2BB157BE00B0E415 /* ViewModel.swift */,
+				4412EFD92BB1571A00B0E415 /* MessageCell.swift */,
+				4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		4412EFE22BB220E400B0E415 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4412EFE72BB235DE00B0E415 /* Chats */,
+				4412EFE12BB220C900B0E415 /* Chat */,
+				44259EDD2BBFCB6600623171 /* Characters */,
+				44B70AB52BC369F5001B71AA /* Settings */,
+				44330EE42BCDDF1900E5E4DF /* HelpView.swift */,
+				44330EE92BCF762A00E5E4DF /* IntroductionView.swift */,
+				44329E902BD5C0670011A2C8 /* TextEditorView.swift */,
+				44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4412EFE72BB235DE00B0E415 /* Chats */ = {
+			isa = PBXGroup;
+			children = (
+				4412EFE32BB2238C00B0E415 /* ChatsView.swift */,
+				4412EFE52BB2356E00B0E415 /* CreateChatView.swift */,
+			);
+			path = Chats;
+			sourceTree = "<group>";
+		};
+		441E4D5A2BCD269100BDF5DF /* Horde API */ = {
+			isa = PBXGroup;
+			children = (
+				441E4D582BCD14A400BDF5DF /* HordeAPI.swift */,
+				4493BDA72BC670DD0043D523 /* HordeModels.swift */,
+				441E4D5E2BCD26EE00BDF5DF /* HordeDefaults.swift */,
+			);
+			path = "Horde API";
+			sourceTree = "<group>";
+		};
+		441E4D5B2BCD26A600BDF5DF /* Chub API */ = {
+			isa = PBXGroup;
+			children = (
+				4493BDAC2BC671C10043D523 /* ChubModels.swift */,
+			);
+			path = "Chub API";
+			sourceTree = "<group>";
+		};
+		441E4D5C2BCD26BB00BDF5DF /* OpenAI API */ = {
+			isa = PBXGroup;
+			children = (
+				4493BDAE2BC671E70043D523 /* OpenAIModels.swift */,
+			);
+			path = "OpenAI API";
+			sourceTree = "<group>";
+		};
+		441E4D5D2BCD26C600BDF5DF /* External APIs */ = {
+			isa = PBXGroup;
+			children = (
+				441E4D5C2BCD26BB00BDF5DF /* OpenAI API */,
+				441E4D5B2BCD26A600BDF5DF /* Chub API */,
+				441E4D5A2BCD269100BDF5DF /* Horde API */,
+			);
+			path = "External APIs";
+			sourceTree = "<group>";
+		};
+		441E4D602BCD277C00BDF5DF /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				44259EDE2BBFCC1900623171 /* Utilities.swift */,
+				444441A62BC8F73E009E9F3B /* Logging.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		44259EDD2BBFCB6600623171 /* Characters */ = {
+			isa = PBXGroup;
+			children = (
+				44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */,
+				44259ED92BBFC7FC00623171 /* CharactersView.swift */,
+				44259EDB2BBFCA2F00623171 /* ImportCharacterView.swift */,
+				44FA79422BD777AC0000C79C /* CharacterHelpView.swift */,
+			);
+			path = Characters;
+			sourceTree = "<group>";
+		};
+		4493BDB02BC672160043D523 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				44259EE22BC0963B00623171 /* Preferences.swift */,
+				4412EFDD2BB1578300B0E415 /* SwiftDataModels.swift */,
+				4493BDA92BC6719C0043D523 /* TavernModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4493BDB12BC672320043D523 /* Preview Support */ = {
+			isa = PBXGroup;
+			children = (
+				44259EE02BC08AB700623171 /* PreviewDataController.swift */,
+			);
+			path = "Preview Support";
+			sourceTree = "<group>";
+		};
+		44B70AB52BC369F5001B71AA /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				4412EFE82BB2750B00B0E415 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4412EFC62BB140B500B0E415 /* Inneal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4412EFD52BB140B600B0E415 /* Build configuration list for PBXNativeTarget "Inneal" */;
+			buildPhases = (
+				4412EFC32BB140B500B0E415 /* Sources */,
+				4412EFC42BB140B500B0E415 /* Frameworks */,
+				4412EFC52BB140B500B0E415 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Inneal;
+			packageProductDependencies = (
+			);
+			productName = Inneal;
+			productReference = 4412EFC72BB140B500B0E415 /* Inneal.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4412EFBF2BB140B500B0E415 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1530;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					4412EFC62BB140B500B0E415 = {
+						CreatedOnToolsVersion = 15.3;
+					};
+				};
+			};
+			buildConfigurationList = 4412EFC22BB140B500B0E415 /* Build configuration list for PBXProject "Inneal" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4412EFBE2BB140B500B0E415;
+			packageReferences = (
+			);
+			productRefGroup = 4412EFC82BB140B500B0E415 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4412EFC62BB140B500B0E415 /* Inneal */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4412EFC52BB140B500B0E415 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44330EE72BCE363100E5E4DF /* PrivacyInfo.xcprivacy in Resources */,
+				4412EFD22BB140B600B0E415 /* Preview Assets.xcassets in Resources */,
+				4412EFCF2BB140B600B0E415 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4412EFC32BB140B500B0E415 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4412EFE42BB2238C00B0E415 /* ChatsView.swift in Sources */,
+				4493BDA82BC670DD0043D523 /* HordeModels.swift in Sources */,
+				4412EFE62BB2356E00B0E415 /* CreateChatView.swift in Sources */,
+				44259EE32BC0963B00623171 /* Preferences.swift in Sources */,
+				44259EDF2BBFCC1900623171 /* Utilities.swift in Sources */,
+				44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */,
+				4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */,
+				4412EFE92BB2750B00B0E415 /* SettingsView.swift in Sources */,
+				4412EFCD2BB140B500B0E415 /* ChatView.swift in Sources */,
+				4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */,
+				4412EFDE2BB1578300B0E415 /* SwiftDataModels.swift in Sources */,
+				44330EEA2BCF762A00E5E4DF /* IntroductionView.swift in Sources */,
+				444441A72BC8F73E009E9F3B /* Logging.swift in Sources */,
+				44259EDA2BBFC7FC00623171 /* CharactersView.swift in Sources */,
+				44329E912BD5C0670011A2C8 /* TextEditorView.swift in Sources */,
+				44ED93CC2BBE99EA001F6E72 /* CharacterView.swift in Sources */,
+				44330EE52BCDDF1900E5E4DF /* HelpView.swift in Sources */,
+				4493BDAD2BC671C10043D523 /* ChubModels.swift in Sources */,
+				44259EDC2BBFCA2F00623171 /* ImportCharacterView.swift in Sources */,
+				4412EFCB2BB140B500B0E415 /* InnealApp.swift in Sources */,
+				4412EFE02BB157BE00B0E415 /* ViewModel.swift in Sources */,
+				44259EE12BC08AB700623171 /* PreviewDataController.swift in Sources */,
+				4492E4382BC3B3B800B130F2 /* ChatSettingsView.swift in Sources */,
+				441E4D5F2BCD26EF00BDF5DF /* HordeDefaults.swift in Sources */,
+				44FA79452BD9D10A0000C79C /* GenerationDetailsView.swift in Sources */,
+				4412EFDA2BB1571A00B0E415 /* MessageCell.swift in Sources */,
+				441E4D592BCD14A400BDF5DF /* HordeAPI.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4412EFD32BB140B600B0E415 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4412EFD42BB140B600B0E415 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4412EFD62BB140B600B0E415 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Inneal/Inneal.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Inneal/Preview Content\"";
+				DEVELOPMENT_TEAM = 2Y9M69QJKZ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Inneal/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4412EFD72BB140B600B0E415 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Inneal/Inneal.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Inneal/Preview Content\"";
+				DEVELOPMENT_TEAM = 2Y9M69QJKZ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Inneal/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4412EFC22BB140B500B0E415 /* Build configuration list for PBXProject "Inneal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4412EFD32BB140B600B0E415 /* Debug */,
+				4412EFD42BB140B600B0E415 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4412EFD52BB140B600B0E415 /* Build configuration list for PBXNativeTarget "Inneal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4412EFD62BB140B600B0E415 /* Debug */,
+				4412EFD72BB140B600B0E415 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4412EFBF2BB140B500B0E415 /* Project object */;
+}
