@@ -147,7 +147,7 @@ class ChatMessage {
 }
 
 @Model
-class Character {
+class Character: Transferable {
     var name: String = ""
     var characterDescription: String = ""
     var personality: String = ""
@@ -183,4 +183,33 @@ class Character {
         self.chubId = chubId
         self.avatar = avatar
     }
+
+    static var transferRepresentation: some TransferRepresentation {
+        let rep = DataRepresentation<Character>(exportedContentType: .json) { character in
+            let tavernData = TavernPNGData(data: TavernCharacterData(name: character.name, description: character.characterDescription, personality: character.personality, firstMes: character.firstMessage, avatar: "", mesExample: character.exampleMessage, scenario: character.scenario, creatorNotes: character.creatorNotes, systemPrompt: character.systemPrompt, postHistoryInstructions: character.postHistoryInstructions, alternateGreetings: character.alternateGreetings, tags: character.tags, creator: character.creator, characterVersion: character.characterVersion), spec: "chara_card_v2", specVersion: "2.0")
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            return try! encoder.encode(tavernData)
+        }
+        return rep.suggestedFileName { obj in obj.suggestedFileName }
+    }
+    var suggestedFileName: String { "\(name).json" }
+}
+
+class CharacterPNGExporter: Transferable {
+    let character: Character
+
+    init(character: Character) {
+        self.character = character
+    }
+    
+    static var transferRepresentation: some TransferRepresentation {
+        let rep = DataRepresentation<CharacterPNGExporter>(exportedContentType: .png) { trans in
+            guard var avatar = trans.character.avatar else { return Data() }
+            return avatar
+        }
+        return rep.suggestedFileName { obj in obj.suggestedFileName }
+    }
+    var suggestedFileName: String { "\(character.name).png" }
+
 }

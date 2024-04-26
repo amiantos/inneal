@@ -58,7 +58,7 @@ struct ChatsView: View {
             }
         })
         .onChange(of: chats.count, { oldValue, newValue in
-            if selectedChat == nil && (newValue - oldValue) > 0 && Preferences.standard.firstTimeSetupCompleted {
+            if (newValue - oldValue) > 0 && Preferences.standard.firstTimeSetupCompleted {
                 selectedChat = chats.first
             }
         })

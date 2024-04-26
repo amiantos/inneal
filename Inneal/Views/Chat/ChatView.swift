@@ -12,6 +12,7 @@ import SwiftUI
 struct ChatView: View {
     let chat: Chat
     var viewModel: ChatView.ViewModel
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @State var newMessage: String = ""
     @Environment(\.modelContext) var modelContext
     @Query(sort: \ChatMessage.dateCreated) var messages: [ChatMessage]
@@ -171,10 +172,7 @@ struct ChatView: View {
 
                                                         if messages.count > 1 {
                                                             HStack(alignment: .center) {
-                                                                VStack {
-                                                                    ProgressView().padding()
-                                                                    Text(showPendingMessage ? "" : "Give me a little nudge if nothing is happening.").font(.footnote)
-                                                                }
+                                                                ProgressView().padding()
                                                             }
                                                             .id("newAlternate")
                                                             .padding(10)
@@ -450,6 +448,11 @@ struct ChatView: View {
     }
 
     func deleteMessage(message: ChatMessage) {
+        if !message.unwrappedContentAlternates.isEmpty {
+            message.unwrappedContentAlternates.forEach { alternate in
+                modelContext.delete(alternate)
+            }
+        }
         modelContext.delete(message)
     }
 

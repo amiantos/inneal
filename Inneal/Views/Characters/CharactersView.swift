@@ -5,6 +5,7 @@
 //  Created by Brad Root on 4/4/24.
 //
 
+import Combine
 import SwiftData
 import SwiftUI
 import UIKit
@@ -36,27 +37,45 @@ struct CharactersView: View {
                             Divider()
 
                             Button {
-                                duplicateCharacter(character)
-                            } label: {
-                                Label("Duplicate Character", systemImage: "doc.on.doc")
-                            }
-                            Button {
                                 selectedCharacter = character
                             } label: {
                                 Label("Edit Character", systemImage: "square.and.pencil")
                             }
 
+                            Button {
+                                duplicateCharacter(character)
+                            } label: {
+                                Label("Duplicate Character", systemImage: "doc.on.doc")
+                            }
+
                             Divider()
 
                             Button {
-                                exportJSON(character)
+                                copyJSON(character)
                             } label: {
-                                Label("Export as JSON", systemImage: "square.and.arrow.up")
+                                Label("Copy as JSON", systemImage: "doc.on.doc")
                             }
-                            Button {
-                                exportPNG(character)
-                            } label: {
-                                Label("Export as PNG", systemImage: "square.and.arrow.up")
+
+                            Divider()
+
+                            Group {
+                                if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
+                                    ShareLink(item: character, preview: SharePreview("\(character.name).json", image: Image(uiImage: uiImage))) {
+                                        Label("Share as JSON", systemImage: "square.and.arrow.up")
+                                    }
+                                } else {
+                                    ShareLink(item: character, preview: .init("Share JSON")) {
+                                        Label("Share as JSON", systemImage: "square.and.arrow.up")
+                                    }
+                                }
+                            }
+
+                            Group {
+                                if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
+                                    ShareLink(item: CharacterPNGExporter(character: character), preview: SharePreview("\(character.name).png", image: Image(uiImage: uiImage))) {
+                                        Label("Share Avatar", systemImage: "square.and.arrow.up")
+                                    }
+                                }
                             }
                         } label: {
                             VStack(alignment: .leading) {
@@ -138,8 +157,18 @@ struct CharactersView: View {
         }
     }
 
-    func exportJSON(_ character: Character) {
-        // TODO
+    func copyJSON(_ character: Character) {
+        let tavernData = TavernPNGData(data: TavernCharacterData(name: character.name, description: character.characterDescription, personality: character.personality, firstMes: character.firstMessage, avatar: "", mesExample: character.exampleMessage, scenario: character.scenario, creatorNotes: character.creatorNotes, systemPrompt: character.systemPrompt, postHistoryInstructions: character.postHistoryInstructions, alternateGreetings: character.alternateGreetings, tags: character.tags, creator: character.creator, characterVersion: character.characterVersion), spec: "chara_card_v2", specVersion: "2.0")
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        do {
+            let jsonData = try encoder.encode(tavernData)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                UIPasteboard.general.string = jsonString
+            }
+        } catch {
+            Log.error("Error encoding JSON: \(error)")
+        }
     }
 
     func exportPNG(_ character: Character) {
