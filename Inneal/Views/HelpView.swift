@@ -18,6 +18,10 @@ struct HelpView: View {
                         Text("*Inneal* is a chat-oriented client for the *AI Horde*, similar to SillyTavern, Agnaistic, and others.\n\nInneal allows you to create *Character Cards* that describe the personality and traits of characters, and then chat with those characters, using open source LLM models provided by enthusiastic volunteers, other people just like you.")
                     }
                     HelpTextView {
+                        Text("Open Source").font(.title3).bold().padding(.bottom, 6)
+                        Text("Inneal is *open source*, which means that if there's something you don't like about it, *you* have the power to change it. You can download the source code, make it better, and share your improvements with others. Neat, huh? At least, I think so.\n\nhttps://github.com/amiantos/inneal")
+                    }
+                    HelpTextView {
                         Text("What is the AI Horde?").font(.title3).bold().padding(.bottom, 6)
                         Text("The AI Horde is a crowdsourced cluster of generative AI related tools, including but not limited to text generation and image generation models. For Inneal, we use the LLMs provided by volunteers to generate responses to your chats.\n\n**Use of the AI Horde is fully anonymous by default, and free to use.**\n\nTo prevent abuse of this generosity, the AI Horde uses a kudos system to prioritize requests. The more kudos you have, the faster your requests are processed. Kudos deplete as you make requests, and can be replenished by volunteering workers to the horde. This is much easier than you may think, visit https://aihorde.net for more information.")
                     }
