@@ -15,7 +15,7 @@ struct ChatView: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     @State var newMessage: String = ""
     @Environment(\.modelContext) var modelContext
-    @Query(sort: \ChatMessage.dateCreated) var messages: [ChatMessage]
+    @Query var messages: [ChatMessage]
     @State var showPendingMessage: Bool = false
     @State var textToEdit: String = ""
     @State var showTextEditor: Bool = false
