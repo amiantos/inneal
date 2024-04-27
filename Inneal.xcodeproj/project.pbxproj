@@ -29,6 +29,7 @@
 		44330EE72BCE363100E5E4DF /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 44330EE62BCE363100E5E4DF /* PrivacyInfo.xcprivacy */; };
 		44330EEA2BCF762A00E5E4DF /* IntroductionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44330EE92BCF762A00E5E4DF /* IntroductionView.swift */; };
 		444441A72BC8F73E009E9F3B /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444441A62BC8F73E009E9F3B /* Logging.swift */; };
+		444ED2C32BDCBC3700EA6CEE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444ED2C22BDCBC3700EA6CEE /* ContentView.swift */; };
 		4492E4382BC3B3B800B130F2 /* ChatSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */; };
 		4493BDA82BC670DD0043D523 /* HordeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDA72BC670DD0043D523 /* HordeModels.swift */; };
 		4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDA92BC6719C0043D523 /* TavernModels.swift */; };
@@ -65,6 +66,7 @@
 		44330EE82BCF205F00E5E4DF /* Inneal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Inneal.entitlements; sourceTree = "<group>"; };
 		44330EE92BCF762A00E5E4DF /* IntroductionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionView.swift; sourceTree = "<group>"; };
 		444441A62BC8F73E009E9F3B /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		444ED2C22BDCBC3700EA6CEE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSettingsView.swift; sourceTree = "<group>"; };
 		4493BDA72BC670DD0043D523 /* HordeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HordeModels.swift; sourceTree = "<group>"; };
 		4493BDA92BC6719C0043D523 /* TavernModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TavernModels.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 		4412EFE22BB220E400B0E415 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				444ED2C22BDCBC3700EA6CEE /* ContentView.swift */,
 				4412EFE72BB235DE00B0E415 /* Chats */,
 				4412EFE12BB220C900B0E415 /* Chat */,
 				44259EDD2BBFCB6600623171 /* Characters */,
@@ -322,6 +325,7 @@
 			files = (
 				4412EFE42BB2238C00B0E415 /* ChatsView.swift in Sources */,
 				4493BDA82BC670DD0043D523 /* HordeModels.swift in Sources */,
+				444ED2C32BDCBC3700EA6CEE /* ContentView.swift in Sources */,
 				4412EFE62BB2356E00B0E415 /* CreateChatView.swift in Sources */,
 				44259EE32BC0963B00623171 /* Preferences.swift in Sources */,
 				44259EDF2BBFCC1900623171 /* Utilities.swift in Sources */,
