@@ -9,7 +9,7 @@ Inneal is a LLM roleplay chatbot client for the [AI Horde](https://aihorde.net),
 - [x] Intuitive "swiping" feature that the kids are all talking about
 - [x] Optional "Auto Mode" takes the guesswork out of using the Horde, and how!
 - [x] Built with vanilla SwiftUI and SwiftData, so there's a touch of charming jank to the UX
-- [ ] CloudKit syncing between all your devices (when that works better)
+- [X] CloudKit syncing of chats and characters between all your devices
 
 # Screenshots
 
@@ -22,7 +22,7 @@ Inneal is a LLM roleplay chatbot client for the [AI Horde](https://aihorde.net),
 
 # Download
 - [Sign up for the Inneal beta on TestFlight](https://testflight.apple.com/join/tdVPV0ly)
-<!-- - Or, support development: [Purchase Inneal on the App Store](https://apps.apple.com/us/app/aislingeach/id6449862063) -->
+- Or, support development: [Purchase Inneal on the App Store](https://apps.apple.com/us/app/inneal-ai-character-tavern/id6482289560) 
 
 # Development
 1. `git clone https://github.com/amiantos/inneal.git`
