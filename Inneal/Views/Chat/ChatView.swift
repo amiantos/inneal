@@ -34,6 +34,7 @@ struct ChatView: View {
     @State private var showRequestDetails: Bool = false
     @State private var batchEditModeEnabled: Bool = false
     @State var selectedForDeletion: Set<ChatMessage> = Set<ChatMessage>()
+    @State private var showingChatlog: Bool = false
 
     init(for chat: Chat, modelContext: ModelContext) {
         Log.debug("Init ChatView for \(chat.name)")
@@ -349,6 +350,9 @@ struct ChatView: View {
                     Button("Edit Character", systemImage: "person") {
                         showingCharacterSheet.toggle()
                     }
+                    Button("Chatlog View", systemImage: "list.clipboard") {
+                        showingChatlog.toggle()
+                    }
                     if !showPendingMessage {
                         Button("Batch Delete Mode", systemImage: "trash") {
                             batchEditModeEnabled = true
@@ -370,6 +374,9 @@ struct ChatView: View {
         })
         .sheet(isPresented: $showAlternateTextEditor, content: {
             TextEditorView(text: $alternateTextToEdit)
+        })
+        .sheet(isPresented: $showingChatlog, content: {
+            SelectableChatLogView(chat: chat)
         })
         .sheet(isPresented: $showRequestDetails, content: {
             GenerationDetailsView(responseDetails: $responseDetails, requestDetails: $requestDetails)

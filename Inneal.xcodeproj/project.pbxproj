@@ -35,6 +35,7 @@
 		4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDA92BC6719C0043D523 /* TavernModels.swift */; };
 		4493BDAD2BC671C10043D523 /* ChubModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAC2BC671C10043D523 /* ChubModels.swift */; };
 		4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAE2BC671E70043D523 /* OpenAIModels.swift */; };
+		4497E89C2BE60128007503A2 /* SelectableChatLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */; };
 		44ED93CC2BBE99EA001F6E72 /* CharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */; };
 		44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79422BD777AC0000C79C /* CharacterHelpView.swift */; };
 		44FA79452BD9D10A0000C79C /* GenerationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */; };
@@ -72,6 +73,7 @@
 		4493BDA92BC6719C0043D523 /* TavernModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TavernModels.swift; sourceTree = "<group>"; };
 		4493BDAC2BC671C10043D523 /* ChubModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChubModels.swift; sourceTree = "<group>"; };
 		4493BDAE2BC671E70043D523 /* OpenAIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModels.swift; sourceTree = "<group>"; };
+		4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableChatLogView.swift; sourceTree = "<group>"; };
 		44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterView.swift; sourceTree = "<group>"; };
 		44FA79422BD777AC0000C79C /* CharacterHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterHelpView.swift; sourceTree = "<group>"; };
 		44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationDetailsView.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				4412EFDF2BB157BE00B0E415 /* ViewModel.swift */,
 				4412EFD92BB1571A00B0E415 /* MessageCell.swift */,
 				4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */,
+				4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				4412EFCD2BB140B500B0E415 /* ChatView.swift in Sources */,
 				4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */,
 				4412EFDE2BB1578300B0E415 /* SwiftDataModels.swift in Sources */,
+				4497E89C2BE60128007503A2 /* SelectableChatLogView.swift in Sources */,
 				44330EEA2BCF762A00E5E4DF /* IntroductionView.swift in Sources */,
 				444441A72BC8F73E009E9F3B /* Logging.swift in Sources */,
 				44259EDA2BBFC7FC00623171 /* CharactersView.swift in Sources */,
