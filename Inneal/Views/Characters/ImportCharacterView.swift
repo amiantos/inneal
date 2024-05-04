@@ -19,16 +19,17 @@ struct ImportCharacterView: View {
         NavigationStack {
             Form {
                 Section(header: Text("Import Character"), footer: Text("• Chub.ai / Venus character URL or ID\n• Pygmalion.chat character URL\n• Link to a Tavern character card PNG\n• JSON character data\n• Link to a JSON file")) {
-                    HStack {
-                        Text("Paste a String")
-                        Spacer()
-                        PasteButton(payloadType: String.self) { strings in
-                            guard let first = strings.first else { return }
-                            lastImportStringAttempt = first
-                            Task {
-                                await viewModel.detectTypeAndImport(string: first)
-                            }
+                    Button {
+                        isImporting = true
+                    } label: {
+                        Label("Import JSON or PNG File", systemImage: "square.and.arrow.down")
+                    }
+                    Button {
+                        Task {
+                            await viewModel.importFromClipboard()
                         }
+                    } label: {
+                        Label("Paste URL or JSON", systemImage: "doc.on.clipboard")
                     }
                 }
 
@@ -55,11 +56,6 @@ struct ImportCharacterView: View {
                     }.foregroundStyle(.red)
                 }
                 ToolbarItemGroup(placement: .primaryAction) {
-                    Button {
-                        isImporting = true
-                    } label: {
-                        Label("Import file", systemImage: "square.and.arrow.down")
-                    }
                     Button("Add") {
                         let character = viewModel.getCharacter()
                         modelContext.insert(character)
@@ -139,6 +135,13 @@ extension ImportCharacterView {
                 await loadJSON(for: string)
             } else {
                 await tryLoading(string)
+            }
+        }
+
+        func importFromClipboard() async {
+            let pasteboard = UIPasteboard.general
+            if let string = pasteboard.string {
+                await detectTypeAndImport(string: string)
             }
         }
 
