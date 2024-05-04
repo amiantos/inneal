@@ -483,13 +483,13 @@ struct ChatView: View {
             let newUserMessage = ChatMessage(content: newMessage, fromUser: true, chat: chat)
             modelContext.insert(newUserMessage)
             chat.dateUpdated = .now
-            try? modelContext.save()
             statusMessage = "Sending message..."
         } else {
             statusMessage = "Requesting a new message..."
         }
         showPendingMessage.toggle()
         newMessage = ""
+        try? modelContext.save()
         Task {
             let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage)
             let newResponseMessage = ChatMessage(content: response.text, fromUser: false, chat: chat, character: response.character, request: response.request, response: response.response)
