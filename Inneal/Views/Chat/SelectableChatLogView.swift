@@ -28,7 +28,8 @@ struct SelectableChatLogView: View {
     var body: some View {
         NavigationStack {
             TextEditor(text: $text)
-                .contentMargins(20.0, for: .scrollContent)
+                .ignoresSafeArea(.container)
+                .contentMargins(.horizontal, 15.0, for: .scrollContent)
                 .keyboardType(.asciiCapable)
                 .navigationTitle("Text Chatlog")
                 .navigationBarTitleDisplayMode(.inline)
