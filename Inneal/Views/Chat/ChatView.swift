@@ -337,6 +337,7 @@ struct ChatView: View {
                         batchDeleteMessages()
                     }
                     Button("Done") {
+                        selectedForDeletion.removeAll()
                         batchEditModeEnabled = false
                     }
                 }
