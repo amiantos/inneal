@@ -483,8 +483,10 @@ struct ChatView: View {
             modelContext.insert(newUserMessage)
             chat.dateUpdated = .now
             try? modelContext.save()
+            statusMessage = "Sending message..."
+        } else {
+            statusMessage = "Requesting a new message..."
         }
-        statusMessage = "Sending message..."
         showPendingMessage.toggle()
         newMessage = ""
         Task {
