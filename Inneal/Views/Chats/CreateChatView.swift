@@ -15,7 +15,7 @@ struct CreateChatView: View {
     @State var userName: String = ""
     @Environment(\.modelContext) var modelContext
     @Query(sort: [SortDescriptor(\Character.name)]) var characters: [Character]
-    @State private var selectedCharacter: Character? = nil
+    @State var selectedCharacters: Set<Character> = Set<Character>()
 
     let columns = [
         GridItem(.adaptive(minimum: 150))
@@ -26,19 +26,19 @@ struct CreateChatView: View {
             VStack {
                 TextField("Your Name (Default: \(Preferences.standard.defaultName))", text: $userName)
                     .textFieldStyle(.roundedBorder)
-                #if os(iOS)
+#if os(iOS)
                     .scrollDismissesKeyboard(.immediately)
-                #endif
+#endif
                     .padding([.leading, .trailing])
                 ScrollView {
-//                    TextField("Chat Name (Optional)", text: $chatName)
-//                        .textFieldStyle(.roundedBorder)
-//                        .scrollDismissesKeyboard(.immediately)
-//                        .padding([.top, .leading, .trailing])
+                    //                    TextField("Chat Name (Optional)", text: $chatName)
+                    //                        .textFieldStyle(.roundedBorder)
+                    //                        .scrollDismissesKeyboard(.immediately)
+                    //                        .padding([.top, .leading, .trailing])
                     LazyVGrid(columns: columns, alignment: .center) {
                         ForEach(characters) { character in
                             Button(action: {
-                                selectedCharacter = character
+                                selectCharacter(character)
                             }, label: {
                                 VStack(alignment: .leading) {
                                     Rectangle()
@@ -49,8 +49,8 @@ struct CreateChatView: View {
                                                 Image(uiImage: uiImage)
                                                     .resizable()
                                                     .scaledToFill()
-                                                    .saturation(selectedCharacter != character ? 1 : 0)
-                                                    .colorMultiply(selectedCharacter != character ? .white : .accentColor)
+                                                    .saturation(selectedCharacters.contains(character) ? 1 : 0)
+                                                    .colorMultiply(selectedCharacters.contains(character) ? .accentColor : .white)
                                             }
                                         }
                                         .clipped()
@@ -59,7 +59,7 @@ struct CreateChatView: View {
                                         .aspectRatio(3, contentMode: .fill)
                                         .overlay {
                                             HStack(alignment: .center) {
-                                                Image(systemName: selectedCharacter == character ? "checkmark.circle.fill" : "circle")
+                                                Image(systemName: selectedCharacters.contains(character) ? "checkmark.circle.fill" : "circle")
                                                     .resizable()
                                                     .frame(width: 22, height: 22)
                                                     .foregroundStyle(.accent)
@@ -72,7 +72,7 @@ struct CreateChatView: View {
                                                     .padding(.trailing)
                                                     .padding(.leading, 3)
                                             }
-                                                .padding(.bottom, 5)
+                                            .padding(.bottom, 5)
                                         }
                                 }
                             })
@@ -81,10 +81,10 @@ struct CreateChatView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12.0))
                         }
                     }
-                        .padding()
-                    #if os(iOS)
-                        .scrollDismissesKeyboard(.immediately)
-                    #endif
+                    .padding()
+#if os(iOS)
+                    .scrollDismissesKeyboard(.immediately)
+#endif
                 }
             }
             .navigationTitle("New Chat")
@@ -97,31 +97,44 @@ struct CreateChatView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add") {
-                        if let character = selectedCharacter {
-                            let chatNameValidated = chatName.isEmpty ? nil : chatName
-                            let chat = Chat(name: chatNameValidated, characters: [character])
+                        if !selectedCharacters.isEmpty {
+                            guard let characterNames = selectedCharacters.compactMap({ $0.name }) as? [String] else { return }
+                            let chatName = characterNames.joined(separator: " & ")
+                            Log.debug("Chat Name \(chatName)")
+
+                            let chat = Chat(name: chatName, characters: Array(selectedCharacters))
                             if !userName.isEmpty {
                                 chat.userName = userName
                             }
                             modelContext.insert(chat)
-                            let message = ChatMessage(
-                                content: character.firstMessage,
-                                fromUser: false,
-                                chat: chat,
-                                character: character
-                            )
-                            modelContext.insert(message)
+                            selectedCharacters.forEach { character in
+                                let message = ChatMessage(
+                                    content: character.firstMessage,
+                                    fromUser: false,
+                                    chat: chat,
+                                    character: character
+                                )
+                                modelContext.insert(message)
 
-                            character.alternateGreetings.forEach { greeting in
-                                let contentAlternate = ContentAlternate(string: greeting, message: message)
-                                modelContext.insert(contentAlternate)
+                                character.alternateGreetings.forEach { greeting in
+                                    let contentAlternate = ContentAlternate(string: greeting, message: message)
+                                    modelContext.insert(contentAlternate)
+                                }
                             }
 
                             dismiss()
                         }
-                    }.disabled(selectedCharacter == nil)
+                    }.disabled(selectedCharacters.isEmpty)
                 }
             }
+        }
+    }
+
+    func selectCharacter(_ character: Character) {
+        if selectedCharacters.contains(character) {
+            selectedCharacters.remove(character)
+        } else {
+            selectedCharacters.insert(character)
         }
     }
 }

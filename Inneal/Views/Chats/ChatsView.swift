@@ -116,6 +116,11 @@ struct ChatsView: View {
             }
             ToolbarItemGroup(placement: .secondaryAction) {
                 Button {
+                    showingSheet.toggle()
+                } label: {
+                    Label("Create Chat", systemImage: "plus")
+                }
+                Button {
                     showingPersonaSheet.toggle()
                 } label: {
                     Label("You", systemImage: "person.crop.circle")

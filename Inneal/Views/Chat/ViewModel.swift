@@ -13,6 +13,7 @@ extension ChatView {
 
     struct ViewModelResponse {
         let text: String
+        let character: Character?
         let response: String?
         let request: String?
     }
@@ -44,12 +45,12 @@ extension ChatView {
             chat.hordeSettings = serializedSettings
         }
 
-        func getNewResponseToChat(statusMessage: Binding<String>, ignoreLastMessage: Bool = false) async -> ViewModelResponse {
+        func getNewResponseToChat(statusMessage: Binding<String>, contentAlternate: Bool = false) async -> ViewModelResponse {
             Log.debug("Got request for new response to chat...")
-            return await getResponseFromHorde(statusMessage: statusMessage, ignoreLastMessage)
+            return await getResponseFromHorde(statusMessage: statusMessage, contentAlternate)
         }
 
-        fileprivate func getResponseFromHorde(statusMessage: Binding<String>, _ ignoreLastMessage: Bool = false) async -> ViewModelResponse {
+        fileprivate func getResponseFromHorde(statusMessage: Binding<String>, _ contentAlternate: Bool = false) async -> ViewModelResponse {
             Log.debug("Requesting new chat from the horde...")
             var currentRequestUUID: UUID?
 
@@ -65,9 +66,46 @@ extension ChatView {
                 modelContext.insert(baseHordeConfig)
             }
 
-            guard let character = chat.characters?.first else {
-                return ViewModelResponse(text: "No character found in chat.", response: nil, request: nil)
+            var history: [ChatMessage] = []
+            do {
+                let id = chat.uuid
+                let descriptor = FetchDescriptor<ChatMessage>(predicate: #Predicate { $0.chatUUID == id }, sortBy: [SortDescriptor(\.dateCreated, order: .reverse)])
+                history = try modelContext.fetch(descriptor)
+            } catch {
+                Log.error("Unable to fetch message history")
             }
+
+            if let characters = chat.characters, characters.isEmpty {
+                return ViewModelResponse(text: "No characters found in chat.", character: nil, response: nil, request: nil)
+            }
+
+            guard var character = chat.characters?.first else {
+                return ViewModelResponse(text: "No characters found in chat.", character: nil, response: nil, request: nil)
+            }
+            if contentAlternate, let lastMessage = history.first, let toon = lastMessage.character {
+                Log.debug("Alternate requested, setting character to last message character: \(toon.name).")
+                character = toon
+            } else {
+                Log.debug("Trying to determine next character in chat...")
+                for message in history {
+                    if message.fromUser, let randomToon = chat.characters?.randomElement() {
+                        Log.debug("Setting random toon: \(randomToon.name)")
+                        character = randomToon
+                        break
+                    } else if let toons = chat.characters {
+                        Log.debug("Setting random toon that isn't \(message.character?.name)")
+                        let filteredToons = toons.filter { $0 != message.character }
+                        if let randomToon = filteredToons.randomElement() {
+                            Log.debug("Setting random toon: \(randomToon.name)")
+                            character = randomToon
+                            break
+                        }
+                    }
+                }
+            }
+
+
+
 
             var maxContentLength = baseHordeParams.maxContentLength
             var maxLength = baseHordeParams.maxLength
@@ -213,23 +251,16 @@ extension ChatView {
             Log.debug("Permanent prompt applied, \(currentTokenCount) tokens used, \(maxContentLength-currentTokenCount) remain.")
 
             var messageHistory = ""
-            do {
-                let id = chat.uuid
-                let descriptor = FetchDescriptor<ChatMessage>(predicate: #Predicate { $0.chatUUID == id }, sortBy: [SortDescriptor(\.dateCreated, order: .reverse)])
-                var history = try modelContext.fetch(descriptor)
-                if ignoreLastMessage {
-                    _ = history.removeFirst()
+            if contentAlternate {
+                _ = history.removeFirst()
+            }
+            history.forEach { m in
+                let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: chat.userName, charName: m.character?.name)
+                let tokens = countTokens(message)
+                if (maxContentLength-(currentTokenCount+tokens)) >= 0 {
+                    messageHistory = "\(message)\(messageHistory)"
+                    currentTokenCount += tokens
                 }
-                history.forEach { m in
-                    let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n"
-                    let tokens = countTokens(message)
-                    if (maxContentLength-(currentTokenCount+tokens)) >= 0 {
-                        messageHistory = "\(message)\(messageHistory)"
-                        currentTokenCount += tokens
-                    }
-                }
-            } catch {
-                Log.debug("Unable to grab mesage history")
             }
             Log.debug("Built message history, \(currentTokenCount) tokens used, \(maxContentLength-currentTokenCount) remain.")
 
@@ -293,11 +324,11 @@ extension ChatView {
                 let requestResponse = try await hordeAPI.submitRequest(apiKey: hordeApiKey, request: hordeRequest)
                 currentRequestUUID = requestResponse.id
             } catch APIError.requestTimedOut {
-                return ViewModelResponse(text: "(OOC: Unable to communicate with the AI Horde. Is your internet working? Maybe the horde is down.)", response: nil, request: requestString)
+                return ViewModelResponse(text: "(OOC: Unable to communicate with the AI Horde. Is your internet working? Maybe the horde is down.)", character: character, response: nil, request: requestString)
             } catch APIError.invalidResponse(let statusCode, let content) {
                Log.error("Received \(statusCode) from AI Horde API. \(content)")
                 if statusCode == 429 {
-                    return ViewModelResponse(text: "(OOC: The Horde is experiencing heavy loads from anonymous users and had to reject your request. Wait a moment, then swipe to get a new response. Consider setting up an API key in Settings, signup is still anonymous.)", response: nil, request: requestString)
+                    return ViewModelResponse(text: "(OOC: The Horde is experiencing heavy loads from anonymous users and had to reject your request. Wait a moment, then swipe to get a new response. Consider setting up an API key in Settings, signup is still anonymous.)", character: character, response: nil, request: requestString)
                 }
             } catch {
                 Log.error("\(error)")
@@ -319,12 +350,12 @@ extension ChatView {
                                 result = ensureEvenQuotes(result)
                                 result = replaceMultipleNewlines(in: result)
                                 result = result.replacingOccurrences(of: chat.userName ?? Preferences.standard.defaultName, with: "{{user}}").replacingOccurrences(of: character.name, with: "{{char}}").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
-                                return ViewModelResponse(text: result, response: requestResponse.toJSONString(), request: requestString)
+                                return ViewModelResponse(text: result, character: character, response: requestResponse.toJSONString(), request: requestString)
                             }
                             break
                         } else {
                             if !requestResponse.isPossible {
-                                return ViewModelResponse(text: "(OOC: Request can not be completed as sent. Please check that your current chat settings match a worker's capabilities.)", response: requestResponse.toJSONString(), request: requestString)
+                                return ViewModelResponse(text: "(OOC: Request can not be completed as sent. Please check that your current chat settings match a worker's capabilities.)", character: character, response: requestResponse.toJSONString(), request: requestString)
                             } else if requestResponse.processing == 0 {
                                 if requestResponse.queuePosition > 0 {
                                     statusMessage.wrappedValue = "Waiting... (#\(requestResponse.queuePosition) in queue)"
@@ -337,7 +368,7 @@ extension ChatView {
                             try await Task.sleep(nanoseconds: 3_000_000_000)
                         }
                     } catch APIError.requestTimedOut {
-                        return ViewModelResponse(text: "(OOC: Unable to communicate with the AI Horde. Is your internet working? Maybe the horde is down.)", response: nil, request: requestString)
+                        return ViewModelResponse(text: "(OOC: Unable to communicate with the AI Horde. Is your internet working? Maybe the horde is down.)", character: character, response: nil, request: requestString)
 
                     } catch APIError.invalidResponse(let statusCode, let content) {
                         Log.error("Received \(statusCode) from AI Horde API. \(content)")
@@ -351,7 +382,7 @@ extension ChatView {
                     }
                 }
             }
-            return ViewModelResponse(text: "(OOC: Did not receive a successful generation from the AI Horde. Please retry.)", response: nil, request: requestString)
+            return ViewModelResponse(text: "(OOC: Did not receive a successful generation from the AI Horde. Please retry.)", character: character, response: nil, request: requestString)
         }
 //
 //        fileprivate func getResponseFromOpenAI() async -> String {

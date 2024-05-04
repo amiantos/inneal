@@ -65,7 +65,7 @@ struct ChatView: View {
                                             HStack(alignment: .center) {
                                                 if !message.fromUser {
                                                     if !message.fromUser {
-                                                        if let character = chat.characters?.first,
+                                                        if let character = message.character,
                                                            let avatar = character.avatar,
                                                            let image = UIImage(data: avatar)
                                                         {
@@ -452,7 +452,7 @@ struct ChatView: View {
             showPendingMessage.toggle()
             statusMessage = "Requesting a new message..."
             Task {
-                let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage, ignoreLastMessage: true)
+                let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage, contentAlternate: true)
                 let newAlternate = ContentAlternate(string: response.text, message: message, request: response.request, response: response.response)
                 chat.dateUpdated = .now
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -489,7 +489,7 @@ struct ChatView: View {
         newMessage = ""
         Task {
             let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage)
-            let newResponseMessage = ChatMessage(content: response.text, fromUser: false, chat: chat, character: chat.characters?.first!, request: response.request, response: response.response)
+            let newResponseMessage = ChatMessage(content: response.text, fromUser: false, chat: chat, character: response.character, request: response.request, response: response.response)
             chat.dateUpdated = Date.now
             modelContext.insert(newResponseMessage)
             chat.dateUpdated = .now

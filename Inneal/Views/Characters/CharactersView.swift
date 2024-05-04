@@ -15,6 +15,7 @@ struct CharactersView: View {
     @Query(sort: [SortDescriptor(\Character.name)]) var characters: [Character]
     @Environment(\.modelContext) var modelContext
     @State private var showingSheet = false
+    @State private var showingMultiCharacterChatSheet = false
     @State private var showingNewCharacterSheet = false
     @State private var selectedCharacter: Character?
 
