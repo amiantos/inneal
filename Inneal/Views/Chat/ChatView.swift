@@ -32,6 +32,8 @@ struct ChatView: View {
     @State private var requestDetails: String = ""
     @State private var responseDetails: String = ""
     @State private var showRequestDetails: Bool = false
+    @State private var batchEditModeEnabled: Bool = false
+    @State var selectedForDeletion: Set<ChatMessage> = Set<ChatMessage>()
 
     init(for chat: Chat, modelContext: ModelContext) {
         Log.debug("Init ChatView for \(chat.name)")
@@ -50,7 +52,14 @@ struct ChatView: View {
                         ScrollView(.vertical) {
                             LazyVStack {
                                 ForEach(messages) { message in
-                                    HStack(alignment: .bottom, spacing: 10) {
+                                    HStack(alignment: .center, spacing: 10) {
+                                        if batchEditModeEnabled {
+                                            Button { 
+                                                selectMessage(message)
+                                            } label: {
+                                                Image(systemName: selectedForDeletion.contains(message) ? "trash.circle" : "circle")
+                                            }
+                                        }
                                         VStack {
                                             HStack(alignment: .center) {
                                                 if !message.fromUser {
@@ -238,11 +247,11 @@ struct ChatView: View {
                                                     }
                                             }
                                         }
+                                            .padding(message.fromUser ? .leading : .trailing, message.fromUser ? 30 : 0)
                                     }
                                     .id(message)
                                     .frame(maxWidth: .infinity, alignment: message.fromUser ? .trailing : .leading)
                                     .padding([.leading, .trailing], 10)
-                                    .padding(message.fromUser ? .leading : .trailing, message.fromUser ? 30 : 0)
                                     .padding(.bottom, 10)
                                 }
                             }
@@ -322,12 +331,28 @@ struct ChatView: View {
         .navigationTitle(chat.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItemGroup(placement: .secondaryAction) {
-                Button("Chat Settings", systemImage: "gearshape") {
-                    showingSettingsSheet.toggle()
+            if batchEditModeEnabled {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button("Delete Selected", systemImage: "trash") {
+                        batchDeleteMessages()
+                    }
+                    Button("Done") {
+                        batchEditModeEnabled = false
+                    }
                 }
-                Button("Edit Character", systemImage: "person") {
-                    showingCharacterSheet.toggle()
+            } else {
+                ToolbarItemGroup(placement: .secondaryAction) {
+                    Button("Chat Settings", systemImage: "gearshape") {
+                        showingSettingsSheet.toggle()
+                    }
+                    Button("Edit Character", systemImage: "person") {
+                        showingCharacterSheet.toggle()
+                    }
+                    if !showPendingMessage {
+                        Button("Batch Delete Mode", systemImage: "trash") {
+                            batchEditModeEnabled = true
+                        }
+                    }
                 }
             }
         }
@@ -387,6 +412,22 @@ struct ChatView: View {
         }
     }
 
+    func batchDeleteMessages() {
+        selectedForDeletion.forEach { message in
+            deleteMessage(message: message)
+        }
+        selectedForDeletion.removeAll()
+        batchEditModeEnabled = false
+    }
+
+    func selectMessage(_ message: ChatMessage) {
+        if selectedForDeletion.contains(message) {
+            selectedForDeletion.remove(message)
+        } else {
+            selectedForDeletion.insert(message)
+        }
+    }
+
     func showRequestDetails(_ request: String?, _ response: String?) {
         if let request, let response {
             let jsonRequestData = Data(request.utf8)
@@ -398,6 +439,7 @@ struct ChatView: View {
     }
 
     func getNewAlternateResponseToChat() {
+        batchEditModeEnabled = false
         if !showPendingMessage, let message = messages.last {
             showPendingMessage.toggle()
             statusMessage = "Requesting a new message..."
@@ -414,6 +456,7 @@ struct ChatView: View {
     }
 
     func sendMessage() {
+        batchEditModeEnabled = false
         if let id = scrollID, id != "primary", let currentMessage = messages.last, !currentMessage.fromUser, let alternateContent = currentMessage.unwrappedContentAlternates.filter({ $0.uuid.uuidString == id }).first {
             let originalContent = currentMessage.content
             let originalRequest = currentMessage.request
