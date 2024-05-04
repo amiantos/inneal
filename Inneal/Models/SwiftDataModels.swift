@@ -70,7 +70,7 @@ class Chat {
 
     var name: String = "Unnamed Chat"
     var userName: String?
-    var allowMultilineReplies: Bool = false
+    var allowMultilineReplies: Bool = true
     
     var service: Services = Services.horde
 
@@ -79,7 +79,7 @@ class Chat {
     var hordeSettings: Data?
     var autoModeEnabled: Bool = true
     var preferredModel: PreferredModel = PreferredModel.any
-    var preferredContextWindow: PreferredContextWindow = PreferredContextWindow.any
+    var preferredContextWindow: PreferredContextWindow = PreferredContextWindow.large
     var preferredResponseSize: PreferredResponseSize = PreferredResponseSize.small
 
     // Computed Properties
