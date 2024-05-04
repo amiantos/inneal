@@ -20,7 +20,7 @@ struct SelectableChatLogView: View {
         self.chat.unwrappedMessages.forEach { message in
             Log.debug(message.content)
             let messageContent = "\(message.fromUser ? "{{user}}" : "{{char}}"): \(message.content)"
-            chatLog.append("\(messageContent.swapPlaceholders(userName: chat.userName, charName: chat.characters?.first?.name))\n\n")
+            chatLog.append("\(messageContent.swapPlaceholders(userName: chat.userName, charName: message.character?.name))\n\n")
         }
         self.text = chatLog
     }
