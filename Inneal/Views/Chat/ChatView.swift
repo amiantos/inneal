@@ -286,8 +286,9 @@ struct ChatView: View {
                                     ProgressView()
                                         .opacity(showPendingMessage ? 1 : 0)
                                     Button(action: sendMessage) {
-                                        Image(systemName: "arrow.up")
+                                        Image(systemName: newMessage.isEmpty ? "plus" : "arrow.up")
                                     }
+                                    .frame(width: 30, height: 30)
                                     .clipShape(Circle())
                                     .buttonStyle(BorderedProminentButtonStyle())
                                     .disabled(showPendingMessage)
