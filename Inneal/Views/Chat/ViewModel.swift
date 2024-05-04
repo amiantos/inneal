@@ -288,6 +288,12 @@ extension ChatView {
 
             Log.debug("Total token count: \(countTokens(prompt))")
 
+            var stopSequence = ["{{user}}:", "\n{{user}} "]
+            for character in chat.characters ?? [] {
+                stopSequence.append("\n\(character.name): ")
+            }
+
+
             let params = HordeRequestParams(
                 n: baseHordeParams.n,
                 maxContentLength: maxContentLength,
@@ -303,7 +309,7 @@ extension ChatView {
                 repPenSlope: baseHordeParams.repPenSlope,
                 samplerOrder: baseHordeParams.samplerOrder,
                 useDefaultBadwordsids: baseHordeParams.useDefaultBadwordsids,
-                stopSequence: baseHordeParams.stopSequence.map { $0.swapPlaceholders(userName: chat.userName, charName: character.name) },
+                stopSequence: stopSequence.map { $0.swapPlaceholders(userName: chat.userName, charName: character.name) },
                 minP: baseHordeParams.minP,
                 dynatempRange: baseHordeParams.dynatempRange,
                 dynatempExponent: baseHordeParams.dynatempExponent,
