@@ -13,13 +13,14 @@ struct ImportCharacterView: View {
     @Environment(\.modelContext) var modelContext
     @State var viewModel = ImportCharacterView.ViewModel()
     @State var lastImportStringAttempt: String?
+    @State private var isImporting = false
 
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Import Character"), footer: Text("Use that Paste button to paste in a variety of things, such as...\n\n• Chub.ai / Venus Character URL or ID\n• Pygmalion.chat Character URL\n• Link to a Tavern character card PNG")) {
+                Section(header: Text("Import Character"), footer: Text("• Chub.ai / Venus character URL or ID\n• Pygmalion.chat character URL\n• Link to a Tavern character card PNG\n• JSON character data\n• Link to a JSON file")) {
                     HStack {
-                        Text("Paste a URL")
+                        Text("Paste a String")
                         Spacer()
                         PasteButton(payloadType: String.self) { strings in
                             guard let first = strings.first else { return }
@@ -48,12 +49,17 @@ struct ImportCharacterView: View {
             .navigationTitle("Import Character")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .navigation) {
                     Button("Cancel", role: .destructive) {
                         dismiss()
                     }.foregroundStyle(.red)
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button {
+                        isImporting = true
+                    } label: {
+                        Label("Import file", systemImage: "square.and.arrow.down")
+                    }
                     Button("Add") {
                         let character = viewModel.getCharacter()
                         modelContext.insert(character)
@@ -64,13 +70,34 @@ struct ImportCharacterView: View {
             .alert("Unrecongized Import", isPresented: $viewModel.showErrorAlert) {
                 Button("OK") {}
             } message: {
-                if let lastImportStringAttempt {
-                    Text("Imported text \"\(lastImportStringAttempt)\" was not recongized as an importable URL. Try again?")
-                } else {
-                    Text("Unknown error occurred, try again?")
-                }
+                Text("Imported content was not recongized as an importable object. Try again?")
             }
+            .fileImporter(isPresented: $isImporting,
+                          allowedContentTypes: [.json, .png]) {
+                let result = $0.flatMap { url in
+                  read(from: url)
+                }
+                switch result {
+                case .success(let data):
+                    Task {
+                        await viewModel.loadFromImported(data)
+                    }
+                case .failure(let error):
+                    Log.debug(error)
+                }
+              }
         }
+    }
+
+    private func read(from url: URL) -> Result<Data,Error> {
+      let accessing = url.startAccessingSecurityScopedResource()
+      defer {
+        if accessing {
+          url.stopAccessingSecurityScopedResource()
+        }
+      }
+
+      return Result { try Data(contentsOf: url) }
     }
 }
 
@@ -108,8 +135,130 @@ extension ImportCharacterView {
                 await loadPygmalionChatCharacter(for: string)
             } else if string.contains(".png") {
                 await loadPng(for: string)
+            } else if string.contains(".json") {
+                await loadJSON(for: string)
             } else {
-                showErrorAlert.toggle()
+                await tryLoading(string)
+            }
+        }
+
+        fileprivate func tryLoading(_ string: String) async {
+            return await loadJSONfromData(string.data(using: .utf8)!)
+
+        }
+
+        func loadFromImported(_ data: Data) async {
+            if UIImage(data: data) != nil {
+                return await loadData(from: data)
+            } else {
+                return await loadJSONfromData(data)
+            }
+        }
+
+        fileprivate func loadJSONfromData(_ data: Data) async {
+            do {
+                let decodedResponse = try JSONDecoder().decode(TavernData.self, from: data)
+                return try await character(for: decodedResponse)
+            } catch {
+                Log.debug("\(error)")
+            }
+            
+            do {
+                let decodedResponse = try JSONDecoder().decode(TavernCharacterData.self, from: data)
+                return try await character(for: decodedResponse)
+            } catch {
+                Log.debug("\(error)")
+            }
+            
+            do {
+                let decodedResponse = try JSONDecoder().decode(TavernOne.self, from: data)
+                return try character(for: decodedResponse)
+            } catch {
+                Log.debug("\(error)")
+            }
+
+            showErrorAlert.toggle()
+        }
+        
+        func loadJSON(for urlString: String) async {
+            do {
+                let request = URLRequest(url: URL(string: urlString)!)
+                let (data, response) = try await URLSession.shared.data(for: request)
+                if let response = response as? HTTPURLResponse {
+                    if (200 ..< 300) ~= response.statusCode {
+                        await loadJSONfromData(data)
+                    }
+                }
+            } catch {
+                Log.debug("\(error)")
+            }
+        }
+
+        func character(for tavernOne: TavernOne) throws {
+            name = tavernOne.charName.isEmpty ? tavernOne.name : tavernOne.charName
+            description = tavernOne.charPersona.isEmpty ? tavernOne.description : tavernOne.charPersona
+            firstMessage = tavernOne.charGreeting.isEmpty ? tavernOne.firstMes : tavernOne.charGreeting
+            exampleMessages = tavernOne.exampleDialog.isEmpty ? tavernOne.mesExample : tavernOne.exampleDialog
+            scenario = tavernOne.worldScenario.isEmpty ? tavernOne.scenario : tavernOne.worldScenario
+            alternateGreetings = []
+            tags = []
+            personality = ""
+            creatorNotes = ""
+            systemPrompt = ""
+            postHistoryInstructions = ""
+            creator = ""
+            characterVersion = ""
+            avatar = nil
+            characterIsImportable = true
+        }
+
+        func character(for tavernData: TavernData) async throws {
+            name = tavernData.data.name
+            description = tavernData.data.description
+            firstMessage = tavernData.data.firstMes
+            scenario = tavernData.data.scenario
+            exampleMessages = tavernData.data.mesExample
+            alternateGreetings = tavernData.data.alternateGreetings
+            tags = tavernData.data.tags
+            characterIsImportable = true
+            personality = tavernData.data.personality
+            creatorNotes = tavernData.data.creatorNotes
+            systemPrompt = tavernData.data.systemPrompt
+            postHistoryInstructions = tavernData.data.postHistoryInstructions
+            creator = tavernData.data.creator
+            characterVersion = tavernData.data.characterVersion
+
+            let imageRequest = URLRequest(url: URL(string: tavernData.data.avatar)!)
+            let (imageData, imageResponse) = try await URLSession.shared.data(for: imageRequest)
+            if let imageResponse = imageResponse as? HTTPURLResponse {
+                if (200 ..< 300) ~= imageResponse.statusCode {
+                    avatar = imageData
+                }
+            }
+        }
+
+        func character(for tavernCharacterData: TavernCharacterData) async throws {
+            name = tavernCharacterData.name
+            description = tavernCharacterData.description
+            firstMessage = tavernCharacterData.firstMes
+            scenario = tavernCharacterData.scenario
+            exampleMessages = tavernCharacterData.mesExample
+            alternateGreetings = tavernCharacterData.alternateGreetings
+            tags = tavernCharacterData.tags
+            characterIsImportable = true
+            personality = tavernCharacterData.personality
+            creatorNotes = tavernCharacterData.creatorNotes
+            systemPrompt = tavernCharacterData.systemPrompt
+            postHistoryInstructions = tavernCharacterData.postHistoryInstructions
+            creator = tavernCharacterData.creator
+            characterVersion = tavernCharacterData.characterVersion
+
+            let imageRequest = URLRequest(url: URL(string: tavernCharacterData.avatar)!)
+            let (imageData, imageResponse) = try await URLSession.shared.data(for: imageRequest)
+            if let imageResponse = imageResponse as? HTTPURLResponse {
+                if (200 ..< 300) ~= imageResponse.statusCode {
+                    avatar = imageData
+                }
             }
         }
 
@@ -119,12 +268,13 @@ extension ImportCharacterView {
                 let (data, response) = try await URLSession.shared.data(for: request)
                 if let response = response as? HTTPURLResponse {
                     if (200 ..< 300) ~= response.statusCode {
-                        await loadData(from: data)
+                        return await loadData(from: data)
                     }
                 }
             } catch {
                 Log.debug("\(error)")
             }
+            showErrorAlert.toggle()
         }
 
         func loadPygmalionChatCharacter(for urlString: String) async {
@@ -164,11 +314,11 @@ extension ImportCharacterView {
                         }
                     }
                 }
-
+                return
             } catch {
                 Log.debug("\(error)")
             }
-
+            showErrorAlert.toggle()
         }
 
 
@@ -193,13 +343,14 @@ extension ImportCharacterView {
                 let (data, response) = try await URLSession.shared.data(for: request)
                 if let response = response as? HTTPURLResponse {
                     if (200 ..< 300) ~= response.statusCode {
-                        await loadData(from: data)
+                        return await loadData(from: data)
                     }
                 }
 
             } catch {
                 Log.debug("\(error)")
             }
+            showErrorAlert.toggle()
         }
 
         func loadData(from data: Data) async {
@@ -239,7 +390,7 @@ extension ImportCharacterView {
                 creator: creator,
                 characterVersion: characterVersion,
                 chubId: chubId,
-                avatar: avatar!
+                avatar: avatar
             )
             return character
         }

@@ -8,7 +8,35 @@
 import Foundation
 
 struct PygmalionChatCharacterResponse: Codable {
-    let character: TavernPNGData
+    let character: TavernData
+}
+
+struct TavernOne: Codable {
+    let charName: String
+    let charPersona: String
+    let worldScenario: String
+    let charGreeting: String
+    let exampleDialog: String
+    let name: String
+    let description: String
+    let personality: String
+    let scenario: String
+    let firstMes: String
+    let mesExample: String
+
+    enum CodingKeys: String, CodingKey {
+        case charName = "char_name"
+        case charPersona = "char_persona"
+        case worldScenario = "world_scenario"
+        case charGreeting = "char_greeting"
+        case exampleDialog = "example_dialogue"
+        case name
+        case description
+        case personality
+        case scenario
+        case firstMes = "first_mes"
+        case mesExample = "mes_example"
+    }
 }
 
 struct TavernSimple: Codable {
@@ -32,7 +60,7 @@ struct TavernSimple: Codable {
 }
 
 
-struct TavernPNGData: Codable {
+struct TavernData: Codable {
     let data: TavernCharacterData
     let spec: String
     let specVersion: String

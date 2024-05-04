@@ -56,7 +56,7 @@ func readPNGTextChunks(from fileData: Data) async -> (TavernCharacterData?, Data
                         Log.debug(base64string)
                         if let data = Data(base64Encoded: base64string) {
                             do {
-                                let pngData = try JSONDecoder().decode(TavernPNGData.self, from: data)
+                                let pngData = try JSONDecoder().decode(TavernData.self, from: data)
                                 return (pngData.data, fileData)
                             } catch {
                                 do {
