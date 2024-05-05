@@ -109,21 +109,26 @@ struct ChatsView: View {
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button {
-                    showingCharactersSheet.toggle()
-                } label: {
-                    Label("Characters", systemImage: "person.2")
-                }
-            }
-            ToolbarItemGroup(placement: .secondaryAction) {
-                Button {
                     showingPersonaSheet.toggle()
                 } label: {
-                    Label("You", systemImage: "person.crop.circle")
+                    Label("You", systemImage: "person")
                 }
+                Button {
+                    showingCharactersSheet.toggle()
+                } label: {
+                    Label("Characters", systemImage: "person.crop.rectangle.stack")
+                }
+                Button {
+                    showingSheet.toggle()
+                } label: {
+                    Label("New Chat", systemImage: "square.and.pencil")
+                }
+            }
+            ToolbarItemGroup(placement: .topBarLeading) {
                 Button {
                     showingHelpSheet.toggle()
                 } label: {
-                    Label("Help / About", systemImage: "questionmark.circle")
+                    Label("Help", systemImage: "questionmark.circle")
                 }
             }
         }

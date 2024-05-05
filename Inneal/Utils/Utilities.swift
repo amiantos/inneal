@@ -204,3 +204,21 @@ extension View {
       .eraseToAnyPublisher()
   }
 }
+
+func extractAllWords(from value: String?) -> [String] {
+    guard let value = value, !value.isEmpty else {
+        return []
+    }
+
+    do {
+        let regex = try NSRegularExpression(pattern: "\\b\\w+\\b", options: [.caseInsensitive])
+        let matches = regex.matches(in: value, options: [], range: NSRange(location: 0, length: value.utf16.count))
+        return matches.map {
+            let range = Range($0.range, in: value)!
+            return String(value[range]).lowercased()
+        }
+    } catch {
+        print("Invalid regex: \(error.localizedDescription)")
+        return []
+    }
+}

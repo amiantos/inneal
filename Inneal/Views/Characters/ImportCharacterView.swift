@@ -231,11 +231,13 @@ extension ImportCharacterView {
             creator = tavernData.data.creator
             characterVersion = tavernData.data.characterVersion
 
-            let imageRequest = URLRequest(url: URL(string: tavernData.data.avatar)!)
-            let (imageData, imageResponse) = try await URLSession.shared.data(for: imageRequest)
-            if let imageResponse = imageResponse as? HTTPURLResponse {
-                if (200 ..< 300) ~= imageResponse.statusCode {
-                    avatar = imageData
+            if let avatarUrl = URL(string: tavernData.data.avatar) {
+                let imageRequest = URLRequest(url: avatarUrl)
+                let (imageData, imageResponse) = try await URLSession.shared.data(for: imageRequest)
+                if let imageResponse = imageResponse as? HTTPURLResponse {
+                    if (200 ..< 300) ~= imageResponse.statusCode {
+                        avatar = imageData
+                    }
                 }
             }
         }
@@ -256,11 +258,13 @@ extension ImportCharacterView {
             creator = tavernCharacterData.creator
             characterVersion = tavernCharacterData.characterVersion
 
-            let imageRequest = URLRequest(url: URL(string: tavernCharacterData.avatar)!)
-            let (imageData, imageResponse) = try await URLSession.shared.data(for: imageRequest)
-            if let imageResponse = imageResponse as? HTTPURLResponse {
-                if (200 ..< 300) ~= imageResponse.statusCode {
-                    avatar = imageData
+            if let avatarUrl = URL(string: tavernCharacterData.avatar) {
+                let imageRequest = URLRequest(url: avatarUrl)
+                let (imageData, imageResponse) = try await URLSession.shared.data(for: imageRequest)
+                if let imageResponse = imageResponse as? HTTPURLResponse {
+                    if (200 ..< 300) ~= imageResponse.statusCode {
+                        avatar = imageData
+                    }
                 }
             }
         }

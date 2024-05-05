@@ -151,6 +151,7 @@
 				4412EFE72BB235DE00B0E415 /* Chats */,
 				4412EFE12BB220C900B0E415 /* Chat */,
 				44259EDD2BBFCB6600623171 /* Characters */,
+				4497E89D2BE61E93007503A2 /* Character */,
 				44B70AB52BC369F5001B71AA /* Settings */,
 				44330EE42BCDDF1900E5E4DF /* HelpView.swift */,
 				44330EE92BCF762A00E5E4DF /* IntroductionView.swift */,
@@ -217,10 +218,8 @@
 		44259EDD2BBFCB6600623171 /* Characters */ = {
 			isa = PBXGroup;
 			children = (
-				44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */,
 				44259ED92BBFC7FC00623171 /* CharactersView.swift */,
 				44259EDB2BBFCA2F00623171 /* ImportCharacterView.swift */,
-				44FA79422BD777AC0000C79C /* CharacterHelpView.swift */,
 			);
 			path = Characters;
 			sourceTree = "<group>";
@@ -241,6 +240,15 @@
 				44259EE02BC08AB700623171 /* PreviewDataController.swift */,
 			);
 			path = "Preview Support";
+			sourceTree = "<group>";
+		};
+		4497E89D2BE61E93007503A2 /* Character */ = {
+			isa = PBXGroup;
+			children = (
+				44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */,
+				44FA79422BD777AC0000C79C /* CharacterHelpView.swift */,
+			);
+			path = Character;
 			sourceTree = "<group>";
 		};
 		44B70AB52BC369F5001B71AA /* Settings */ = {

@@ -65,7 +65,7 @@ struct ChatView: View {
                                             HStack(alignment: .center) {
                                                 if !message.fromUser {
                                                     if !message.fromUser {
-                                                        if let character = chat.characters?.first,
+                                                        if let character = message.character,
                                                            let avatar = character.avatar,
                                                            let image = UIImage(data: avatar)
                                                         {
@@ -126,7 +126,7 @@ struct ChatView: View {
                                                                     }
                                                                 }
 
-                                                            if !message.unwrappedContentAlternates.isEmpty || messages.count > 1 {
+                                                            if !message.unwrappedContentAlternates.isEmpty || messages.count > 1 && !showPendingMessage {
                                                                 Image(systemName: message.unwrappedContentAlternates.isEmpty ? "arrow.clockwise" : "chevron.right")
                                                             }
 
@@ -138,7 +138,9 @@ struct ChatView: View {
                                                         ForEach(message.unwrappedContentAlternates) { alternate in
                                                             HStack(alignment: .top) {
                                                                 HStack {
-                                                                    Image(systemName: "chevron.left")
+                                                                    if !showPendingMessage {
+                                                                        Image(systemName: "chevron.left")
+                                                                    }
                                                                     MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
                                                                         .fixedSize(horizontal: false, vertical: true)
                                                                         .readIntrinsicContentSize(to: $textSize)
@@ -173,7 +175,7 @@ struct ChatView: View {
                                                                                 }
                                                                             }
                                                                         }
-                                                                    if alternate != message.unwrappedContentAlternates.last || messages.count > 1 {
+                                                                    if alternate != message.unwrappedContentAlternates.last || messages.count > 1 && !showPendingMessage {
                                                                         Image(systemName: alternate != message.unwrappedContentAlternates.last ? "chevron.right" : "arrow.clockwise")
                                                                     }
                                                                 }
@@ -286,8 +288,9 @@ struct ChatView: View {
                                     ProgressView()
                                         .opacity(showPendingMessage ? 1 : 0)
                                     Button(action: sendMessage) {
-                                        Image(systemName: "arrow.up")
+                                        Image(systemName: newMessage.isEmpty ? "plus" : "arrow.up")
                                     }
+                                    .frame(width: 30, height: 30)
                                     .clipShape(Circle())
                                     .buttonStyle(BorderedProminentButtonStyle())
                                     .disabled(showPendingMessage)
@@ -452,7 +455,7 @@ struct ChatView: View {
             showPendingMessage.toggle()
             statusMessage = "Requesting a new message..."
             Task {
-                let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage, ignoreLastMessage: true)
+                let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage, contentAlternate: true)
                 let newAlternate = ContentAlternate(string: response.text, message: message, request: response.request, response: response.response)
                 chat.dateUpdated = .now
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -482,14 +485,16 @@ struct ChatView: View {
             let newUserMessage = ChatMessage(content: newMessage, fromUser: true, chat: chat)
             modelContext.insert(newUserMessage)
             chat.dateUpdated = .now
-            try? modelContext.save()
+            statusMessage = "Sending message..."
+        } else {
+            statusMessage = "Requesting a new message..."
         }
-        statusMessage = "Sending message..."
         showPendingMessage.toggle()
         newMessage = ""
+        try? modelContext.save()
         Task {
             let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage)
-            let newResponseMessage = ChatMessage(content: response.text, fromUser: false, chat: chat, character: chat.characters?.first!, request: response.request, response: response.response)
+            let newResponseMessage = ChatMessage(content: response.text, fromUser: false, chat: chat, character: response.character, request: response.request, response: response.response)
             chat.dateUpdated = Date.now
             modelContext.insert(newResponseMessage)
             chat.dateUpdated = .now
