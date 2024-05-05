@@ -22,6 +22,16 @@ struct ChatsView: View {
     @State private var showingPersonaSheet = false
     @State private var selectedChat: Chat?
 
+    let gridItems = [
+        GridItem(.fixed(30), spacing: -5, alignment: .leading),
+        GridItem(.fixed(30), spacing: -5, alignment: .leading),
+    ]
+
+    let hGridItems = [
+        GridItem(.fixed(30), spacing: -5, alignment: .leading),
+        GridItem(.fixed(30), spacing: -5, alignment: .leading),
+    ]
+
     var body: some View {
         NavigationSplitView {
             ChatList
@@ -69,22 +79,78 @@ struct ChatsView: View {
             ForEach(chats, id: \.self) { chat in
                 NavigationLink(value: chat) {
                     HStack {
-                        if let character = chat.characters?.first,
-                           let avatar = character.avatar,
-                           let image = UIImage(data: avatar)
-                        {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 60, height: 60, alignment: .center)
-                                .cornerRadius(30)
-                                .padding(.trailing, 5)
+                        if chat.unwrappedCharacters.count == 1 {
+                            if let avatar = chat.unwrappedCharacters.first!.avatar,
+                               let image = UIImage(data: avatar)
+                            {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 60, height: 60, alignment: .center)
+                                    .cornerRadius(30)
+                                    .padding(.trailing, 5)
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 60, height: 60, alignment: .center)
+                                    .cornerRadius(30)
+                                    .padding(.trailing, 5)
+                            }
                         } else {
-                            Image(systemName: "person.circle.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60, alignment: .center)
-                                .cornerRadius(30)
-                                .padding(.trailing, 5)
+                            Group {
+                                ZStack {
+                                    LazyHGrid(rows: hGridItems, alignment: .center, spacing: 0) {
+                                        ForEach(2..<4, id: \.self) { idx in
+                                            if chat.unwrappedCharacters.count>idx {
+                                                if let avatar = chat.unwrappedCharacters[idx].avatar,
+                                                   let image = UIImage(data: avatar)
+                                                {
+                                                    Image(uiImage: image)
+                                                        .resizable()
+                                                        .scaledToFill()
+                                                        .frame(width: 30, height: 30, alignment: .center)
+                                                        .cornerRadius(15)
+                                                        .offset(x: idx == 3 ? -5 : 5).shadow(radius: 5)
+                                                } else {
+                                                    Image(systemName: "person.circle.fill")
+                                                        .resizable()
+                                                        .scaledToFill()
+                                                        .frame(width: 30, height: 30, alignment: .center)
+                                                        .cornerRadius(15)
+                                                        .offset(x: idx == 3 ? -5 : 5).shadow(radius: 5)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
+                                        ForEach(0..<2, id: \.self) { idx in
+                                            if let avatar = chat.unwrappedCharacters[idx].avatar,
+                                               let image = UIImage(data: avatar)
+                                            {
+                                                Image(uiImage: image)
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: 30, height: 30, alignment: .center)
+                                                    .cornerRadius(15)
+                                                    .offset(y: idx == 0 ? -5 : 5).shadow(radius: 5)
+                                            } else {
+                                                Image(systemName: "person.circle.fill")
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: 30, height: 30, alignment: .center)
+                                                    .cornerRadius(15)
+                                                    .offset(y: idx == 0 ? -5 : 5).shadow(radius: 5)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                              .frame(minWidth: 60, idealWidth: 60, minHeight: 60, idealHeight: 60)
+                              .background(.ultraThinMaterial)
+                              .fixedSize()
+                              .cornerRadius(30)
+                              .padding(.trailing, 5)
                         }
                         VStack {
                             Text(chat.name)

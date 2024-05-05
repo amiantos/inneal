@@ -89,6 +89,11 @@ class Chat {
         return unwrappedMessages.sorted { $0.dateCreated < $1.dateCreated }
     }
 
+    var unwrappedCharacters: [Character] {
+        let unwrappedCharacters: [Character] = characters ?? []
+        return unwrappedCharacters.sorted { $0.name < $1.name }
+    }
+
     // Init
 
     init(name: String?, characters: [Character]) {
