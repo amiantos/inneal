@@ -16,11 +16,12 @@ struct CreateChatView: View {
     @Environment(\.modelContext) var modelContext
     @Query(sort: [SortDescriptor(\Character.name)]) var characters: [Character]
     @State var selectedCharacters: Set<Character> = Set<Character>()
+    @State var showingWarningAlert = false
 
     let columns = [
         GridItem(.adaptive(minimum: 150))
     ]
-
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -43,6 +44,7 @@ struct CreateChatView: View {
                                                 .resizable()
                                                 .scaledToFit()
                                                 .padding()
+                                                .colorMultiply(selectedCharacters.contains(character) ? .accentColor : .white)
                                         }
                                     }
                                     .clipped()
@@ -81,41 +83,24 @@ struct CreateChatView: View {
             }
             .navigationTitle("New Chat")
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", role: .destructive) {
                         dismiss()
                     }.foregroundStyle(.red)
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Add") {
-                        if !selectedCharacters.isEmpty {
-                            guard let characterNames = selectedCharacters.compactMap({ $0.name }) as? [String] else { return }
-                            let chatName = characterNames.joined(separator: " & ")
-                            Log.debug("Chat Name \(chatName)")
-
-                            let chat = Chat(name: chatName, characters: Array(selectedCharacters))
-                            if !userName.isEmpty {
-                                chat.userName = userName
-                            }
-                            modelContext.insert(chat)
-                            selectedCharacters.forEach { character in
-                                let message = ChatMessage(
-                                    content: character.firstMessage,
-                                    fromUser: false,
-                                    chat: chat,
-                                    character: character
-                                )
-                                modelContext.insert(message)
-
-                                character.alternateGreetings.forEach { greeting in
-                                    let contentAlternate = ContentAlternate(string: greeting, message: message)
-                                    modelContext.insert(contentAlternate)
-                                }
-                            }
-
-                            dismiss()
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Create") {
+                        tryCreateChat()
+                    }
+                    .disabled(selectedCharacters.isEmpty)
+                    .alert("Multi-Character Chat", isPresented: $showingWarningAlert) {
+                        Button("Groovy") {
+                            createChat()
                         }
-                    }.disabled(selectedCharacters.isEmpty)
+                        Button("Nevermind", role: .cancel) {}
+                    } message: {
+                        Text("When a multi-character chat is created, it is populated with all of the character's first messages. Delete or edit the messages to set the scenario you want.")
+                    }
                 }
             }
         }
@@ -126,6 +111,46 @@ struct CreateChatView: View {
             selectedCharacters.remove(character)
         } else {
             selectedCharacters.insert(character)
+        }
+    }
+
+    fileprivate func tryCreateChat() {
+        if !selectedCharacters.isEmpty {
+            if selectedCharacters.count > 1 {
+                showingWarningAlert.toggle()
+            } else {
+                createChat()
+            }
+        }
+    }
+
+    fileprivate func createChat() {
+        if !selectedCharacters.isEmpty {
+            guard let characterNames = selectedCharacters.compactMap({ $0.name }) as? [String] else { return }
+            let chatName = characterNames.joined(separator: " & ")
+            Log.debug("Chat Name \(chatName)")
+
+            let chat = Chat(name: chatName, characters: Array(selectedCharacters))
+            if !userName.isEmpty {
+                chat.userName = userName
+            }
+            modelContext.insert(chat)
+            selectedCharacters.forEach { character in
+                let message = ChatMessage(
+                    content: character.firstMessage,
+                    fromUser: false,
+                    chat: chat,
+                    character: character
+                )
+                modelContext.insert(message)
+
+                character.alternateGreetings.forEach { greeting in
+                    let contentAlternate = ContentAlternate(string: greeting, message: message)
+                    modelContext.insert(contentAlternate)
+                }
+            }
+
+            dismiss()
         }
     }
 }
