@@ -89,9 +89,10 @@ struct CharactersView: View {
                                                 .resizable()
                                                 .scaledToFill()
                                         } else {
-                                            Image(systemName: "face.smiling.inverse")
+                                            Image(systemName: "face.smiling")
                                                 .resizable()
                                                 .scaledToFit()
+                                                .padding()
                                         }
                                     }
                                     .clipped()
@@ -126,13 +127,13 @@ struct CharactersView: View {
                     Button {
                         showingSheet.toggle()
                     } label: {
-                        Label("Import Character", systemImage: "square.and.arrow.down")
+                        Label("Import", systemImage: "square.and.arrow.down")
                     }
                     Button {
                         selectedCharacter = nil
                         showingNewCharacterSheet.toggle()
                     } label: {
-                        Label("New Character", systemImage: "plus")
+                        Label("Create", systemImage: "square.and.pencil")
                     }
                 }
                 ToolbarItem(placement: .cancellationAction) {

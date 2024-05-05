@@ -126,7 +126,7 @@ struct ChatView: View {
                                                                     }
                                                                 }
 
-                                                            if !message.unwrappedContentAlternates.isEmpty || messages.count > 1 {
+                                                            if !message.unwrappedContentAlternates.isEmpty || messages.count > 1 && !showPendingMessage {
                                                                 Image(systemName: message.unwrappedContentAlternates.isEmpty ? "arrow.clockwise" : "chevron.right")
                                                             }
 
@@ -138,7 +138,9 @@ struct ChatView: View {
                                                         ForEach(message.unwrappedContentAlternates) { alternate in
                                                             HStack(alignment: .top) {
                                                                 HStack {
-                                                                    Image(systemName: "chevron.left")
+                                                                    if !showPendingMessage {
+                                                                        Image(systemName: "chevron.left")
+                                                                    }
                                                                     MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
                                                                         .fixedSize(horizontal: false, vertical: true)
                                                                         .readIntrinsicContentSize(to: $textSize)
@@ -173,7 +175,7 @@ struct ChatView: View {
                                                                                 }
                                                                             }
                                                                         }
-                                                                    if alternate != message.unwrappedContentAlternates.last || messages.count > 1 {
+                                                                    if alternate != message.unwrappedContentAlternates.last || messages.count > 1 && !showPendingMessage {
                                                                         Image(systemName: alternate != message.unwrappedContentAlternates.last ? "chevron.right" : "arrow.clockwise")
                                                                     }
                                                                 }

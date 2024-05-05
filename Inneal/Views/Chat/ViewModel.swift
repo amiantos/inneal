@@ -84,20 +84,20 @@ extension ChatView {
                 character = toon
             } else {
                 Log.debug("Trying to determine next character in chat...")
-                outerLoop: for message in history {
+                mainLoop: for message in history {
                     if message.fromUser, let randomToon = characters.randomElement() {
                         for currentWord in extractAllWords(from: message.content) {
                             for chatCharacter in characters {
                                 if extractAllWords(from: chatCharacter.name).contains(currentWord) {
                                     Log.debug("Found mention, setting toon: \(chatCharacter.name)")
                                     character = chatCharacter
-                                    break outerLoop
+                                    break mainLoop
                                 }
                             }
                         }
                         Log.debug("Setting random toon: \(randomToon.name)")
                         character = randomToon
-                        break outerLoop
+                        break mainLoop
                     } else {
                         Log.debug("Setting toon that isn't \(message.character?.name ?? "Unknown Character")")
                         let filteredToons = characters.filter { $0 != message.character }
@@ -106,7 +106,7 @@ extension ChatView {
                                 if extractAllWords(from: chatCharacter.name).contains(currentWord) {
                                     Log.debug("Found mention, setting toon: \(chatCharacter.name)")
                                     character = chatCharacter
-                                    break outerLoop
+                                    break mainLoop
                                 }
                             }
                         }
@@ -114,7 +114,7 @@ extension ChatView {
                             Log.debug("Setting random toon: \(randomToon.name)")
                             character = randomToon
                         }
-                        break outerLoop
+                        break mainLoop
                     }
                 }
             }

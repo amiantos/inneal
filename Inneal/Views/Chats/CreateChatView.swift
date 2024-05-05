@@ -23,72 +23,63 @@ struct CreateChatView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                TextField("Your Name (Default: \(Preferences.standard.defaultName))", text: $userName)
-                    .textFieldStyle(.roundedBorder)
-#if os(iOS)
-                    .scrollDismissesKeyboard(.immediately)
-#endif
-                    .padding([.leading, .trailing])
-                ScrollView {
-                    //                    TextField("Chat Name (Optional)", text: $chatName)
-                    //                        .textFieldStyle(.roundedBorder)
-                    //                        .scrollDismissesKeyboard(.immediately)
-                    //                        .padding([.top, .leading, .trailing])
-                    LazyVGrid(columns: columns, alignment: .center) {
-                        ForEach(characters) { character in
-                            Button(action: {
-                                selectCharacter(character)
-                            }, label: {
-                                VStack(alignment: .leading) {
-                                    Rectangle()
-                                        .aspectRatio(2/3, contentMode: .fill)
-                                        .foregroundColor(.clear)
-                                        .overlay {
-                                            if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
-                                                Image(uiImage: uiImage)
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .saturation(selectedCharacters.contains(character) ? 1 : 0)
-                                                    .colorMultiply(selectedCharacters.contains(character) ? .accentColor : .white)
-                                            }
+            ScrollView {
+                LazyVGrid(columns: columns, alignment: .center) {
+                    ForEach(characters) { character in
+                        Button(action: {
+                            selectCharacter(character)
+                        }, label: {
+                            VStack(alignment: .leading) {
+                                Rectangle()
+                                    .aspectRatio(2/3, contentMode: .fill)
+                                    .foregroundColor(.clear)
+                                    .overlay {
+                                        if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
+                                            Image(uiImage: uiImage)
+                                                .resizable()
+                                                .scaledToFill()
+                                        } else {
+                                            Image(systemName: "face.smiling")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .padding()
                                         }
-                                        .clipped()
-                                    Rectangle()
-                                        .foregroundColor(.clear)
-                                        .aspectRatio(3, contentMode: .fill)
-                                        .overlay {
-                                            HStack(alignment: .center) {
-                                                Image(systemName: selectedCharacters.contains(character) ? "checkmark.circle.fill" : "circle")
-                                                    .resizable()
-                                                    .frame(width: 22, height: 22)
-                                                    .foregroundStyle(.accent)
-                                                    .padding(.leading)
-                                                Text(character.name)
-                                                    .lineLimit(2)
-                                                    .font(.subheadline)
-                                                    .minimumScaleFactor(0.5)
-                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .padding(.trailing)
-                                                    .padding(.leading, 3)
-                                            }
-                                            .padding(.bottom, 5)
+                                    }
+                                    .clipped()
+                                    .saturation(selectedCharacters.contains(character) ? 1 : 0)
+                                Rectangle()
+                                    .foregroundColor(.clear)
+                                    .aspectRatio(3, contentMode: .fill)
+                                    .overlay {
+                                        HStack(alignment: .center) {
+                                            Image(systemName: selectedCharacters.contains(character) ? "checkmark.circle.fill" : "circle")
+                                                .resizable()
+                                                .frame(width: 22, height: 22)
+                                                .foregroundStyle(.accent)
+                                                .padding(.leading)
+                                            Text(character.name)
+                                                .lineLimit(2)
+                                                .font(.subheadline)
+                                                .minimumScaleFactor(0.5)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .padding(.trailing)
+                                                .padding(.leading, 3)
                                         }
-                                }
-                            })
-                            .buttonStyle(.plain)
-                            .background(.quaternary)
-                            .clipShape(RoundedRectangle(cornerRadius: 12.0))
-                        }
+                                        .padding(.bottom, 5)
+                                    }
+                            }
+                        })
+                        .buttonStyle(.plain)
+                        .background(.quaternary)
+                        .clipShape(RoundedRectangle(cornerRadius: 12.0))
                     }
-                    .padding()
-#if os(iOS)
-                    .scrollDismissesKeyboard(.immediately)
-#endif
                 }
+                .padding()
+#if os(iOS)
+                .scrollDismissesKeyboard(.immediately)
+#endif
             }
             .navigationTitle("New Chat")
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel", role: .destructive) {
