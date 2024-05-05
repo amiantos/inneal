@@ -75,37 +75,49 @@ extension ChatView {
                 Log.error("Unable to fetch message history")
             }
 
-            if let characters = chat.characters, characters.isEmpty {
+            guard let characters = chat.characters, !characters.isEmpty, var character = chat.characters?.first else {
                 return ViewModelResponse(text: "No characters found in chat.", character: nil, response: nil, request: nil)
             }
 
-            guard var character = chat.characters?.first else {
-                return ViewModelResponse(text: "No characters found in chat.", character: nil, response: nil, request: nil)
-            }
             if contentAlternate, let lastMessage = history.first, let toon = lastMessage.character {
                 Log.debug("Alternate requested, setting character to last message character: \(toon.name).")
                 character = toon
             } else {
                 Log.debug("Trying to determine next character in chat...")
-                for message in history {
-                    if message.fromUser, let randomToon = chat.characters?.randomElement() {
+                outerLoop: for message in history {
+                    if message.fromUser, let randomToon = characters.randomElement() {
+                        for currentWord in extractAllWords(from: message.content) {
+                            for chatCharacter in characters {
+                                if extractAllWords(from: chatCharacter.name).contains(currentWord) {
+                                    Log.debug("Found mention, setting toon: \(chatCharacter.name)")
+                                    character = chatCharacter
+                                    break outerLoop
+                                }
+                            }
+                        }
                         Log.debug("Setting random toon: \(randomToon.name)")
                         character = randomToon
-                        break
-                    } else if let toons = chat.characters {
-                        Log.debug("Setting random toon that isn't \(message.character?.name)")
-                        let filteredToons = toons.filter { $0 != message.character }
+                        break outerLoop
+                    } else {
+                        Log.debug("Setting toon that isn't \(message.character?.name ?? "Unknown Character")")
+                        let filteredToons = characters.filter { $0 != message.character }
+                        for currentWord in extractAllWords(from: message.content) {
+                            for chatCharacter in filteredToons {
+                                if extractAllWords(from: chatCharacter.name).contains(currentWord) {
+                                    Log.debug("Found mention, setting toon: \(chatCharacter.name)")
+                                    character = chatCharacter
+                                    break outerLoop
+                                }
+                            }
+                        }
                         if let randomToon = filteredToons.randomElement() {
                             Log.debug("Setting random toon: \(randomToon.name)")
                             character = randomToon
-                            break
                         }
+                        break outerLoop
                     }
                 }
             }
-
-
-
 
             var maxContentLength = baseHordeParams.maxContentLength
             var maxLength = baseHordeParams.maxLength
@@ -293,7 +305,6 @@ extension ChatView {
                 stopSequence.append("\n\(character.name): ")
             }
 
-
             let params = HordeRequestParams(
                 n: baseHordeParams.n,
                 maxContentLength: maxContentLength,
@@ -352,8 +363,8 @@ extension ChatView {
                                 var result = endTrimToSentence(input: generation.text, includeNewline: true)
                                 result = result.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
                                 result = trimToFirstNewline(text: result, characterName: character.name, userName: chat.userName ?? Preferences.standard.defaultName, multilineReplies: chat.allowMultilineReplies)
-                                result = ensureEvenAsterisks(result)
-                                result = ensureEvenQuotes(result)
+                                // result = ensureEvenAsterisks(result)
+                                // result = ensureEvenQuotes(result)
                                 result = replaceMultipleNewlines(in: result)
                                 result = result.replacingOccurrences(of: chat.userName ?? Preferences.standard.defaultName, with: "{{user}}").replacingOccurrences(of: character.name, with: "{{char}}").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
                                 return ViewModelResponse(text: result, character: character, response: requestResponse.toJSONString(), request: requestString)
