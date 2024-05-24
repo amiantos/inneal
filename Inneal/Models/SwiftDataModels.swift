@@ -210,7 +210,7 @@ class CharacterPNGExporter: Transferable {
     
     static var transferRepresentation: some TransferRepresentation {
         let rep = DataRepresentation<CharacterPNGExporter>(exportedContentType: .png) { trans in
-            guard var avatar = trans.character.avatar else { return Data() }
+            guard let avatar = trans.character.avatar else { return Data() }
             return avatar
         }
         return rep.suggestedFileName { obj in obj.suggestedFileName }
