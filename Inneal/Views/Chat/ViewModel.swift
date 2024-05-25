@@ -137,7 +137,7 @@ extension ChatView {
             permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
             permanentPrompt += character.scenario.isEmpty ? "" : "\(character.scenario)\n"
             
-            if let userCharacter {
+            if let userCharacter, userCharacter != character {
                 permanentPrompt += "\n\nDescription of \(userName): \(userCharacter.characterDescription.swapPlaceholders(userName: character.name, charName: userCharacter.name, userSettings: userSettings))"
             }
 
