@@ -397,6 +397,8 @@ extension ChatView {
                                 result = trimToFirstNewline(text: result, characterName: character.name, userName: userName, multilineReplies: chat.allowMultilineReplies)
                                 result = replaceMultipleNewlines(in: result)
                                 result = result.replacingOccurrences(of: userName, with: "{{user}}").replacingOccurrences(of: "### New Roleplay:", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+                                result = removeTrailingNewlines(result)
+
                                 return ViewModelResponse(text: result, character: character, response: requestResponse.toJSONString(), request: requestString)
                             }
                             break
@@ -603,6 +605,10 @@ extension ChatView {
 
         func countTokens(_ string: String) -> Int {
             Int(ceil(Double(string.count) / 3.5))
+        }
+
+        func removeTrailingNewlines(_ string: String) -> String {
+            return string.replacingOccurrences(of: "\\n\\*$", with: "", options: .regularExpression)
         }
     }
 }
