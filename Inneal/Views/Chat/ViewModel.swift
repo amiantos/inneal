@@ -138,7 +138,7 @@ extension ChatView {
             permanentPrompt += character.scenario.isEmpty ? "" : "\(character.scenario)\n"
             
             if let userCharacter, userCharacter != character {
-                permanentPrompt += "\n\nDescription of \(userName): \(userCharacter.characterDescription.swapPlaceholders(userName: character.name, charName: userCharacter.name, userSettings: userSettings))"
+                permanentPrompt += "\n\nDescription of \(userCharacter.name): \(userCharacter.characterDescription.swapPlaceholders(userName: character.name, charName: userCharacter.name, userSettings: userSettings))"
             }
 
             let permanentTokens = countTokens(permanentPrompt)
