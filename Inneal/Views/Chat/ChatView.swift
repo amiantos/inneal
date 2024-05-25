@@ -123,75 +123,70 @@ struct ChatView: View {
                                                                         }
                                                                     }
                                                                 }
-
-                                                            if !message.unwrappedContentAlternates.isEmpty || messages.count > 1 && !showPendingMessage {
+                                                            if !showPendingMessage {
                                                                 Image(systemName: message.unwrappedContentAlternates.isEmpty ? "arrow.clockwise" : "chevron.right")
                                                             }
-
                                                         }
                                                         .id("primary")
                                                         .containerRelativeFrame(.horizontal)
 
-
                                                         ForEach(message.unwrappedContentAlternates) { alternate in
-                                                            HStack(alignment: .top) {
-                                                                HStack {
-                                                                    if !showPendingMessage {
-                                                                        Image(systemName: "chevron.left")
-                                                                    }
-                                                                    MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
-                                                                        .fixedSize(horizontal: false, vertical: true)
-                                                                        .readIntrinsicContentSize(to: $textSize)
-                                                                        .contextMenu {
-                                                                            Button(role: .destructive) {
-                                                                                delete(contentAlternate: alternate)
-                                                                            } label: {
-                                                                                Label("Delete Alternate", systemImage: "trash")
-                                                                            }
+                                                            // MARK: Content Alternate
+                                                            HStack {
+                                                                if !showPendingMessage {
+                                                                    Image(systemName: "chevron.left")
+                                                                }
+                                                                MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
+                                                                    .fixedSize(horizontal: false, vertical: true)
+                                                                    .readIntrinsicContentSize(to: $textSize)
+                                                                    .contextMenu {
+                                                                        Button(role: .destructive) {
+                                                                            delete(contentAlternate: alternate)
+                                                                        } label: {
+                                                                            Label("Delete Alternate", systemImage: "trash")
+                                                                        }
 
-                                                                            Button {
-                                                                                copyText(contentAlternate: alternate)
-                                                                            } label: {
-                                                                                Label("Copy Text", systemImage: "doc.on.doc")
-                                                                            }
+                                                                        Button {
+                                                                            copyText(contentAlternate: alternate)
+                                                                        } label: {
+                                                                            Label("Copy Text", systemImage: "doc.on.doc")
+                                                                        }
 
-                                                                            Button {
-                                                                                alternateTextToEdit = alternate.string
-                                                                                alternateBeingEdited = alternate
-                                                                                showAlternateTextEditor.toggle()
-                                                                            } label: {
-                                                                                Label("Edit", systemImage: "square.and.pencil")
-                                                                            }
+                                                                        Button {
+                                                                            alternateTextToEdit = alternate.string
+                                                                            alternateBeingEdited = alternate
+                                                                            showAlternateTextEditor.toggle()
+                                                                        } label: {
+                                                                            Label("Edit", systemImage: "square.and.pencil")
+                                                                        }
 
-                                                                            Group {
-                                                                                if alternate.request != nil {
-                                                                                    Button {
-                                                                                        showRequestDetails(alternate.request, alternate.response)
-                                                                                    } label: {
-                                                                                        Label("Generation Details", systemImage: "info.circle")
-                                                                                    }
+                                                                        Group {
+                                                                            if alternate.request != nil {
+                                                                                Button {
+                                                                                    showRequestDetails(alternate.request, alternate.response)
+                                                                                } label: {
+                                                                                    Label("Generation Details", systemImage: "info.circle")
                                                                                 }
                                                                             }
                                                                         }
-                                                                    if alternate != message.unwrappedContentAlternates.last || messages.count > 1 && !showPendingMessage {
-                                                                        Image(systemName: alternate != message.unwrappedContentAlternates.last ? "chevron.right" : "arrow.clockwise")
                                                                     }
+                                                                if !showPendingMessage {
+                                                                    Image(systemName: alternate != message.unwrappedContentAlternates.last ? "chevron.right" : "arrow.clockwise")
                                                                 }
                                                             }.id(alternate.uuid.uuidString).containerRelativeFrame(.horizontal)
                                                         }
-
-                                                        if messages.count > 1 {
-                                                            HStack(alignment: .center) {
-                                                                ProgressView().padding()
-                                                            }
-                                                            .id("newAlternate")
-                                                            .padding(10)
-                                                            .containerRelativeFrame([.horizontal, .vertical])
-                                                            .fixedSize(horizontal: false, vertical: true)
-                                                            .foregroundColor(Color(UIColor.label))
-                                                            .background(Color(UIColor.tertiarySystemFill))
-                                                            .cornerRadius(15)
+                                                        
+                                                        // MARK: Pending Alternate Box
+                                                        HStack(alignment: .center) {
+                                                            ProgressView().padding()
                                                         }
+                                                        .id("newAlternate")
+                                                        .padding(10)
+                                                        .containerRelativeFrame([.horizontal, .vertical])
+                                                        .fixedSize(horizontal: false, vertical: true)
+                                                        .foregroundColor(Color(UIColor.label))
+                                                        .background(Color(UIColor.tertiarySystemFill))
+                                                        .cornerRadius(15)
 
                                                     }.scrollTargetLayout().frame(height: textSize.height)
                                                 }
