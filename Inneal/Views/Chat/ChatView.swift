@@ -379,6 +379,17 @@ struct ChatView: View {
                                 showingCharacterSheet.toggle()
                             }
                         }
+                        if chat.userCharacter != nil {
+                            Button("Edit \(chat.userCharacter!.name)", systemImage: "person") {
+                                characterBeingEdited = chat.userCharacter!
+                                showingCharacterSheet.toggle()
+                            }
+                        } else if chat.userName == nil, userSettings.userCharacter != nil {
+                            Button("Edit \(userSettings.userCharacter!.name)", systemImage: "person") {
+                                characterBeingEdited = userSettings.userCharacter!
+                                showingCharacterSheet.toggle()
+                            }
+                        }
                     }
                 }
             }
