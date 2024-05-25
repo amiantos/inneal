@@ -16,7 +16,10 @@ enum SettingsMode: String, CaseIterable, Identifiable {
 }
 
 struct ChatSettingsView: View {
+    @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
+
+    @Query(sort: [SortDescriptor(\Character.name)]) var characters: [Character]
 
     @State var chat: Chat
     @State var viewModel: ChatSettingsView.ViewModel = .init()
@@ -30,8 +33,6 @@ struct ChatSettingsView: View {
     @State var currentHordeConfigObject: APIConfiguration?
     @State var showingAPIKeyDeleteAlert = false
 
-    @Environment(\.modelContext) var modelContext
-
     @State var settingsMode: SettingsMode = .basic
     @State var customUserName: String = ""
 
@@ -44,15 +45,24 @@ struct ChatSettingsView: View {
             }.pickerStyle(.segmented).padding([.leading, .trailing])
             Form {
                 if settingsMode == .basic {
-                    Section(header: Text("Your Name"), footer: Text("Your name in this specific chat.")) {
-                        TextField(Preferences.standard.defaultName, text: $customUserName)
-                            .onChange(of: customUserName) {
-                                if customUserName.isEmpty {
-                                    chat.userName = nil
-                                } else {
-                                    chat.userName = customUserName
+                    Section(header: Text("You"), footer: Text("Who are you in this chat?")) {
+                        if chat.userCharacter == nil {
+                            TextField(Preferences.standard.defaultName, text: $customUserName)
+                                .disabled(chat.userCharacter != nil)
+                                .onChange(of: customUserName) {
+                                    if customUserName.isEmpty {
+                                        chat.userName = nil
+                                    } else {
+                                        chat.userName = customUserName
+                                    }
                                 }
+                        }
+                        Picker("Persona", selection: $chat.userCharacter) {
+                            Text("User Default").tag(nil as Character?)
+                            ForEach(characters) { character in
+                                Text(character.name).tag(character as Character?)
                             }
+                        }
                     }
                 }
                 if service == .horde {
@@ -348,6 +358,15 @@ struct ChatSettingsView: View {
                         saveSettingsToChat()
                         dismiss()
                     }
+                }
+            }
+            .onChange(of: chat.userCharacter) {
+                if let uChar = chat.userCharacter {
+                    customUserName = uChar.name
+                    chat.userName = uChar.name
+                } else {
+                    chat.userName = nil
+                    customUserName = ""
                 }
             }
             #if os(iOS)
