@@ -142,7 +142,8 @@ extension ChatView {
             permanentPrompt += character.characterDescription.isEmpty ? "" : "\(character.characterDescription)\n"
             permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
             permanentPrompt += character.scenario.isEmpty ? "" : "Scenario: \(character.scenario)\n"
-            permanentPrompt += character.postHistoryInstructions.isEmpty ? "" : "\(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: ""))"
+
+            let postHistoryPrompt = character.postHistoryInstructions.isEmpty ? "" : "[System note: \(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines))]\n"
 
             if let userCharacter, userCharacter != character {
                 permanentPrompt += "\n"
@@ -151,7 +152,7 @@ extension ChatView {
 
             permanentPrompt += "### Response:\n(OOC) Understood. I will take this info into account for the roleplay. (end OOC)"
 
-            let permanentTokens = countTokens(permanentPrompt)
+            let permanentTokens = countTokens(permanentPrompt) + countTokens(postHistoryPrompt)
             Log.debug("Permanent tokens: \(permanentTokens)")
 
             if chat.autoModeEnabled {
@@ -319,6 +320,8 @@ extension ChatView {
 
             prompt.append("### New Roleplay:\n")
             prompt.append(messageHistory)
+            prompt.append(postHistoryPrompt)
+
             if imitation {
                 prompt.append("{{user}}:")
             } else {
