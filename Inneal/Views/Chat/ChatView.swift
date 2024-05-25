@@ -62,25 +62,23 @@ struct ChatView: View {
                                             }
                                         }
                                         VStack {
-                                            HStack(alignment: .center) {
-                                                if !message.fromUser {
-                                                    if !message.fromUser {
-                                                        if let character = message.character,
-                                                           let avatar = character.avatar,
-                                                           let image = UIImage(data: avatar)
-                                                        {
-                                                            Image(uiImage: image)
-                                                                .resizable()
-                                                                .scaledToFill()
-                                                                .frame(width: 40, height: 40, alignment: .leading)
-                                                                .clipShape(Circle())
-                                                        } else {
-                                                            Image(systemName: "person.circle.fill")
-                                                                .resizable()
-                                                                .scaledToFit()
-                                                                .frame(width: 40, height: 40, alignment: .leading)
-                                                                .clipShape(Circle())
-                                                        }
+                                            if !message.fromUser {
+                                                HStack(alignment: .center) {
+                                                    if let character = message.character,
+                                                       let avatar = character.avatar,
+                                                       let image = UIImage(data: avatar)
+                                                    {
+                                                        Image(uiImage: image)
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                            .frame(width: 40, height: 40, alignment: .leading)
+                                                            .clipShape(Circle())
+                                                    } else {
+                                                        Image(systemName: "person.circle.fill")
+                                                            .resizable()
+                                                            .scaledToFit()
+                                                            .frame(width: 40, height: 40, alignment: .leading)
+                                                            .clipShape(Circle())
                                                     }
                                                     Text(message.character?.name ?? "Unknown Character")
                                                         .font(.footnote)
