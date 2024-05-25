@@ -115,10 +115,10 @@ public extension Binding {
 }
 
 extension String {
-    func swapPlaceholders(userName: String?, charName: String?) -> String {
-        replacingOccurrences(of: "{{user}}", with: userName ?? Preferences.standard.defaultName)
+    func swapPlaceholders(userName: String, charName: String?) -> String {
+        replacingOccurrences(of: "{{user}}", with: userName)
             .replacingOccurrences(of: "{{char}}", with: charName ?? "Uknown Character")
-            .replacingOccurrences(of: "{{User}}", with: userName ?? Preferences.standard.defaultName)
+            .replacingOccurrences(of: "{{User}}", with: userName)
             .replacingOccurrences(of: "{{Char}}", with: charName ?? "Uknown Character")
     }
 }
