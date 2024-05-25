@@ -176,7 +176,7 @@ struct ChatsView: View {
                                 .lineLimit(1)
                                 .font(.body.bold())
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(((chat.unwrappedMessages.last?.content ?? "") + "\n").swapPlaceholders(userName: chat.userName, charName: chat.unwrappedMessages.last?.character?.name))
+                            Text(((chat.unwrappedMessages.last?.content ?? "") + "\n").swapPlaceholders(userName: chat.userName, charName: chat.unwrappedMessages.last?.character?.name, userSettings: userSettings ?? UserSettings(userCharacter: nil, defaultUserName: "You")))
                                 .lineLimit(2)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)

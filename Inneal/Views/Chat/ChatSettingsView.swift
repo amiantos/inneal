@@ -20,6 +20,8 @@ struct ChatSettingsView: View {
     @Environment(\.dismiss) var dismiss
 
     @Query(sort: [SortDescriptor(\Character.name)]) var characters: [Character]
+    
+    var userSettings: UserSettings
 
     @State var chat: Chat
     @State var viewModel: ChatSettingsView.ViewModel = .init()
@@ -47,7 +49,7 @@ struct ChatSettingsView: View {
                 if settingsMode == .basic {
                     Section(header: Text("You"), footer: Text("Who are you in this chat?")) {
                         if chat.userCharacter == nil {
-                            TextField(Preferences.standard.defaultName, text: $customUserName)
+                            TextField("\(userSettings.defaultUserName)", text: $customUserName)
                                 .disabled(chat.userCharacter != nil)
                                 .onChange(of: customUserName) {
                                     if customUserName.isEmpty {
@@ -58,7 +60,7 @@ struct ChatSettingsView: View {
                                 }
                         }
                         Picker("Persona", selection: $chat.userCharacter) {
-                            Text("User Default").tag(nil as Character?)
+                            Text(chat.userName == nil && chat.userCharacter == nil ? "User Default (\(userSettings.userCharacter?.name ?? "None"))" : "None").tag(nil as Character?)
                             ForEach(characters) { character in
                                 Text(character.name).tag(character as Character?)
                             }
@@ -472,7 +474,7 @@ extension ChatSettingsView {
             }
             try? container.mainContext.save()
 
-            return ChatSettingsView(chat: chat, hordeRequest: hordeRequest, hordeParams: hordeParams).modelContainer(container)
+            return ChatSettingsView(userSettings: UserSettings(userCharacter: nil, defaultUserName: "You"), chat: chat, hordeRequest: hordeRequest, hordeParams: hordeParams).modelContainer(container)
         }
     }
 

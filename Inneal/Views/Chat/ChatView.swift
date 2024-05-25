@@ -93,7 +93,7 @@ struct ChatView: View {
                                                 ScrollView(.horizontal) {
                                                     LazyHStack(alignment: .top, spacing: 0) {
                                                         HStack {
-                                                            MessageCell(contentMessage: message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
+                                                            MessageCell(contentMessage: message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name, userSettings: userSettings), isCurrentUser: message.fromUser)
                                                                 .fixedSize(horizontal: false, vertical: true)
                                                                 .readIntrinsicContentSize(to: $textSize)
                                                                 .contextMenu {
@@ -142,7 +142,7 @@ struct ChatView: View {
                                                                 if !showPendingMessage {
                                                                     Image(systemName: "chevron.left")
                                                                 }
-                                                                MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
+                                                                MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name, userSettings: userSettings), isCurrentUser: message.fromUser)
                                                                     .fixedSize(horizontal: false, vertical: true)
                                                                     .readIntrinsicContentSize(to: $textSize)
                                                                     .contextMenu {
@@ -215,7 +215,7 @@ struct ChatView: View {
                                                     }
                                                 }
                                             } else {
-                                                MessageCell(contentMessage: message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
+                                                MessageCell(contentMessage: message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name, userSettings: userSettings), isCurrentUser: message.fromUser)
                                                     .contextMenu {
                                                         Button(role: .destructive) {
                                                             deleteMessage(message: message)
@@ -384,7 +384,7 @@ struct ChatView: View {
             }
         }
         .sheet(isPresented: $showingSettingsSheet) {
-            ChatSettingsView(chat: chat, hordeRequest: viewModel.baseHordeRequest, hordeParams: viewModel.baseHordeParams).interactiveDismissDisabled()
+            ChatSettingsView(userSettings: userSettings, chat: chat, hordeRequest: viewModel.baseHordeRequest, hordeParams: viewModel.baseHordeParams).interactiveDismissDisabled()
         }
         .sheet(isPresented: $showingCharacterSheet) {
             if let character = characterBeingEdited {
@@ -398,7 +398,7 @@ struct ChatView: View {
             TextEditorView(text: $alternateTextToEdit)
         })
         .sheet(isPresented: $showingChatlog, content: {
-            SelectableChatLogView(chat: chat)
+            SelectableChatLogView(chat: chat, userSettings: userSettings)
         })
         .sheet(isPresented: $showRequestDetails, content: {
             GenerationDetailsView(responseDetails: $responseDetails, requestDetails: $requestDetails)
@@ -533,12 +533,12 @@ struct ChatView: View {
 
     func copyText(contentAlternate: ContentAlternate) {
         let pasteboard = UIPasteboard.general
-        pasteboard.string = contentAlternate.string.swapPlaceholders(userName: chat.userName, charName: contentAlternate.message?.character?.name)
+        pasteboard.string = contentAlternate.string.swapPlaceholders(userName: chat.userName, charName: contentAlternate.message?.character?.name, userSettings: userSettings)
     }
 
     func copyMessageText(message: ChatMessage) {
         let pasteboard = UIPasteboard.general
-        pasteboard.string = message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name)
+        pasteboard.string = message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name, userSettings: userSettings)
     }
 }
 

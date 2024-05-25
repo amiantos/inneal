@@ -50,6 +50,8 @@ struct UserSettingsView: View {
             .onChange(of: userSettings.userCharacter) {
                 if let uChar = userSettings.userCharacter {
                     userSettings.defaultUserName = uChar.name
+                } else {
+                    userSettings.defaultUserName = "You"
                 }
             }
             .sheet(isPresented: $showingSheet) {

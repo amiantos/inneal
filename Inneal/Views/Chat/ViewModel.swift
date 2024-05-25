@@ -52,9 +52,9 @@ extension ChatView {
 
             var hordeApiKey = "0000000000"
 
-            var userName = userSettings.defaultUserName
+            var userName = chat.userName ?? userSettings.defaultUserName
             var userCharacter = chat.userCharacter
-            if userCharacter == nil, let uChar = userSettings.userCharacter {
+            if userCharacter == nil, chat.userName == nil, let uChar = userSettings.userCharacter {
                 userCharacter = uChar
                 userName = uChar.name
             }
@@ -136,6 +136,11 @@ extension ChatView {
             var permanentPrompt = character.characterDescription.isEmpty ? "" : "\(character.characterDescription)\n"
             permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
             permanentPrompt += character.scenario.isEmpty ? "" : "\(character.scenario)\n"
+            
+            if let userCharacter {
+                permanentPrompt += "\n\nDescription of \(userName): \(userCharacter.characterDescription.swapPlaceholders(userName: character.name, charName: userCharacter.name, userSettings: userSettings))"
+            }
+
             let permanentTokens = countTokens(permanentPrompt)
             Log.debug("Permanent tokens: \(permanentTokens)")
 
@@ -276,7 +281,7 @@ extension ChatView {
                 _ = history.removeFirst()
             }
             for m in history {
-                let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: userName, charName: m.character?.name)
+                let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: userName, charName: m.character?.name, userSettings: userSettings)
                 let tokens = countTokens(message)
                 if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
                     messageHistory = "\(message)\(messageHistory)"
@@ -305,7 +310,7 @@ extension ChatView {
             prompt.append(messageHistory)
             prompt.append("{{char}}:")
 
-            prompt = prompt.swapPlaceholders(userName: userName, charName: character.name)
+            prompt = prompt.swapPlaceholders(userName: userName, charName: character.name, userSettings: userSettings)
 
             Log.debug("Total token count: \(countTokens(prompt))")
 
@@ -329,7 +334,7 @@ extension ChatView {
                 repPenSlope: baseHordeParams.repPenSlope,
                 samplerOrder: baseHordeParams.samplerOrder,
                 useDefaultBadwordsids: baseHordeParams.useDefaultBadwordsids,
-                stopSequence: stopSequence.map { $0.swapPlaceholders(userName: userName, charName: character.name) },
+                stopSequence: stopSequence.map { $0.swapPlaceholders(userName: userName, charName: character.name, userSettings: userSettings) },
                 minP: baseHordeParams.minP,
                 dynatempRange: baseHordeParams.dynatempRange,
                 dynatempExponent: baseHordeParams.dynatempExponent,
