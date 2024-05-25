@@ -21,6 +21,7 @@ struct ChatsView: View {
     @State private var showingCharactersSheet = false
     @State private var showingPersonaSheet = false
     @State private var selectedChat: Chat?
+    @State private var userSettings: UserSettings?
 
     let gridItems = [
         GridItem(.fixed(30), spacing: -5, alignment: .leading),
@@ -70,6 +71,22 @@ struct ChatsView: View {
         .onChange(of: chats.count) { oldValue, newValue in
             if (newValue - oldValue) > 0, Preferences.standard.firstTimeSetupCompleted {
                 selectedChat = chats.first
+            }
+        }
+        .onAppear {
+            do {
+                let descriptor = FetchDescriptor<UserSettings>()
+                let configurations = try modelContext.fetch(descriptor)
+                if !configurations.isEmpty, let settings = configurations.first {
+                    userSettings = settings
+                    Log.debug("Loaded user settings from DB, name: \(settings.defaultUserName), character: \(settings.userCharacter?.name ?? "nil")")
+                } else {
+                    let settings = UserSettings(userCharacter: nil, defaultUserName: Preferences.standard.defaultName)
+                    modelContext.insert(settings)
+                    userSettings = settings
+                }
+            } catch {
+                Log.error("Errorl loading or creating user settings")
             }
         }
     }
