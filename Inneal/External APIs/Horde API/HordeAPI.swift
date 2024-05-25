@@ -17,7 +17,7 @@ enum APIError: Error {
 
 class HordeAPI {
     var urlBase: String = "https://aihorde.net/api/v2"
-    var userAgent: String = "Inneal:1.0:https://amiantos.net"
+    var userAgent: String = "Inneal:1.1:https://amiantos.net"
 
     init(urlBase: String = "https://aihorde.net/api/v2") {
         self.urlBase = urlBase

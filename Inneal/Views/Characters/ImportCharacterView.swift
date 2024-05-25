@@ -290,7 +290,7 @@ extension ImportCharacterView {
             var request = URLRequest(url: URL(string: "https://server.pygmalion.chat/api/export/character/\(pygmalionCharacterId)/v2")!)
             request.httpMethod = "GET"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.setValue("Inneal:1.0:https://amiantos.net", forHTTPHeaderField: "Client-Agent")
+            request.setValue("Inneal:1.1:https://amiantos.net", forHTTPHeaderField: "Client-Agent")
             Log.debug("Requesting character from API...")
             do {
                 let (data, response) = try await URLSession.shared.data(for: request)
@@ -337,7 +337,7 @@ extension ImportCharacterView {
             var request = URLRequest(url: URL(string: "https://api.chub.ai/api/characters/download")!)
             request.httpMethod = "POST"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.setValue("Inneal:1.0:https://amiantos.net", forHTTPHeaderField: "Client-Agent")
+            request.setValue("Inneal:1.1:https://amiantos.net", forHTTPHeaderField: "Client-Agent")
 
             let params = ChubAPICharacterRequest(format: "tavern", fullPath: chubId, version: "main")
             let encodedParameters = try? JSONEncoder().encode(params)
