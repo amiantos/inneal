@@ -12,6 +12,7 @@ import SwiftUI
 struct ChatView: View {
     let chat: Chat
     var viewModel: ChatView.ViewModel
+    var userSettings: UserSettings
     @Environment(\.horizontalSizeClass) private var sizeClass
     @State var newMessage: String = ""
     @Environment(\.modelContext) var modelContext
@@ -37,12 +38,13 @@ struct ChatView: View {
     @State var selectedForDeletion: Set<ChatMessage> = .init()
     @State private var showingChatlog: Bool = false
 
-    init(for chat: Chat, modelContext: ModelContext) {
+    init(for chat: Chat, modelContext: ModelContext, userSettings: UserSettings) {
         Log.debug("Init ChatView for \(chat.name)")
         self.chat = chat
         let id = chat.uuid
         _messages = Query(filter: #Predicate { $0.chatUUID == id }, sort: \.dateCreated)
         viewModel = ChatView.ViewModel(for: chat, modelContext: modelContext)
+        self.userSettings = userSettings
     }
 
     var body: some View {
@@ -569,7 +571,7 @@ struct ChatView: View {
         container.mainContext.insert(message)
     }
     return NavigationStack {
-        ChatView(for: chat, modelContext: modelContext)
+        ChatView(for: chat, modelContext: modelContext, userSettings: UserSettings(userCharacter: nil, defaultUserName: "Seymour"))
             .modelContainer(container)
             .navigationTitle("Edit Character")
     }

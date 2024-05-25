@@ -80,6 +80,18 @@ struct IntroductionView: View {
     func submit() {
         if !name.isEmpty {
             Preferences.standard.set(defaultName: name)
+            do {
+                let descriptor = FetchDescriptor<UserSettings>()
+                let configurations = try modelContext.fetch(descriptor)
+                if !configurations.isEmpty, let settings = configurations.first {
+                    settings.defaultUserName = name
+                } else {
+                    let settings = UserSettings(userCharacter: nil, defaultUserName: name)
+                    modelContext.insert(settings)
+                }
+            } catch {
+                Log.error("Error saving usersettings")
+            }
         }
     }
 

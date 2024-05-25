@@ -38,7 +38,7 @@ struct ChatsView: View {
             ChatList
         } detail: {
             if let selectedChat {
-                ChatView(for: selectedChat, modelContext: modelContext).id(selectedChat)
+                ChatView(for: selectedChat, modelContext: modelContext, userSettings: userSettings!).id(selectedChat)
             } else {
                 ContentUnavailableView("Use sidebar navigation", systemImage: "sidebar.left")
             }
@@ -53,7 +53,7 @@ struct ChatsView: View {
             CharactersView()
         }
         .sheet(isPresented: $showingPersonaSheet) {
-            UserSettingsView()
+            UserSettingsView(userSettings: userSettings)
         }
         .fullScreenCover(isPresented: $showingIntroSheet) {
             IntroductionView()
@@ -174,7 +174,7 @@ struct ChatsView: View {
                                 .lineLimit(1)
                                 .font(.body.bold())
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(((chat.unwrappedMessages.last?.content ?? "") + "\n").swapPlaceholders(userName: chat.userName, charName: chat.characters?.first?.name))
+                            Text(((chat.unwrappedMessages.last?.content ?? "") + "\n").swapPlaceholders(userName: chat.userCharacter?.name ?? chat.userName, charName: chat.characters?.first?.name))
                                 .lineLimit(2)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)

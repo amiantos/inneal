@@ -11,13 +11,17 @@ import SwiftUI
 import UIKit
 
 struct UserSettingsView: View {
+    var userSettings: UserSettings?
     @Environment(\.modelContext) var modelContext
     @State var defaultName: String = Preferences.standard.defaultName
     @Query(sort: [SortDescriptor(\Character.name)]) var characters: [Character]
-    @Query var userSettings: [UserSettings]
     @Environment(\.dismiss) var dismiss
     @State var currentUserSettings: UserSettings = UserSettings(userCharacter: nil, defaultUserName: "You")
     @State var selectedCharacter: Character?
+
+    init(userSettings: UserSettings?) {
+        self.userSettings = userSettings
+    }
 
     var body: some View {
         NavigationStack {
@@ -50,11 +54,11 @@ struct UserSettingsView: View {
                 currentUserSettings.userCharacter = newValue
             }
             .onAppear {
-                if userSettings.isEmpty {
+                if userSettings == nil {
                     let newUserSettings = UserSettings(userCharacter: nil, defaultUserName: defaultName)
                     modelContext.insert(newUserSettings)
                 }
-                if let settings = userSettings.first {
+                if let settings = userSettings {
                     currentUserSettings = settings
                     selectedCharacter = settings.userCharacter
                 }
@@ -64,6 +68,6 @@ struct UserSettingsView: View {
 }
 
 #Preview {
-    UserSettingsView()
+    UserSettingsView(userSettings: UserSettings(userCharacter: nil, defaultUserName: "You"))
         .modelContainer(PreviewDataController.previewContainer)
 }
