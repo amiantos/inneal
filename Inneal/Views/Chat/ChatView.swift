@@ -339,7 +339,6 @@ struct ChatView: View {
                         .animation(.easeInOut(duration: 0.5), value: opacityLevel)
                     Spacer()
                 }.allowsHitTesting(false)
-
             }
         }
         .navigationTitle(chat.name)
