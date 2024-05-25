@@ -26,6 +26,7 @@ struct ChatView: View {
     @State var showingSettingsSheet: Bool = false
     @State private var scrollID: String?
     @State var textSize: CGSize = CGSize(width: 10, height: 10)
+    @State var characterBeingEdited: Character?
     @State var showingCharacterSheet: Bool = false
     @State var statusMessage: String = "Sending message..."
     @State private var opacityLevel = 0.0
@@ -265,7 +266,7 @@ struct ChatView: View {
                                     .textFieldStyle(.roundedBorder)
                                     .lineLimit(5)
                                     .onSubmit {
-                                        sendMessage()
+                                        requestMessage()
                                     }
                                     .onReceive(keyboardPublisher) { value in
                                         if value {
@@ -280,14 +281,30 @@ struct ChatView: View {
                                 ZStack {
                                     ProgressView()
                                         .opacity(showPendingMessage ? 1 : 0)
-                                    Button(action: sendMessage) {
+                                    Menu {
+                                        Button {
+                                            requestMessage()
+                                        } label: {
+                                            Label("Automatic", systemImage: "doc.badge.plus")
+                                        }
+                                        ForEach(chat.unwrappedCharacters, id: \.self) { character in
+                                            Button {
+                                                requestMessage(fromCharacter: character)
+                                            } label: {
+                                                Label("\(character.name)", systemImage: "person.badge.plus")
+                                            }
+                                        }
+                                    } label: {
                                         Image(systemName: newMessage.isEmpty ? "plus" : "arrow.up")
+                                    } primaryAction: {
+                                        requestMessage()
                                     }
                                     .frame(width: 30, height: 30)
                                     .clipShape(Circle())
                                     .buttonStyle(BorderedProminentButtonStyle())
                                     .disabled(showPendingMessage)
                                     .opacity(showPendingMessage ? 0 : 1)
+
                                 }
                                 .padding(.leading, 2)
                             }
@@ -340,20 +357,25 @@ struct ChatView: View {
                 }
             } else {
                 ToolbarItemGroup(placement: .secondaryAction) {
-                    Button("Chat Settings", systemImage: "gearshape") {
-                        showingSettingsSheet.toggle()
-                    }
-                    Button("Edit Character", systemImage: "person") {
-                        showingCharacterSheet.toggle()
-                    }
-                    Button("Chatlog View", systemImage: "list.clipboard") {
-                        showingChatlog.toggle()
-                    }
-                    if !showPendingMessage {
-                        Button("Batch Delete Mode", systemImage: "trash") {
-                            batchEditModeEnabled = true
+                        Button("Chat Settings", systemImage: "gearshape") {
+                            showingSettingsSheet.toggle()
                         }
-                    }
+                        Button("Chatlog View", systemImage: "list.clipboard") {
+                            showingChatlog.toggle()
+                        }
+                        if !showPendingMessage {
+                            Button("Batch Delete Mode", systemImage: "trash") {
+                                batchEditModeEnabled = true
+                            }
+                        }
+                        Menu("Characters") {
+                            ForEach(chat.unwrappedCharacters, id: \.self) { character in
+                                Button("Edit \(character.name)", systemImage: "person") {
+                                    characterBeingEdited = character
+                                    showingCharacterSheet.toggle()
+                                }
+                            }
+                        }
                 }
             }
         }
@@ -361,7 +383,7 @@ struct ChatView: View {
             ChatSettingsView(chat: chat, hordeRequest: viewModel.baseHordeRequest, hordeParams: viewModel.baseHordeParams)
         }
         .sheet(isPresented: $showingCharacterSheet) {
-            if let character = chat.characters?.first {
+            if let character = characterBeingEdited {
                 CharacterView(character: character)
             }
         }
@@ -459,7 +481,7 @@ struct ChatView: View {
         }
     }
 
-    func sendMessage() {
+    func requestMessage(fromCharacter: Character? = nil) {
         batchEditModeEnabled = false
         if let id = scrollID, id != "primary", let currentMessage = messages.last, !currentMessage.fromUser, let alternateContent = currentMessage.unwrappedContentAlternates.filter({ $0.uuid.uuidString == id }).first {
             let originalContent = currentMessage.content
@@ -486,7 +508,7 @@ struct ChatView: View {
         newMessage = ""
         try? modelContext.save()
         Task {
-            let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage)
+            let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage, character: fromCharacter)
             let newResponseMessage = ChatMessage(content: response.text, fromUser: false, chat: chat, character: response.character, request: response.request, response: response.response)
             chat.dateUpdated = Date.now
             modelContext.insert(newResponseMessage)
@@ -494,6 +516,7 @@ struct ChatView: View {
             try? modelContext.save()
             showPendingMessage.toggle()
         }
+
     }
 
     func deleteMessage(message: ChatMessage) {

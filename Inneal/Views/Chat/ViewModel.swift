@@ -45,12 +45,12 @@ extension ChatView {
             chat.hordeSettings = serializedSettings
         }
 
-        func getNewResponseToChat(statusMessage: Binding<String>, contentAlternate: Bool = false) async -> ViewModelResponse {
+        func getNewResponseToChat(statusMessage: Binding<String>, contentAlternate: Bool = false, character: Character? = nil) async -> ViewModelResponse {
             Log.debug("Got request for new response to chat...")
-            return await getResponseFromHorde(statusMessage: statusMessage, contentAlternate)
+            return await getResponseFromHorde(statusMessage: statusMessage, contentAlternate, character)
         }
 
-        fileprivate func getResponseFromHorde(statusMessage: Binding<String>, _ contentAlternate: Bool = false) async -> ViewModelResponse {
+        fileprivate func getResponseFromHorde(statusMessage: Binding<String>, _ contentAlternate: Bool = false, _ fromCharacter: Character? = nil) async -> ViewModelResponse {
             Log.debug("Requesting new chat from the horde...")
             var currentRequestUUID: UUID?
 
@@ -82,6 +82,9 @@ extension ChatView {
             if contentAlternate, let lastMessage = history.first, let toon = lastMessage.character {
                 Log.debug("Alternate requested, setting character to last message character: \(toon.name).")
                 character = toon
+            } else if let fromChar = fromCharacter {
+                Log.debug("Requested message for a specific character \(fromChar.name)")
+                character = fromChar
             } else {
                 Log.debug("Trying to determine next character in chat...")
                 mainLoop: for message in history {
