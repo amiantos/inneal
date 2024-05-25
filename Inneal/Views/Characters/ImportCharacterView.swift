@@ -126,7 +126,9 @@ extension ImportCharacterView {
         var showErrorAlert: Bool = false
 
         func detectTypeAndImport(string: String) async {
-            if string.contains("chub.ai") {
+            if string.contains("{") {
+                await tryLoading(string)
+            } else if string.contains("chub.ai") {
                 await loadTavernImageUrlString(for: string)
             } else if string.contains("pygmalion.chat") {
                 await loadPygmalionChatCharacter(for: string)
@@ -134,8 +136,6 @@ extension ImportCharacterView {
                 await loadPng(for: string)
             } else if string.contains(".json") {
                 await loadJSON(for: string)
-            } else {
-                await tryLoading(string)
             }
         }
 
