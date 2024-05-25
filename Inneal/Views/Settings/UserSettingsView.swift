@@ -32,6 +32,9 @@ struct UserSettingsView: View {
                             Text(character.name).tag(character as Character?)
                         }
                     }
+                    Button("Edit Character") {
+                        Log.debug("Foo")
+                    }.disabled(selectedCharacter == nil) 
                 }
             }
             #if os(iOS)

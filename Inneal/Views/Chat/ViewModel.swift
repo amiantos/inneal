@@ -50,6 +50,28 @@ extension ChatView {
 
             var hordeApiKey = "0000000000"
 
+            var userSettings = UserSettings(userCharacter: nil, defaultUserName: Preferences.standard.defaultName)
+            do {
+                let descriptor = FetchDescriptor<UserSettings>()
+                let configurations = try modelContext.fetch(descriptor)
+                if !configurations.isEmpty, let settings = configurations.first {
+                    userSettings = settings
+                    Log.debug("Loaded user settings from DB, name: \(userSettings.defaultUserName), character: \(userSettings.userCharacter?.name ?? "nil")")
+                }
+            } catch {
+                Log.error("Unable to load UserSettings from DB")
+            }
+
+            var userName = userSettings.defaultUserName
+            var userCharacter = chat.userCharacter
+            if userCharacter == nil, let uChar = userSettings.userCharacter {
+                userCharacter = uChar
+                userName = uChar.name
+            }
+            if userCharacter != nil {
+                Log.debug("User character in use, name: \(userName)")
+            }
+
             do {
                 let descriptor = FetchDescriptor<APIConfiguration>(predicate: #Predicate { $0.serviceName == "horde" })
                 let configurations = try modelContext.fetch(descriptor)
@@ -264,7 +286,7 @@ extension ChatView {
                 _ = history.removeFirst()
             }
             for m in history {
-                let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: chat.userName, charName: m.character?.name)
+                let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: userName, charName: m.character?.name)
                 let tokens = countTokens(message)
                 if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
                     messageHistory = "\(message)\(messageHistory)"
@@ -293,7 +315,7 @@ extension ChatView {
             prompt.append(messageHistory)
             prompt.append("{{char}}:")
 
-            prompt = prompt.swapPlaceholders(userName: chat.userName, charName: character.name)
+            prompt = prompt.swapPlaceholders(userName: userName, charName: character.name)
 
             Log.debug("Total token count: \(countTokens(prompt))")
 
@@ -317,7 +339,7 @@ extension ChatView {
                 repPenSlope: baseHordeParams.repPenSlope,
                 samplerOrder: baseHordeParams.samplerOrder,
                 useDefaultBadwordsids: baseHordeParams.useDefaultBadwordsids,
-                stopSequence: stopSequence.map { $0.swapPlaceholders(userName: chat.userName, charName: character.name) },
+                stopSequence: stopSequence.map { $0.swapPlaceholders(userName: userName, charName: character.name) },
                 minP: baseHordeParams.minP,
                 dynatempRange: baseHordeParams.dynatempRange,
                 dynatempExponent: baseHordeParams.dynatempExponent,
@@ -359,11 +381,11 @@ extension ChatView {
                                 statusMessage.wrappedValue = "Text from \(generation.model)"
                                 var result = endTrimToSentence(input: generation.text, includeNewline: true)
                                 result = result.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
-                                result = trimToFirstNewline(text: result, characterName: character.name, userName: chat.userName ?? Preferences.standard.defaultName, multilineReplies: chat.allowMultilineReplies)
+                                result = trimToFirstNewline(text: result, characterName: character.name, userName: userName, multilineReplies: chat.allowMultilineReplies)
                                 // result = ensureEvenAsterisks(result)
                                 // result = ensureEvenQuotes(result)
                                 result = replaceMultipleNewlines(in: result)
-                                result = result.replacingOccurrences(of: chat.userName ?? Preferences.standard.defaultName, with: "{{user}}").replacingOccurrences(of: character.name, with: "{{char}}").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+                                result = result.replacingOccurrences(of: userName, with: "{{user}}").replacingOccurrences(of: character.name, with: "{{char}}").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
                                 return ViewModelResponse(text: result, character: character, response: requestResponse.toJSONString(), request: requestString)
                             }
                             break
