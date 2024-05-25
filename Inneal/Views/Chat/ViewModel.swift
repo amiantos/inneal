@@ -143,7 +143,10 @@ extension ChatView {
             permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
             permanentPrompt += character.scenario.isEmpty ? "" : "Scenario: \(character.scenario)\n"
 
-            let postHistoryPrompt = character.postHistoryInstructions.isEmpty ? "" : "[System note: \(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines))]\n"
+            var postHistoryPrompt = character.postHistoryInstructions.isEmpty ? "" : "\(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines))\n"
+            if imitation {
+                postHistoryPrompt = "[Write your next reply from the point of view of {{user}}, using the chat history so far as a guideline for the writing style of {{user}}. Don't write as {{char}} or system. Don't describe the actions of {{char}}.]\n"
+            }
 
             if let userCharacter, userCharacter != character {
                 permanentPrompt += "\n"
