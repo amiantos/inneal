@@ -85,7 +85,7 @@ struct ChatView: View {
                                                         .frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
                                                 }
                                             }
-                                            if !message.fromUser && message == messages.last {
+                                            if !message.fromUser && !showPendingMessage && message == messages.last {
                                                 ScrollView(.horizontal) {
                                                     LazyHStack(alignment: .top, spacing: 0) {
                                                         HStack {
