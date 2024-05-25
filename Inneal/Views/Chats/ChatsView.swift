@@ -37,8 +37,8 @@ struct ChatsView: View {
         NavigationSplitView {
             ChatList
         } detail: {
-            if let selectedChat {
-                ChatView(for: selectedChat, modelContext: modelContext, userSettings: userSettings!).id(selectedChat)
+            if let selectedChat, let userSettings {
+                ChatView(for: selectedChat, modelContext: modelContext, userSettings: userSettings).id(selectedChat)
             } else {
                 ContentUnavailableView("Use sidebar navigation", systemImage: "sidebar.left")
             }
@@ -53,7 +53,9 @@ struct ChatsView: View {
             CharactersView()
         }
         .sheet(isPresented: $showingPersonaSheet) {
-            UserSettingsView(userSettings: userSettings)
+            if userSettings != nil {
+                UserSettingsView(userSettings: userSettings!)
+            }
         }
         .fullScreenCover(isPresented: $showingIntroSheet) {
             IntroductionView()

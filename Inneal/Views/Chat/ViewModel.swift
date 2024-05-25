@@ -21,14 +21,16 @@ extension ChatView {
     class ViewModel {
         var chat: Chat
         var modelContext: ModelContext
+        var userSettings: UserSettings
         let hordeAPI: HordeAPI = .init()
 
         var baseHordeRequest: HordeRequest = defaultHordeRequest
         var baseHordeParams: HordeRequestParams = defaultHordeParams
 
-        init(for chat: Chat, modelContext: ModelContext) {
+        init(for chat: Chat, modelContext: ModelContext, userSettings: UserSettings) {
             self.chat = chat
             self.modelContext = modelContext
+            self.userSettings = userSettings
 
             if let settingData = chat.hordeSettings,
                let decodedSettings = try? JSONDecoder().decode(HordeRequest.self, from: settingData)
@@ -49,18 +51,6 @@ extension ChatView {
             var currentRequestUUID: UUID?
 
             var hordeApiKey = "0000000000"
-
-            var userSettings = UserSettings(userCharacter: nil, defaultUserName: Preferences.standard.defaultName)
-            do {
-                let descriptor = FetchDescriptor<UserSettings>()
-                let configurations = try modelContext.fetch(descriptor)
-                if !configurations.isEmpty, let settings = configurations.first {
-                    userSettings = settings
-                    Log.debug("Loaded user settings from DB, name: \(userSettings.defaultUserName), character: \(userSettings.userCharacter?.name ?? "nil")")
-                }
-            } catch {
-                Log.error("Unable to load UserSettings from DB")
-            }
 
             var userName = userSettings.defaultUserName
             var userCharacter = chat.userCharacter

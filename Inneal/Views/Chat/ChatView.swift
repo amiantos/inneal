@@ -43,7 +43,7 @@ struct ChatView: View {
         self.chat = chat
         let id = chat.uuid
         _messages = Query(filter: #Predicate { $0.chatUUID == id }, sort: \.dateCreated)
-        viewModel = ChatView.ViewModel(for: chat, modelContext: modelContext)
+        viewModel = ChatView.ViewModel(for: chat, modelContext: modelContext, userSettings: userSettings)
         self.userSettings = userSettings
     }
 
