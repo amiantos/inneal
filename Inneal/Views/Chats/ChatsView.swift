@@ -52,7 +52,7 @@ struct ChatsView: View {
             CharactersView()
         }
         .sheet(isPresented: $showingPersonaSheet) {
-            SettingsView()
+            UserSettingsView()
         }
         .fullScreenCover(isPresented: $showingIntroSheet) {
             IntroductionView()

@@ -16,7 +16,7 @@
 		4412EFE02BB157BE00B0E415 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFDF2BB157BE00B0E415 /* ViewModel.swift */; };
 		4412EFE42BB2238C00B0E415 /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFE32BB2238C00B0E415 /* ChatsView.swift */; };
 		4412EFE62BB2356E00B0E415 /* CreateChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFE52BB2356E00B0E415 /* CreateChatView.swift */; };
-		4412EFE92BB2750B00B0E415 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFE82BB2750B00B0E415 /* SettingsView.swift */; };
+		4412EFE92BB2750B00B0E415 /* UserSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFE82BB2750B00B0E415 /* UserSettingsView.swift */; };
 		441E4D592BCD14A400BDF5DF /* HordeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441E4D582BCD14A400BDF5DF /* HordeAPI.swift */; };
 		441E4D5F2BCD26EF00BDF5DF /* HordeDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441E4D5E2BCD26EE00BDF5DF /* HordeDefaults.swift */; };
 		44259EDA2BBFC7FC00623171 /* CharactersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44259ED92BBFC7FC00623171 /* CharactersView.swift */; };
@@ -53,7 +53,7 @@
 		4412EFDF2BB157BE00B0E415 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		4412EFE32BB2238C00B0E415 /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
 		4412EFE52BB2356E00B0E415 /* CreateChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateChatView.swift; sourceTree = "<group>"; };
-		4412EFE82BB2750B00B0E415 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4412EFE82BB2750B00B0E415 /* UserSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsView.swift; sourceTree = "<group>"; };
 		441E4D582BCD14A400BDF5DF /* HordeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HordeAPI.swift; sourceTree = "<group>"; };
 		441E4D5E2BCD26EE00BDF5DF /* HordeDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HordeDefaults.swift; sourceTree = "<group>"; };
 		44259ED92BBFC7FC00623171 /* CharactersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharactersView.swift; sourceTree = "<group>"; };
@@ -254,7 +254,7 @@
 		44B70AB52BC369F5001B71AA /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				4412EFE82BB2750B00B0E415 /* SettingsView.swift */,
+				4412EFE82BB2750B00B0E415 /* UserSettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -342,7 +342,7 @@
 				44259EDF2BBFCC1900623171 /* Utilities.swift in Sources */,
 				44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */,
 				4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */,
-				4412EFE92BB2750B00B0E415 /* SettingsView.swift in Sources */,
+				4412EFE92BB2750B00B0E415 /* UserSettingsView.swift in Sources */,
 				4412EFCD2BB140B500B0E415 /* ChatView.swift in Sources */,
 				4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */,
 				4412EFDE2BB1578300B0E415 /* SwiftDataModels.swift in Sources */,

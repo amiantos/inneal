@@ -45,6 +45,17 @@ enum Services: String, Codable, CaseIterable, Identifiable {
 }
 
 @Model
+class UserSettings {
+    var userCharacter: Character?
+    var defaultUserName: String = "You"
+
+    init(userCharacter: Character?, defaultUserName: String) {
+        self.userCharacter = userCharacter
+        self.defaultUserName = defaultUserName
+    }
+}
+
+@Model
 class APIConfiguration {
     let serviceName: String = "horde"
     @Attribute(.allowsCloudEncryption) var configurationData: Data?
@@ -68,6 +79,7 @@ class Chat {
 
     var name: String = "Unnamed Chat"
     var userName: String?
+    var userCharacter: Character?
     var allowMultilineReplies: Bool = true
 
     var service: Services = Services.horde
@@ -166,6 +178,9 @@ class Character: Transferable {
     var chubId: String = ""
     @Attribute(.externalStorage) var avatar: Data?
     @Relationship(deleteRule: .cascade, inverse: \Chat.characters) var chats: [Chat]? = [Chat]()
+    @Relationship(inverse: \Chat.userCharacter) var userChats: [Chat]? = [Chat]()
+    @Relationship(inverse: \UserSettings.userCharacter) var userSettings: [UserSettings]? = [UserSettings]()
+
     @Relationship(inverse: \ChatMessage.character) var messages: [ChatMessage]? = [ChatMessage]()
 
     init(name: String, characterDescription: String, personality: String, firstMessage: String, exampleMessage: String, scenario: String, creatorNotes: String, systemPrompt: String, postHistoryInstructions: String, alternateGreetings: [String], tags: [String], creator: String, characterVersion: String, chubId: String, avatar: Data? = nil) {

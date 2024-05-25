@@ -19,7 +19,7 @@ struct InnealApp: App {
 
     var sharedModelContainer: ModelContainer = {
         do {
-            return try ModelContainer(for: Chat.self, APIConfiguration.self)
+            return try ModelContainer(for: Chat.self, APIConfiguration.self, UserSettings.self)
         } catch {
             fatalError()
         }
