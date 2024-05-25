@@ -1,5 +1,5 @@
 //
-//  Models.swift
+//  SwiftDataModels.swift
 //  Inneal
 //
 //  Created by Brad Root on 3/24/24.
@@ -8,7 +8,6 @@
 import Foundation
 import SwiftData
 import SwiftUI
-
 
 enum PreferredModel: String, Codable, CaseIterable, Identifiable {
     case any = "Any"
@@ -45,7 +44,6 @@ enum Services: String, Codable, CaseIterable, Identifiable {
     var id: Self { self }
 }
 
-
 @Model
 class APIConfiguration {
     let serviceName: String = "horde"
@@ -71,7 +69,7 @@ class Chat {
     var name: String = "Unnamed Chat"
     var userName: String?
     var allowMultilineReplies: Bool = true
-    
+
     var service: Services = Services.horde
 
     // Horde Specific
@@ -100,7 +98,6 @@ class Chat {
         self.name = name ?? "\(characters.first!.name)"
         self.characters = characters
     }
-
 }
 
 @Model
@@ -198,6 +195,7 @@ class Character: Transferable {
         }
         return rep.suggestedFileName { obj in obj.suggestedFileName }
     }
+
     var suggestedFileName: String { "\(name).json" }
 }
 
@@ -207,14 +205,14 @@ class CharacterPNGExporter: Transferable {
     init(character: Character) {
         self.character = character
     }
-    
+
     static var transferRepresentation: some TransferRepresentation {
         let rep = DataRepresentation<CharacterPNGExporter>(exportedContentType: .png) { trans in
-            guard var avatar = trans.character.avatar else { return Data() }
+            guard let avatar = trans.character.avatar else { return Data() }
             return avatar
         }
         return rep.suggestedFileName { obj in obj.suggestedFileName }
     }
-    var suggestedFileName: String { "\(character.name).png" }
 
+    var suggestedFileName: String { "\(character.name).png" }
 }

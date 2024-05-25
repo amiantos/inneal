@@ -1,5 +1,5 @@
 //
-//  ChatViewModel.swift
+//  ViewModel.swift
 //  Inneal
 //
 //  Created by Brad Root on 3/24/24.
@@ -10,7 +10,6 @@ import SwiftData
 import SwiftUI
 
 extension ChatView {
-
     struct ViewModelResponse {
         let text: String
         let character: Character?
@@ -22,7 +21,7 @@ extension ChatView {
     class ViewModel {
         var chat: Chat
         var modelContext: ModelContext
-        let hordeAPI: HordeAPI = HordeAPI()
+        let hordeAPI: HordeAPI = .init()
 
         var baseHordeRequest: HordeRequest = defaultHordeRequest
         var baseHordeParams: HordeRequestParams = defaultHordeParams
@@ -32,7 +31,8 @@ extension ChatView {
             self.modelContext = modelContext
 
             if let settingData = chat.hordeSettings,
-               let decodedSettings = try? JSONDecoder().decode(HordeRequest.self, from: settingData) {
+               let decodedSettings = try? JSONDecoder().decode(HordeRequest.self, from: settingData)
+            {
                 baseHordeRequest = decodedSettings
                 baseHordeParams = decodedSettings.params
             }
@@ -45,12 +45,12 @@ extension ChatView {
             chat.hordeSettings = serializedSettings
         }
 
-        func getNewResponseToChat(statusMessage: Binding<String>, contentAlternate: Bool = false) async -> ViewModelResponse {
+        func getNewResponseToChat(statusMessage: Binding<String>, contentAlternate: Bool = false, character: Character? = nil) async -> ViewModelResponse {
             Log.debug("Got request for new response to chat...")
-            return await getResponseFromHorde(statusMessage: statusMessage, contentAlternate)
+            return await getResponseFromHorde(statusMessage: statusMessage, contentAlternate, character)
         }
 
-        fileprivate func getResponseFromHorde(statusMessage: Binding<String>, _ contentAlternate: Bool = false) async -> ViewModelResponse {
+        fileprivate func getResponseFromHorde(statusMessage: Binding<String>, _ contentAlternate: Bool = false, _ fromCharacter: Character? = nil) async -> ViewModelResponse {
             Log.debug("Requesting new chat from the horde...")
             var currentRequestUUID: UUID?
 
@@ -82,6 +82,9 @@ extension ChatView {
             if contentAlternate, let lastMessage = history.first, let toon = lastMessage.character {
                 Log.debug("Alternate requested, setting character to last message character: \(toon.name).")
                 character = toon
+            } else if let fromChar = fromCharacter {
+                Log.debug("Requested message for a specific character \(fromChar.name)")
+                character = fromChar
             } else {
                 Log.debug("Trying to determine next character in chat...")
                 mainLoop: for message in history {
@@ -131,7 +134,7 @@ extension ChatView {
             Log.debug("Permanent tokens: \(permanentTokens)")
 
             if chat.autoModeEnabled {
-                var desiredContextWindow: Int = 2048
+                var desiredContextWindow = 2048
                 switch chat.preferredContextWindow {
                 case .any:
                     desiredContextWindow = 2048
@@ -141,7 +144,7 @@ extension ChatView {
                     desiredContextWindow = 8192
                 }
 
-                if permanentTokens >= 1536 && desiredContextWindow == 2048 {
+                if permanentTokens >= 1536, desiredContextWindow == 2048 {
                     Log.debug("Permanent tokens over 1536, setting desired context window to 4096.")
                     desiredContextWindow = 4096
                 }
@@ -154,8 +157,8 @@ extension ChatView {
                 let hordeModels = await hordeAPI.getModels()
                 Log.debug("Found \(hordeModels.count) models.")
 
-                var modelStubs: [String] = ["pygmalion-6","pygmalion-v8","pygmalion-2","hermes","airoboros","chrono","llama","wizard","mantis","myth","xwin","spicyboros","mlewd","mxlewd","mistral","maid","mixtral","estopia","fighter","fimbul"]
-                var modelStubsBackups: [String] = ["pygmalion","janeway","nerys","erebus","nerybus","opt","vicuna","manticore","alpaca"]
+                var modelStubs: [String] = ["pygmalion-6", "pygmalion-v8", "pygmalion-2", "hermes", "airoboros", "chrono", "llama", "wizard", "mantis", "myth", "xwin", "spicyboros", "mlewd", "mxlewd", "mistral", "maid", "mixtral", "estopia", "fighter", "fimbul"]
+                var modelStubsBackups: [String] = ["pygmalion", "janeway", "nerys", "erebus", "nerybus", "opt", "vicuna", "manticore", "alpaca"]
 
                 if chat.preferredModel != .any {
                     modelStubsBackups.append(contentsOf: modelStubs)
@@ -204,7 +207,7 @@ extension ChatView {
                     }
                 }
 
-                if chat.preferredResponseSize == .large && !selectedWorkers.isEmpty {
+                if chat.preferredResponseSize == .large, !selectedWorkers.isEmpty {
                     Log.debug("Large response size preference invoked, checking for response size...")
                     let largeWorkers = hordeWorkers.filter { worker in
                         selectedModels.contains { model in
@@ -225,7 +228,7 @@ extension ChatView {
                         }
                     }
                 }
-                
+
                 var mCL = 0
                 var mL = 0
                 for worker in selectedWorkers {
@@ -246,13 +249,13 @@ extension ChatView {
 
                 Log.debug("Determined \(maxContentLength) \\ \(maxLength)")
 
-                if chat.preferredResponseSize == .small && maxLength > 120 {
+                if chat.preferredResponseSize == .small, maxLength > 120 {
                     Log.debug("Small response size preference invoked, reducing response size.")
                     maxLength = 120
                 }
 
-                eligibleModels = selectedModels.map { $0.name }
-                eligibleWorkers = selectedWorkers.map { $0.id }
+                eligibleModels = selectedModels.map(\.name)
+                eligibleWorkers = selectedWorkers.map(\.id)
 
                 Log.debug("Found \(selectedModels.count) eligible models and \(selectedWorkers.count) eligible workers.")
             }
@@ -260,33 +263,33 @@ extension ChatView {
             var prompt = permanentPrompt
             prompt += "\n\n"
             var currentTokenCount = permanentTokens
-            Log.debug("Permanent prompt applied, \(currentTokenCount) tokens used, \(maxContentLength-currentTokenCount) remain.")
+            Log.debug("Permanent prompt applied, \(currentTokenCount) tokens used, \(maxContentLength - currentTokenCount) remain.")
 
             var messageHistory = ""
             if contentAlternate {
                 _ = history.removeFirst()
             }
-            history.forEach { m in
+            for m in history {
                 let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: chat.userName, charName: m.character?.name)
                 let tokens = countTokens(message)
-                if (maxContentLength-(currentTokenCount+tokens)) >= 0 {
+                if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
                     messageHistory = "\(message)\(messageHistory)"
                     currentTokenCount += tokens
                 }
             }
-            Log.debug("Built message history, \(currentTokenCount) tokens used, \(maxContentLength-currentTokenCount) remain.")
+            Log.debug("Built message history, \(currentTokenCount) tokens used, \(maxContentLength - currentTokenCount) remain.")
 
             var exampleMessageHistory = ""
             var exampleChats = character.exampleMessage.components(separatedBy: "<START>")
-            exampleChats = exampleChats.map { $0.trimmingCharacters(in: .whitespacesAndNewlines)}.filter { !$0.isEmpty }
-            exampleChats.forEach { m in
+            exampleChats = exampleChats.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+            for m in exampleChats {
                 let tokens = countTokens(m)
-                if (maxContentLength-(currentTokenCount+tokens)) >= 0 {
+                if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
                     exampleMessageHistory.append("\(m)\n\n\n\n")
                     currentTokenCount += tokens
                 }
             }
-            Log.debug("Built message examples, \(currentTokenCount) tokens used, \(maxContentLength-currentTokenCount) remain.")
+            Log.debug("Built message examples, \(currentTokenCount) tokens used, \(maxContentLength - currentTokenCount) remain.")
 
             if !exampleMessageHistory.isEmpty {
                 prompt.append(exampleMessageHistory)
@@ -342,8 +345,8 @@ extension ChatView {
                 currentRequestUUID = requestResponse.id
             } catch APIError.requestTimedOut {
                 return ViewModelResponse(text: "(OOC: Unable to communicate with the AI Horde. Is your internet working? Maybe the horde is down.)", character: character, response: nil, request: requestString)
-            } catch APIError.invalidResponse(let statusCode, let content) {
-               Log.error("Received \(statusCode) from AI Horde API. \(content)")
+            } catch let APIError.invalidResponse(statusCode, content) {
+                Log.error("Received \(statusCode) from AI Horde API. \(content)")
                 if statusCode == 429 {
                     return ViewModelResponse(text: "(OOC: The Horde is experiencing heavy loads from anonymous users and had to reject your request. Wait a moment, then swipe to get a new response. Consider setting up an API key in Settings, signup is still anonymous.)", character: character, response: nil, request: requestString)
                 }
@@ -352,7 +355,7 @@ extension ChatView {
             }
 
             if let requestUUID = currentRequestUUID {
-                var failures: Int = 0
+                var failures = 0
                 while true {
                     do {
                         let requestResponse = try await hordeAPI.checkRequest(apiKey: hordeApiKey, requestUUID: requestUUID)
@@ -387,7 +390,7 @@ extension ChatView {
                     } catch APIError.requestTimedOut {
                         return ViewModelResponse(text: "(OOC: Unable to communicate with the AI Horde. Is your internet working? Maybe the horde is down.)", character: character, response: nil, request: requestString)
 
-                    } catch APIError.invalidResponse(let statusCode, let content) {
+                    } catch let APIError.invalidResponse(statusCode, content) {
                         Log.error("Received \(statusCode) from AI Horde API. \(content)")
                         failures += 1
                         if failures > 5 {
@@ -401,6 +404,7 @@ extension ChatView {
             }
             return ViewModelResponse(text: "(OOC: Did not receive a successful generation from the AI Horde. Please retry.)", character: character, response: nil, request: requestString)
         }
+
 //
 //        fileprivate func getResponseFromOpenAI() async -> String {
 //            let openAIKey = ""
@@ -501,7 +505,7 @@ extension ChatView {
 
             if last > 0 {
                 let endIndex = input.index(input.startIndex, offsetBy: last + 1)
-                let trimmedString = String(input[input.startIndex..<endIndex])
+                let trimmedString = String(input[input.startIndex ..< endIndex])
                 return trimmedString.trimmingCharacters(in: .whitespacesAndNewlines)
             }
 
@@ -548,7 +552,7 @@ extension ChatView {
                 if multilineReplies {
                     splitresponse.append(gentxt)
                 } else {
-                    if gentxt.hasPrefix("\""), let endQuoteIndex = gentxt.range(of: "\"", options: [], range: gentxt.index(after: gentxt.startIndex)..<gentxt.endIndex) {
+                    if gentxt.hasPrefix("\""), let endQuoteIndex = gentxt.range(of: "\"", options: [], range: gentxt.index(after: gentxt.startIndex) ..< gentxt.endIndex) {
                         splitresponse.append(String(gentxt[..<endQuoteIndex.upperBound]))
                     } else {
                         splitresponse = gentxt.components(separatedBy: "\n")
@@ -571,7 +575,7 @@ extension ChatView {
         }
 
         func countTokens(_ string: String) -> Int {
-            return Int(ceil(Double(string.count) / 3.5))
+            Int(ceil(Double(string.count) / 3.5))
         }
     }
 }

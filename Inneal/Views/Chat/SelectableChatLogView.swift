@@ -17,12 +17,12 @@ struct SelectableChatLogView: View {
         self.chat = chat
         Log.debug("\(self.chat.unwrappedMessages.count)")
         var chatLog = ""
-        self.chat.unwrappedMessages.forEach { message in
+        for message in self.chat.unwrappedMessages {
             Log.debug(message.content)
             let messageContent = "\(message.fromUser ? "{{user}}" : "{{char}}"): \(message.content)"
             chatLog.append("\(messageContent.swapPlaceholders(userName: chat.userName, charName: message.character?.name))\n\n")
         }
-        self.text = chatLog
+        text = chatLog
     }
 
     var body: some View {

@@ -19,7 +19,7 @@ struct CharactersView: View {
     @State private var selectedCharacter: Character?
 
     let columns = [
-        GridItem(.adaptive(minimum: 150))
+        GridItem(.adaptive(minimum: 150)),
     ]
 
     var body: some View {
@@ -80,7 +80,7 @@ struct CharactersView: View {
                         } label: {
                             VStack(alignment: .leading) {
                                 Rectangle()
-                                    .aspectRatio(2/3, contentMode: .fill)
+                                    .aspectRatio(2 / 3, contentMode: .fill)
                                     .foregroundColor(.clear)
                                     .overlay {
                                         if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
@@ -112,9 +112,9 @@ struct CharactersView: View {
                                     }
                             }
                         }
-                            .buttonStyle(.plain)
-                            .background(.quaternary)
-                            .clipShape(RoundedRectangle(cornerRadius: 12.0))
+                        .buttonStyle(.plain)
+                        .background(.quaternary)
+                        .clipShape(RoundedRectangle(cornerRadius: 12.0))
                     }
                 }
                 .padding()
@@ -172,8 +172,8 @@ struct CharactersView: View {
         }
     }
 
-    func exportPNG(_ character: Character) {
-        // TODO
+    func exportPNG(_: Character) {
+        // TODO:
     }
 
     func createNewChat(_ character: Character) {
@@ -186,7 +186,7 @@ struct CharactersView: View {
             character: character
         )
         modelContext.insert(message)
-        character.alternateGreetings.forEach { greeting in
+        for greeting in character.alternateGreetings {
             let contentAlternate = ContentAlternate(string: greeting, message: message)
             modelContext.insert(contentAlternate)
         }

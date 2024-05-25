@@ -59,7 +59,6 @@ struct TavernSimple: Codable {
     }
 }
 
-
 struct TavernData: Codable {
     let data: TavernCharacterData
     let spec: String

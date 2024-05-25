@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Preferences {
+enum Preferences {
     fileprivate enum Key {
         static let defaultName = "defaultName"
         static let firstTimeSetupCompleted = "firstTimeSetupCompleted"
@@ -27,7 +27,7 @@ struct Preferences {
 
 extension UserDefaults {
     var defaultName: String {
-        return string(forKey: Preferences.Key.defaultName) ?? "You"
+        string(forKey: Preferences.Key.defaultName) ?? "You"
     }
 
     func set(defaultName: String) {
@@ -35,7 +35,7 @@ extension UserDefaults {
     }
 
     var firstTimeSetupCompleted: Bool {
-        return bool(forKey: Preferences.Key.firstTimeSetupCompleted)
+        bool(forKey: Preferences.Key.firstTimeSetupCompleted)
     }
 
     func set(firstTimeSetupCompleted: Bool) {

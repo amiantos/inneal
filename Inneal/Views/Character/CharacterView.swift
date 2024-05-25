@@ -61,7 +61,8 @@ struct CharacterView: View {
                 .onChange(of: avatarItem) {
                     Task {
                         if let loaded = try? await avatarItem?.loadTransferable(type: Image.self),
-                           let data =  try? await avatarItem?.loadTransferable(type: Data.self){
+                           let data = try? await avatarItem?.loadTransferable(type: Data.self)
+                        {
                             avatarImage = loaded
                             character.avatar = data
                         } else {
@@ -79,21 +80,20 @@ struct CharacterView: View {
                         .lineLimit(20).keyboardType(.asciiCapable)
                 }
 
-
                 Section(header: Text("Metadata")) {
                     TextField("Creator Name", text: $character.creator, axis: .vertical)
                         .lineLimit(1).keyboardType(.asciiCapable)
                     TextField("Creator Notes (Optional)", text: $character.creatorNotes, axis: .vertical)
                         .lineLimit(20).keyboardType(.asciiCapable)
                 }
-                
+
                 Section(header: Text("Prompt Engineering")) {
                     TextField("System Prompt (Optional)", text: $character.systemPrompt, axis: .vertical)
                         .lineLimit(20).keyboardType(.asciiCapable)
                     TextField("Post-History Instructions (Optional)", text: $character.postHistoryInstructions, axis: .vertical)
                         .lineLimit(20).keyboardType(.asciiCapable)
                 }
-                
+
                 if !newCharacterMode {
                     Button("Delete Character", role: .destructive) {
                         showingAlert = true
@@ -150,8 +150,6 @@ struct CharacterView: View {
                             dismiss()
                         }
                     }
-
-
                 }
             }
             .onAppear {
@@ -179,26 +177,26 @@ struct CharacterView: View {
 }
 
 #Preview {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Character.self, configurations: config)
-        let character = Character(
-            name: "Bradley Root",
-            characterDescription: "Bradley is a software engineer",
-            personality: "",
-            firstMessage: "Hi! I'm Bradley!",
-            exampleMessage: "",
-            scenario: "",
-            creatorNotes: "",
-            systemPrompt: "",
-            postHistoryInstructions: "",
-            alternateGreetings: ["Hi, I smell like butt!", "Whoa! Spicy take there buddy. Oh, I didn't see you there."],
-            tags: [],
-            creator: "Brad Root",
-            characterVersion: "main",
-            chubId: "",
-            avatar: UIImage(named: "brad-real")!.pngData()!
-        )
-        container.mainContext.insert(character)
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Character.self, configurations: config)
+    let character = Character(
+        name: "Bradley Root",
+        characterDescription: "Bradley is a software engineer",
+        personality: "",
+        firstMessage: "Hi! I'm Bradley!",
+        exampleMessage: "",
+        scenario: "",
+        creatorNotes: "",
+        systemPrompt: "",
+        postHistoryInstructions: "",
+        alternateGreetings: ["Hi, I smell like butt!", "Whoa! Spicy take there buddy. Oh, I didn't see you there."],
+        tags: [],
+        creator: "Brad Root",
+        characterVersion: "main",
+        chubId: "",
+        avatar: UIImage(named: "brad-real")!.pngData()!
+    )
+    container.mainContext.insert(character)
     return NavigationStack {
         CharacterView(character: character)
             .modelContainer(container)
@@ -207,26 +205,26 @@ struct CharacterView: View {
 }
 
 #Preview {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Character.self, configurations: config)
-        let character = Character(
-            name: "Bradley Root",
-            characterDescription: "Bradley is a software engineer",
-            personality: "",
-            firstMessage: "Hi! I'm Bradley!",
-            exampleMessage: "",
-            scenario: "",
-            creatorNotes: "",
-            systemPrompt: "",
-            postHistoryInstructions: "",
-            alternateGreetings: ["Hi, I smell like butt!", "Whoa! Spicy take there buddy. Oh, I didn't see you there."],
-            tags: [],
-            creator: "Brad Root",
-            characterVersion: "main",
-            chubId: "",
-            avatar: UIImage(named: "brad-real")!.pngData()!
-        )
-        container.mainContext.insert(character)
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Character.self, configurations: config)
+    let character = Character(
+        name: "Bradley Root",
+        characterDescription: "Bradley is a software engineer",
+        personality: "",
+        firstMessage: "Hi! I'm Bradley!",
+        exampleMessage: "",
+        scenario: "",
+        creatorNotes: "",
+        systemPrompt: "",
+        postHistoryInstructions: "",
+        alternateGreetings: ["Hi, I smell like butt!", "Whoa! Spicy take there buddy. Oh, I didn't see you there."],
+        tags: [],
+        creator: "Brad Root",
+        characterVersion: "main",
+        chubId: "",
+        avatar: UIImage(named: "brad-real")!.pngData()!
+    )
+    container.mainContext.insert(character)
     return NavigationStack {
         CharacterView(character: character, newCharacterMode: true)
             .modelContainer(container)

@@ -93,22 +93,21 @@ func readPNGTextChunks(from fileData: Data) async -> (TavernCharacterData?, Data
 // MARK: - Stuff?
 
 public extension Binding {
-
     static func convert<TInt, TFloat>(from intBinding: Binding<TInt>) -> Binding<TFloat>
-    where TInt:   BinaryInteger,
-          TFloat: BinaryFloatingPoint{
-
-        Binding<TFloat> (
+        where TInt: BinaryInteger,
+        TFloat: BinaryFloatingPoint
+    {
+        Binding<TFloat>(
             get: { TFloat(intBinding.wrappedValue) },
             set: { intBinding.wrappedValue = TInt($0) }
         )
     }
 
     static func convert<TFloat, TInt>(from floatBinding: Binding<TFloat>) -> Binding<TInt>
-    where TFloat: BinaryFloatingPoint,
-          TInt:   BinaryInteger {
-
-        Binding<TInt> (
+        where TFloat: BinaryFloatingPoint,
+        TInt: BinaryInteger
+    {
+        Binding<TInt>(
             get: { TInt(floatBinding.wrappedValue) },
             set: { floatBinding.wrappedValue = TFloat($0) }
         )
@@ -117,7 +116,7 @@ public extension Binding {
 
 extension String {
     func swapPlaceholders(userName: String?, charName: String?) -> String {
-        return self.replacingOccurrences(of: "{{user}}", with: userName ?? Preferences.standard.defaultName)
+        replacingOccurrences(of: "{{user}}", with: userName ?? Preferences.standard.defaultName)
             .replacingOccurrences(of: "{{char}}", with: charName ?? "Uknown Character")
             .replacingOccurrences(of: "{{User}}", with: userName ?? Preferences.standard.defaultName)
             .replacingOccurrences(of: "{{Char}}", with: charName ?? "Uknown Character")
@@ -188,25 +187,25 @@ extension Data {
 }
 
 extension View {
-
-  var keyboardPublisher: AnyPublisher<Bool, Never> {
-    Publishers
-      .Merge(
-        NotificationCenter
-          .default
-          .publisher(for: UIResponder.keyboardWillShowNotification)
-          .map { _ in true },
-        NotificationCenter
-          .default
-          .publisher(for: UIResponder.keyboardWillHideNotification)
-          .map { _ in false })
-      .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
-      .eraseToAnyPublisher()
-  }
+    var keyboardPublisher: AnyPublisher<Bool, Never> {
+        Publishers
+            .Merge(
+                NotificationCenter
+                    .default
+                    .publisher(for: UIResponder.keyboardWillShowNotification)
+                    .map { _ in true },
+                NotificationCenter
+                    .default
+                    .publisher(for: UIResponder.keyboardWillHideNotification)
+                    .map { _ in false }
+            )
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
 }
 
 func extractAllWords(from value: String?) -> [String] {
-    guard let value = value, !value.isEmpty else {
+    guard let value, !value.isEmpty else {
         return []
     }
 

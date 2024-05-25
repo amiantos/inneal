@@ -25,7 +25,8 @@ struct ChatView: View {
     @State var messageBeingEdited: ChatMessage?
     @State var showingSettingsSheet: Bool = false
     @State private var scrollID: String?
-    @State var textSize: CGSize = CGSize(width: 10, height: 10)
+    @State var textSize: CGSize = .init(width: 10, height: 10)
+    @State var characterBeingEdited: Character?
     @State var showingCharacterSheet: Bool = false
     @State var statusMessage: String = "Sending message..."
     @State private var opacityLevel = 0.0
@@ -33,7 +34,7 @@ struct ChatView: View {
     @State private var responseDetails: String = ""
     @State private var showRequestDetails: Bool = false
     @State private var batchEditModeEnabled: Bool = false
-    @State var selectedForDeletion: Set<ChatMessage> = Set<ChatMessage>()
+    @State var selectedForDeletion: Set<ChatMessage> = .init()
     @State private var showingChatlog: Bool = false
 
     init(for chat: Chat, modelContext: ModelContext) {
@@ -49,45 +50,44 @@ struct ChatView: View {
             ZStack {
                 VStack {
                     // MARK: - Chat Content Area
-                    GeometryReader { geometryProxy in
+
+                    GeometryReader { _ in
                         ScrollView(.vertical) {
                             LazyVStack {
                                 ForEach(messages) { message in
                                     HStack(alignment: .center, spacing: 10) {
                                         if batchEditModeEnabled {
-                                            Button { 
+                                            Button {
                                                 selectMessage(message)
                                             } label: {
                                                 Image(systemName: selectedForDeletion.contains(message) ? "trash.circle" : "circle")
                                             }
                                         }
                                         VStack {
-                                            HStack(alignment: .center) {
-                                                if !message.fromUser {
-                                                    if !message.fromUser {
-                                                        if let character = message.character,
-                                                           let avatar = character.avatar,
-                                                           let image = UIImage(data: avatar)
-                                                        {
-                                                            Image(uiImage: image)
-                                                                .resizable()
-                                                                .scaledToFill()
-                                                                .frame(width: 40, height: 40, alignment: .leading)
-                                                                .clipShape(Circle())
-                                                        } else {
-                                                            Image(systemName: "person.circle.fill")
-                                                                .resizable()
-                                                                .scaledToFit()
-                                                                .frame(width: 40, height: 40, alignment: .leading)
-                                                                .clipShape(Circle())
-                                                        }
+                                            if !message.fromUser {
+                                                HStack(alignment: .center) {
+                                                    if let character = message.character,
+                                                       let avatar = character.avatar,
+                                                       let image = UIImage(data: avatar)
+                                                    {
+                                                        Image(uiImage: image)
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                            .frame(width: 40, height: 40, alignment: .leading)
+                                                            .clipShape(Circle())
+                                                    } else {
+                                                        Image(systemName: "person.circle.fill")
+                                                            .resizable()
+                                                            .scaledToFit()
+                                                            .frame(width: 40, height: 40, alignment: .leading)
+                                                            .clipShape(Circle())
                                                     }
                                                     Text(message.character?.name ?? "Unknown Character")
                                                         .font(.footnote)
                                                         .frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
                                                 }
                                             }
-                                            if !message.fromUser && message == messages.last {
+                                            if !message.fromUser, message == messages.last {
                                                 ScrollView(.horizontal) {
                                                     LazyHStack(alignment: .top, spacing: 0) {
                                                         HStack {
@@ -125,75 +125,73 @@ struct ChatView: View {
                                                                         }
                                                                     }
                                                                 }
-
-                                                            if !message.unwrappedContentAlternates.isEmpty || messages.count > 1 && !showPendingMessage {
+                                                            if !showPendingMessage {
                                                                 Image(systemName: message.unwrappedContentAlternates.isEmpty ? "arrow.clockwise" : "chevron.right")
                                                             }
-
                                                         }
                                                         .id("primary")
                                                         .containerRelativeFrame(.horizontal)
 
-
                                                         ForEach(message.unwrappedContentAlternates) { alternate in
-                                                            HStack(alignment: .top) {
-                                                                HStack {
-                                                                    if !showPendingMessage {
-                                                                        Image(systemName: "chevron.left")
-                                                                    }
-                                                                    MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
-                                                                        .fixedSize(horizontal: false, vertical: true)
-                                                                        .readIntrinsicContentSize(to: $textSize)
-                                                                        .contextMenu {
-                                                                            Button(role: .destructive) {
-                                                                                delete(contentAlternate: alternate)
-                                                                            } label: {
-                                                                                Label("Delete Alternate", systemImage: "trash")
-                                                                            }
 
-                                                                            Button {
-                                                                                copyText(contentAlternate: alternate)
-                                                                            } label: {
-                                                                                Label("Copy Text", systemImage: "doc.on.doc")
-                                                                            }
+                                                            // MARK: Content Alternate
 
-                                                                            Button {
-                                                                                alternateTextToEdit = alternate.string
-                                                                                alternateBeingEdited = alternate
-                                                                                showAlternateTextEditor.toggle()
-                                                                            } label: {
-                                                                                Label("Edit", systemImage: "square.and.pencil")
-                                                                            }
+                                                            HStack {
+                                                                if !showPendingMessage {
+                                                                    Image(systemName: "chevron.left")
+                                                                }
+                                                                MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
+                                                                    .fixedSize(horizontal: false, vertical: true)
+                                                                    .readIntrinsicContentSize(to: $textSize)
+                                                                    .contextMenu {
+                                                                        Button(role: .destructive) {
+                                                                            delete(contentAlternate: alternate)
+                                                                        } label: {
+                                                                            Label("Delete Alternate", systemImage: "trash")
+                                                                        }
 
-                                                                            Group {
-                                                                                if alternate.request != nil {
-                                                                                    Button {
-                                                                                        showRequestDetails(alternate.request, alternate.response)
-                                                                                    } label: {
-                                                                                        Label("Generation Details", systemImage: "info.circle")
-                                                                                    }
+                                                                        Button {
+                                                                            copyText(contentAlternate: alternate)
+                                                                        } label: {
+                                                                            Label("Copy Text", systemImage: "doc.on.doc")
+                                                                        }
+
+                                                                        Button {
+                                                                            alternateTextToEdit = alternate.string
+                                                                            alternateBeingEdited = alternate
+                                                                            showAlternateTextEditor.toggle()
+                                                                        } label: {
+                                                                            Label("Edit", systemImage: "square.and.pencil")
+                                                                        }
+
+                                                                        Group {
+                                                                            if alternate.request != nil {
+                                                                                Button {
+                                                                                    showRequestDetails(alternate.request, alternate.response)
+                                                                                } label: {
+                                                                                    Label("Generation Details", systemImage: "info.circle")
                                                                                 }
                                                                             }
                                                                         }
-                                                                    if alternate != message.unwrappedContentAlternates.last || messages.count > 1 && !showPendingMessage {
-                                                                        Image(systemName: alternate != message.unwrappedContentAlternates.last ? "chevron.right" : "arrow.clockwise")
                                                                     }
+                                                                if !showPendingMessage {
+                                                                    Image(systemName: alternate != message.unwrappedContentAlternates.last ? "chevron.right" : "arrow.clockwise")
                                                                 }
                                                             }.id(alternate.uuid.uuidString).containerRelativeFrame(.horizontal)
                                                         }
 
-                                                        if messages.count > 1 {
-                                                            HStack(alignment: .center) {
-                                                                ProgressView().padding()
-                                                            }
-                                                            .id("newAlternate")
-                                                            .padding(10)
-                                                            .containerRelativeFrame([.horizontal, .vertical])
-                                                            .fixedSize(horizontal: false, vertical: true)
-                                                            .foregroundColor(Color(UIColor.label))
-                                                            .background(Color(UIColor.tertiarySystemFill))
-                                                            .cornerRadius(15)
+                                                        // MARK: Pending Alternate Box
+
+                                                        HStack(alignment: .center) {
+                                                            ProgressView().padding()
                                                         }
+                                                        .id("newAlternate")
+                                                        .padding(10)
+                                                        .containerRelativeFrame([.horizontal, .vertical])
+                                                        .fixedSize(horizontal: false, vertical: true)
+                                                        .foregroundColor(Color(UIColor.label))
+                                                        .background(Color(UIColor.tertiarySystemFill))
+                                                        .cornerRadius(15)
 
                                                     }.scrollTargetLayout().frame(height: textSize.height)
                                                 }
@@ -246,11 +244,10 @@ struct ChatView: View {
                                                                 }
                                                             }
                                                         }
-
                                                     }
                                             }
                                         }
-                                            .padding(message.fromUser ? .leading : .trailing, message.fromUser ? 30 : 0)
+                                        .padding(message.fromUser ? .leading : .trailing, message.fromUser ? 30 : 0)
                                     }
                                     .id(message)
                                     .frame(maxWidth: .infinity, alignment: message.fromUser ? .trailing : .leading)
@@ -258,21 +255,22 @@ struct ChatView: View {
                                     .padding(.bottom, 10)
                                 }
                             }
-                            .onChange(of: messages.count, { oldValue, newValue in
+                            .onChange(of: messages.count) { oldValue, newValue in
                                 if (newValue - oldValue) > 0 {
                                     proxy.scrollTo(messages.last, anchor: .bottom)
                                 }
-                            })
+                            }
                         }
                         .safeAreaInset(edge: .bottom, alignment: .center, spacing: 0) {
                             // MARK: - Chat Textfield
+
                             HStack(alignment: .bottom) {
                                 TextField("AI Horde", text: $newMessage, axis: .vertical)
                                     .keyboardType(.asciiCapable)
                                     .textFieldStyle(.roundedBorder)
                                     .lineLimit(5)
                                     .onSubmit {
-                                        sendMessage()
+                                        requestMessage()
                                     }
                                     .onReceive(keyboardPublisher) { value in
                                         if value {
@@ -283,12 +281,27 @@ struct ChatView: View {
                                         } else {
                                             Log.debug("Keyboard Hidden")
                                         }
-                                      }
+                                    }
                                 ZStack {
                                     ProgressView()
                                         .opacity(showPendingMessage ? 1 : 0)
-                                    Button(action: sendMessage) {
+                                    Menu {
+                                        Button {
+                                            requestMessage()
+                                        } label: {
+                                            Label("Automatic", systemImage: "doc.badge.plus")
+                                        }
+                                        ForEach(chat.unwrappedCharacters, id: \.self) { character in
+                                            Button {
+                                                requestMessage(fromCharacter: character)
+                                            } label: {
+                                                Label("\(character.name)", systemImage: "person.badge.plus")
+                                            }
+                                        }
+                                    } label: {
                                         Image(systemName: newMessage.isEmpty ? "plus" : "arrow.up")
+                                    } primaryAction: {
+                                        requestMessage()
                                     }
                                     .frame(width: 30, height: 30)
                                     .clipShape(Circle())
@@ -304,13 +317,14 @@ struct ChatView: View {
                             // MARK: End of Chat Textfield
                         }
                         .defaultScrollAnchor(.bottom)
-#if os(iOS)
-                        .scrollDismissesKeyboard(.interactively)
-#endif
+                        #if os(iOS)
+                            .scrollDismissesKeyboard(.interactively)
+                        #endif
                     }
-
                 }
+
                 // MARK: - Status Overlay
+
                 VStack(alignment: .center) {
                     Text(statusMessage)
                         .font(.footnote)
@@ -323,13 +337,11 @@ struct ChatView: View {
                         .background(.ultraThickMaterial)
                         .overlay(Divider()
                             .frame(maxWidth: .infinity, maxHeight: 1)
-                            .background(Color(.opaqueSeparator)), alignment: .bottom
-                        )
+                            .background(Color(.opaqueSeparator)), alignment: .bottom)
                         .opacity(opacityLevel)
                         .animation(.easeInOut(duration: 0.5), value: opacityLevel)
                     Spacer()
                 }.allowsHitTesting(false)
-
             }
         }
         .navigationTitle(chat.name)
@@ -350,15 +362,20 @@ struct ChatView: View {
                     Button("Chat Settings", systemImage: "gearshape") {
                         showingSettingsSheet.toggle()
                     }
-                    Button("Edit Character", systemImage: "person") {
-                        showingCharacterSheet.toggle()
-                    }
                     Button("Chatlog View", systemImage: "list.clipboard") {
                         showingChatlog.toggle()
                     }
                     if !showPendingMessage {
                         Button("Batch Delete Mode", systemImage: "trash") {
                             batchEditModeEnabled = true
+                        }
+                    }
+                    Menu("Characters") {
+                        ForEach(chat.unwrappedCharacters, id: \.self) { character in
+                            Button("Edit \(character.name)", systemImage: "person") {
+                                characterBeingEdited = character
+                                showingCharacterSheet.toggle()
+                            }
                         }
                     }
                 }
@@ -368,7 +385,7 @@ struct ChatView: View {
             ChatSettingsView(chat: chat, hordeRequest: viewModel.baseHordeRequest, hordeParams: viewModel.baseHordeParams)
         }
         .sheet(isPresented: $showingCharacterSheet) {
-            if let character = chat.characters?.first {
+            if let character = characterBeingEdited {
                 CharacterView(character: character)
             }
         }
@@ -384,12 +401,12 @@ struct ChatView: View {
         .sheet(isPresented: $showRequestDetails, content: {
             GenerationDetailsView(responseDetails: $responseDetails, requestDetails: $requestDetails)
         })
-        .onChange(of: showingSettingsSheet) { oldValue, newValue in
+        .onChange(of: showingSettingsSheet) { _, newValue in
             if !newValue {
                 viewModel.saveSettingsToChat()
             }
         }
-        .onChange(of: scrollID) { oldValue, newValue in
+        .onChange(of: scrollID) { _, newValue in
             if newValue == "newAlternate" {
                 getNewAlternateResponseToChat()
             }
@@ -424,7 +441,7 @@ struct ChatView: View {
     }
 
     func batchDeleteMessages() {
-        selectedForDeletion.forEach { message in
+        for message in selectedForDeletion {
             deleteMessage(message: message)
         }
         selectedForDeletion.removeAll()
@@ -466,7 +483,7 @@ struct ChatView: View {
         }
     }
 
-    func sendMessage() {
+    func requestMessage(fromCharacter: Character? = nil) {
         batchEditModeEnabled = false
         if let id = scrollID, id != "primary", let currentMessage = messages.last, !currentMessage.fromUser, let alternateContent = currentMessage.unwrappedContentAlternates.filter({ $0.uuid.uuidString == id }).first {
             let originalContent = currentMessage.content
@@ -493,7 +510,7 @@ struct ChatView: View {
         newMessage = ""
         try? modelContext.save()
         Task {
-            let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage)
+            let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage, character: fromCharacter)
             let newResponseMessage = ChatMessage(content: response.text, fromUser: false, chat: chat, character: response.character, request: response.request, response: response.response)
             chat.dateUpdated = Date.now
             modelContext.insert(newResponseMessage)
@@ -505,7 +522,7 @@ struct ChatView: View {
 
     func deleteMessage(message: ChatMessage) {
         if !message.unwrappedContentAlternates.isEmpty {
-            message.unwrappedContentAlternates.forEach { alternate in
+            for alternate in message.unwrappedContentAlternates {
                 modelContext.delete(alternate)
             }
         }
@@ -527,7 +544,6 @@ struct ChatView: View {
         pasteboard.string = message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name)
     }
 }
-
 
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
