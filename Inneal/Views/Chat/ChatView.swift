@@ -25,7 +25,7 @@ struct ChatView: View {
     @State var messageBeingEdited: ChatMessage?
     @State var showingSettingsSheet: Bool = false
     @State private var scrollID: String?
-    @State var textSize: CGSize = CGSize(width: 10, height: 10)
+    @State var textSize: CGSize = .init(width: 10, height: 10)
     @State var characterBeingEdited: Character?
     @State var showingCharacterSheet: Bool = false
     @State var statusMessage: String = "Sending message..."
@@ -34,7 +34,7 @@ struct ChatView: View {
     @State private var responseDetails: String = ""
     @State private var showRequestDetails: Bool = false
     @State private var batchEditModeEnabled: Bool = false
-    @State var selectedForDeletion: Set<ChatMessage> = Set<ChatMessage>()
+    @State var selectedForDeletion: Set<ChatMessage> = .init()
     @State private var showingChatlog: Bool = false
 
     init(for chat: Chat, modelContext: ModelContext) {
@@ -50,13 +50,14 @@ struct ChatView: View {
             ZStack {
                 VStack {
                     // MARK: - Chat Content Area
-                    GeometryReader { geometryProxy in
+
+                    GeometryReader { _ in
                         ScrollView(.vertical) {
                             LazyVStack {
                                 ForEach(messages) { message in
                                     HStack(alignment: .center, spacing: 10) {
                                         if batchEditModeEnabled {
-                                            Button { 
+                                            Button {
                                                 selectMessage(message)
                                             } label: {
                                                 Image(systemName: selectedForDeletion.contains(message) ? "trash.circle" : "circle")
@@ -86,7 +87,7 @@ struct ChatView: View {
                                                         .frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
                                                 }
                                             }
-                                            if !message.fromUser && message == messages.last {
+                                            if !message.fromUser, message == messages.last {
                                                 ScrollView(.horizontal) {
                                                     LazyHStack(alignment: .top, spacing: 0) {
                                                         HStack {
@@ -132,7 +133,9 @@ struct ChatView: View {
                                                         .containerRelativeFrame(.horizontal)
 
                                                         ForEach(message.unwrappedContentAlternates) { alternate in
+
                                                             // MARK: Content Alternate
+
                                                             HStack {
                                                                 if !showPendingMessage {
                                                                     Image(systemName: "chevron.left")
@@ -176,8 +179,9 @@ struct ChatView: View {
                                                                 }
                                                             }.id(alternate.uuid.uuidString).containerRelativeFrame(.horizontal)
                                                         }
-                                                        
+
                                                         // MARK: Pending Alternate Box
+
                                                         HStack(alignment: .center) {
                                                             ProgressView().padding()
                                                         }
@@ -240,11 +244,10 @@ struct ChatView: View {
                                                                 }
                                                             }
                                                         }
-
                                                     }
                                             }
                                         }
-                                            .padding(message.fromUser ? .leading : .trailing, message.fromUser ? 30 : 0)
+                                        .padding(message.fromUser ? .leading : .trailing, message.fromUser ? 30 : 0)
                                     }
                                     .id(message)
                                     .frame(maxWidth: .infinity, alignment: message.fromUser ? .trailing : .leading)
@@ -252,14 +255,15 @@ struct ChatView: View {
                                     .padding(.bottom, 10)
                                 }
                             }
-                            .onChange(of: messages.count, { oldValue, newValue in
+                            .onChange(of: messages.count) { oldValue, newValue in
                                 if (newValue - oldValue) > 0 {
                                     proxy.scrollTo(messages.last, anchor: .bottom)
                                 }
-                            })
+                            }
                         }
                         .safeAreaInset(edge: .bottom, alignment: .center, spacing: 0) {
                             // MARK: - Chat Textfield
+
                             HStack(alignment: .bottom) {
                                 TextField("AI Horde", text: $newMessage, axis: .vertical)
                                     .keyboardType(.asciiCapable)
@@ -277,7 +281,7 @@ struct ChatView: View {
                                         } else {
                                             Log.debug("Keyboard Hidden")
                                         }
-                                      }
+                                    }
                                 ZStack {
                                     ProgressView()
                                         .opacity(showPendingMessage ? 1 : 0)
@@ -304,7 +308,6 @@ struct ChatView: View {
                                     .buttonStyle(BorderedProminentButtonStyle())
                                     .disabled(showPendingMessage)
                                     .opacity(showPendingMessage ? 0 : 1)
-
                                 }
                                 .padding(.leading, 2)
                             }
@@ -314,13 +317,14 @@ struct ChatView: View {
                             // MARK: End of Chat Textfield
                         }
                         .defaultScrollAnchor(.bottom)
-#if os(iOS)
-                        .scrollDismissesKeyboard(.interactively)
-#endif
+                        #if os(iOS)
+                            .scrollDismissesKeyboard(.interactively)
+                        #endif
                     }
-
                 }
+
                 // MARK: - Status Overlay
+
                 VStack(alignment: .center) {
                     Text(statusMessage)
                         .font(.footnote)
@@ -333,8 +337,7 @@ struct ChatView: View {
                         .background(.ultraThickMaterial)
                         .overlay(Divider()
                             .frame(maxWidth: .infinity, maxHeight: 1)
-                            .background(Color(.opaqueSeparator)), alignment: .bottom
-                        )
+                            .background(Color(.opaqueSeparator)), alignment: .bottom)
                         .opacity(opacityLevel)
                         .animation(.easeInOut(duration: 0.5), value: opacityLevel)
                     Spacer()
@@ -356,25 +359,25 @@ struct ChatView: View {
                 }
             } else {
                 ToolbarItemGroup(placement: .secondaryAction) {
-                        Button("Chat Settings", systemImage: "gearshape") {
-                            showingSettingsSheet.toggle()
+                    Button("Chat Settings", systemImage: "gearshape") {
+                        showingSettingsSheet.toggle()
+                    }
+                    Button("Chatlog View", systemImage: "list.clipboard") {
+                        showingChatlog.toggle()
+                    }
+                    if !showPendingMessage {
+                        Button("Batch Delete Mode", systemImage: "trash") {
+                            batchEditModeEnabled = true
                         }
-                        Button("Chatlog View", systemImage: "list.clipboard") {
-                            showingChatlog.toggle()
-                        }
-                        if !showPendingMessage {
-                            Button("Batch Delete Mode", systemImage: "trash") {
-                                batchEditModeEnabled = true
+                    }
+                    Menu("Characters") {
+                        ForEach(chat.unwrappedCharacters, id: \.self) { character in
+                            Button("Edit \(character.name)", systemImage: "person") {
+                                characterBeingEdited = character
+                                showingCharacterSheet.toggle()
                             }
                         }
-                        Menu("Characters") {
-                            ForEach(chat.unwrappedCharacters, id: \.self) { character in
-                                Button("Edit \(character.name)", systemImage: "person") {
-                                    characterBeingEdited = character
-                                    showingCharacterSheet.toggle()
-                                }
-                            }
-                        }
+                    }
                 }
             }
         }
@@ -398,12 +401,12 @@ struct ChatView: View {
         .sheet(isPresented: $showRequestDetails, content: {
             GenerationDetailsView(responseDetails: $responseDetails, requestDetails: $requestDetails)
         })
-        .onChange(of: showingSettingsSheet) { oldValue, newValue in
+        .onChange(of: showingSettingsSheet) { _, newValue in
             if !newValue {
                 viewModel.saveSettingsToChat()
             }
         }
-        .onChange(of: scrollID) { oldValue, newValue in
+        .onChange(of: scrollID) { _, newValue in
             if newValue == "newAlternate" {
                 getNewAlternateResponseToChat()
             }
@@ -438,7 +441,7 @@ struct ChatView: View {
     }
 
     func batchDeleteMessages() {
-        selectedForDeletion.forEach { message in
+        for message in selectedForDeletion {
             deleteMessage(message: message)
         }
         selectedForDeletion.removeAll()
@@ -515,12 +518,11 @@ struct ChatView: View {
             try? modelContext.save()
             showPendingMessage.toggle()
         }
-
     }
 
     func deleteMessage(message: ChatMessage) {
         if !message.unwrappedContentAlternates.isEmpty {
-            message.unwrappedContentAlternates.forEach { alternate in
+            for alternate in message.unwrappedContentAlternates {
                 modelContext.delete(alternate)
             }
         }
@@ -542,7 +544,6 @@ struct ChatView: View {
         pasteboard.string = message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name)
     }
 }
-
 
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)

@@ -27,7 +27,7 @@ struct SettingsView: View {
             .scrollDismissesKeyboard(.immediately)
             #endif
             .navigationTitle("You")
-            .toolbar{
+            .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Done") }
                 }

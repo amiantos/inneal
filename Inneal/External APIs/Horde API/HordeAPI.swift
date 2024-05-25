@@ -59,7 +59,7 @@ class HordeAPI {
         do {
             return try await post("/generate/text/async", responseType: HordeRequestResponse.self, apiKey: apiKey, body: request)
         } catch URLError.timedOut {
-           throw APIError.requestTimedOut
+            throw APIError.requestTimedOut
         }
     }
 
@@ -71,25 +71,24 @@ class HordeAPI {
         }
     }
 
-
     // Ugly Innards
-    
+
     private func request(for url: URL, method: String = "GET", apiKey: String? = nil, body: Encodable? = nil) -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(userAgent, forHTTPHeaderField: "Client-Agent")
-        if let apiKey = apiKey {
+        if let apiKey {
             request.setValue(apiKey, forHTTPHeaderField: "apikey")
         }
-        if let body = body {
+        if let body {
             request.httpBody = try? JSONEncoder().encode(body)
             request.timeoutInterval = 5
         }
         return request
     }
 
-    private func perform<T: Decodable>(_ request: URLRequest, responseType: T.Type) async throws -> T {
+    private func perform<T: Decodable>(_ request: URLRequest, responseType _: T.Type) async throws -> T {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             if let response = response as? HTTPURLResponse, !((200 ..< 300) ~= response.statusCode) {

@@ -12,12 +12,11 @@ struct GenerationDetailsView: View {
     @Binding var responseDetails: String
     @Binding var requestDetails: String
 
-    let myMonoFont: Font = Font.system(size: 12).monospaced()
+    let myMonoFont: Font = .system(size: 12).monospaced()
 
     var body: some View {
         NavigationStack {
             Form {
-
                 Section(header: Text("Response")) {
                     Text(responseDetails)
                         .font(myMonoFont)
@@ -28,7 +27,6 @@ struct GenerationDetailsView: View {
                         .font(myMonoFont)
                         .textSelection(.enabled)
                 }
-
             }
             .navigationTitle("Generation Details")
             .navigationBarTitleDisplayMode(.inline)
@@ -43,6 +41,6 @@ struct GenerationDetailsView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    TextViewerView(text: Binding<String>("Foo"))
-//}
+// }

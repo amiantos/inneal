@@ -15,13 +15,13 @@ struct CreateChatView: View {
     @State var userName: String = ""
     @Environment(\.modelContext) var modelContext
     @Query(sort: [SortDescriptor(\Character.name)]) var characters: [Character]
-    @State var selectedCharacters: Set<Character> = Set<Character>()
+    @State var selectedCharacters: Set<Character> = .init()
     @State var showingWarningAlert = false
 
     let columns = [
-        GridItem(.adaptive(minimum: 150))
+        GridItem(.adaptive(minimum: 150)),
     ]
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -32,7 +32,7 @@ struct CreateChatView: View {
                         }, label: {
                             VStack(alignment: .leading) {
                                 Rectangle()
-                                    .aspectRatio(2/3, contentMode: .fill)
+                                    .aspectRatio(2 / 3, contentMode: .fill)
                                     .foregroundColor(.clear)
                                     .overlay {
                                         if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
@@ -77,9 +77,9 @@ struct CreateChatView: View {
                     }
                 }
                 .padding()
-#if os(iOS)
-                .scrollDismissesKeyboard(.immediately)
-#endif
+                #if os(iOS)
+                    .scrollDismissesKeyboard(.immediately)
+                #endif
             }
             .navigationTitle("New Chat")
             .toolbar {
@@ -135,7 +135,7 @@ struct CreateChatView: View {
                 chat.userName = userName
             }
             modelContext.insert(chat)
-            selectedCharacters.forEach { character in
+            for character in selectedCharacters {
                 let message = ChatMessage(
                     content: character.firstMessage,
                     fromUser: false,
@@ -144,7 +144,7 @@ struct CreateChatView: View {
                 )
                 modelContext.insert(message)
 
-                character.alternateGreetings.forEach { greeting in
+                for greeting in character.alternateGreetings {
                     let contentAlternate = ContentAlternate(string: greeting, message: message)
                     modelContext.insert(contentAlternate)
                 }

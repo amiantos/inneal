@@ -34,11 +34,8 @@ struct HelpView: View {
                         Text("It's easy to get in touch with me, if you have more questions.\n\nYou can email me directly at bradroot@me.com, don't be shy!\n\nOn Discord, my username is **amiantos**.\n\nYou can send me a friend request, but also you find me in the AI Horde Discord in the #inneal channel. Join here: https://discord.gg/QHxkdJtXar\n\nIt's fun to meet likeminded people, so you should consider joining!")
                     }
                 }
-
-
-
             }
-            .toolbar{
+            .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Done") }
                 }
@@ -52,7 +49,6 @@ struct HelpView: View {
 #Preview {
     NavigationStack {
         HelpView()
-
     }
 }
 

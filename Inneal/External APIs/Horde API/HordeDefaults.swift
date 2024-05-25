@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 let defaultHordeParams = HordeRequestParams(
     n: 1,
     maxContentLength: 4096,

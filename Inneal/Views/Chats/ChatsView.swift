@@ -57,21 +57,21 @@ struct ChatsView: View {
         .fullScreenCover(isPresented: $showingIntroSheet) {
             IntroductionView()
         }
-        .onChange(of: scenePhase, { oldValue, newValue in
+        .onChange(of: scenePhase) { _, newValue in
             switch newValue {
-                case .active:
+            case .active:
                 if !Preferences.standard.firstTimeSetupCompleted {
                     showIntroductionSheet()
                 }
             default:
                 break
             }
-        })
-        .onChange(of: chats.count, { oldValue, newValue in
-            if (newValue - oldValue) > 0 && Preferences.standard.firstTimeSetupCompleted {
+        }
+        .onChange(of: chats.count) { oldValue, newValue in
+            if (newValue - oldValue) > 0, Preferences.standard.firstTimeSetupCompleted {
                 selectedChat = chats.first
             }
-        })
+        }
     }
 
     var ChatList: some View {
@@ -101,8 +101,8 @@ struct ChatsView: View {
                             Group {
                                 ZStack {
                                     LazyHGrid(rows: hGridItems, alignment: .center, spacing: 0) {
-                                        ForEach(2..<4, id: \.self) { idx in
-                                            if chat.unwrappedCharacters.count>idx {
+                                        ForEach(2 ..< 4, id: \.self) { idx in
+                                            if chat.unwrappedCharacters.count > idx {
                                                 if let avatar = chat.unwrappedCharacters[idx].avatar,
                                                    let image = UIImage(data: avatar)
                                                 {
@@ -124,7 +124,7 @@ struct ChatsView: View {
                                         }
                                     }
                                     LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
-                                        ForEach(0..<2, id: \.self) { idx in
+                                        ForEach(0 ..< 2, id: \.self) { idx in
                                             if let avatar = chat.unwrappedCharacters[idx].avatar,
                                                let image = UIImage(data: avatar)
                                             {
@@ -146,11 +146,11 @@ struct ChatsView: View {
                                     }
                                 }
                             }
-                              .frame(minWidth: 60, idealWidth: 60, minHeight: 60, idealHeight: 60)
-                              .background(.ultraThinMaterial)
-                              .fixedSize()
-                              .cornerRadius(30)
-                              .padding(.trailing, 5)
+                            .frame(minWidth: 60, idealWidth: 60, minHeight: 60, idealHeight: 60)
+                            .background(.ultraThinMaterial)
+                            .fixedSize()
+                            .cornerRadius(30)
+                            .padding(.trailing, 5)
                         }
                         VStack {
                             Text(chat.name)

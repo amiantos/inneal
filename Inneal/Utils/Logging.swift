@@ -18,23 +18,23 @@ open class Log {
 
         var name: String {
             switch self {
-            case .verbose: return "Verbose"
-            case .debug: return "Debug"
-            case .info: return "Info"
-            case .warn: return "Warn"
-            case .error: return "Error"
-            case .off: return "Disabled"
+            case .verbose: "Verbose"
+            case .debug: "Debug"
+            case .info: "Info"
+            case .warn: "Warn"
+            case .error: "Error"
+            case .off: "Disabled"
             }
         }
 
         var emoji: String {
             switch self {
-            case .verbose: return "📖"
-            case .debug: return "🐝"
-            case .info: return "✏️"
-            case .warn: return "⚠️"
-            case .error: return "⁉️"
-            case .off: return ""
+            case .verbose: "📖"
+            case .debug: "🐝"
+            case .info: "✏️"
+            case .warn: "⚠️"
+            case .error: "⁉️"
+            case .off: ""
             }
         }
     }
@@ -51,7 +51,7 @@ open class Log {
         return dateFormatter
     }()
 
-    private static func log<T>(_ object: @autoclosure () -> T, level: Log.Level, _ fileName: String, _: String, _ line: Int) {
+    private static func log(_ object: @autoclosure () -> some Any, level: Log.Level, _ fileName: String, _: String, _ line: Int) {
         if logLevel.rawValue <= level.rawValue {
             let date = Log.dateformatter.string(from: Date())
             let components: [String] = fileName.components(separatedBy: "/")
@@ -63,8 +63,8 @@ open class Log {
         }
     }
 
-    public static func error<T>(
-        _ object: @autoclosure () -> T,
+    public static func error(
+        _ object: @autoclosure () -> some Any,
         _ fileName: String = #file,
         _ functionName: String = #function,
         _ line: Int = #line
@@ -72,8 +72,8 @@ open class Log {
         log(object(), level: .error, fileName, functionName, line)
     }
 
-    public static func warn<T>(
-        _ object: @autoclosure () -> T,
+    public static func warn(
+        _ object: @autoclosure () -> some Any,
         _ fileName: String = #file,
         _ functionName: String = #function,
         _ line: Int = #line
@@ -81,8 +81,8 @@ open class Log {
         log(object(), level: .warn, fileName, functionName, line)
     }
 
-    public static func info<T>(
-        _ object: @autoclosure () -> T,
+    public static func info(
+        _ object: @autoclosure () -> some Any,
         _ fileName: String = #file,
         _ functionName: String = #function,
         _ line: Int = #line
@@ -90,8 +90,8 @@ open class Log {
         log(object(), level: .info, fileName, functionName, line)
     }
 
-    public static func debug<T>(
-        _ object: @autoclosure () -> T,
+    public static func debug(
+        _ object: @autoclosure () -> some Any,
         _ fileName: String = #file,
         _ functionName: String = #function,
         _ line: Int = #line
@@ -99,8 +99,8 @@ open class Log {
         log(object(), level: .debug, fileName, functionName, line)
     }
 
-    public static func verbose<T>(
-        _ object: @autoclosure () -> T,
+    public static func verbose(
+        _ object: @autoclosure () -> some Any,
         _ fileName: String = #file,
         _ functionName: String = #function,
         _ line: Int = #line

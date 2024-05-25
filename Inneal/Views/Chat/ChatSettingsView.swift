@@ -15,7 +15,6 @@ enum SettingsMode: String, CaseIterable, Identifiable {
     var id: Self { self }
 }
 
-
 struct ChatSettingsView: View {
     @Environment(\.dismiss) var dismiss
 
@@ -88,7 +87,7 @@ struct ChatSettingsView: View {
                                 .alert("Enter max context tokens", isPresented: $showingContextPicker) {
                                     TextField("Enter maximum context tokens", value: $hordeParams.maxContentLength, formatter: NumberFormatter())
                                         .keyboardType(.numberPad)
-                                    Button("OK") { }
+                                    Button("OK") {}
                                 }
                             }
 
@@ -101,7 +100,7 @@ struct ChatSettingsView: View {
                                 .alert("Enter tokens to generate", isPresented: $showingGeneratePicker) {
                                     TextField("Enter tokens to generate", value: $hordeParams.maxLength, formatter: NumberFormatter())
                                         .keyboardType(.numberPad)
-                                    Button("OK") { }
+                                    Button("OK") {}
                                 }
                                 Slider(value: .convert(from: $hordeParams.maxLength), in: 16 ... 512, step: 16)
                             }
@@ -356,7 +355,6 @@ struct ChatSettingsView: View {
 //                    }
                     Text("AI Horde")
                 }
-
             }
             #if os(iOS)
             .scrollDismissesKeyboard(.immediately)
@@ -378,7 +376,7 @@ extension ChatSettingsView {
         var setValuesByWorker: Bool = true
         var hordeModels: [HordeModel] = []
         var hordeWorkers: [HordeWorker] = []
-        let hordeAPI: HordeAPI = HordeAPI()
+        let hordeAPI: HordeAPI = .init()
         var currentUserName: String?
         var currentKudos: String?
         var currentTrusted: Bool = false

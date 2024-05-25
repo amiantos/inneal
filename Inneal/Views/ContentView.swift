@@ -5,8 +5,8 @@
 //  Created by Brad Root on 4/26/24.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct ContentView: View {
     // We need this content view because of
@@ -17,8 +17,9 @@ struct ContentView: View {
 
     init(container: ModelContainer) {
         self.container = container
-        self.modelContext = ModelContext(container)
+        modelContext = ModelContext(container)
     }
+
     var body: some View {
         ChatsView().modelContext(modelContext)
     }

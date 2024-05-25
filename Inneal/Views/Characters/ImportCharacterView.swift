@@ -69,31 +69,32 @@ struct ImportCharacterView: View {
                 Text("Imported content was not recongized as an importable object. Try again?")
             }
             .fileImporter(isPresented: $isImporting,
-                          allowedContentTypes: [.json, .png]) {
+                          allowedContentTypes: [.json, .png])
+            {
                 let result = $0.flatMap { url in
-                  read(from: url)
+                    read(from: url)
                 }
                 switch result {
-                case .success(let data):
+                case let .success(data):
                     Task {
                         await viewModel.loadFromImported(data)
                     }
-                case .failure(let error):
+                case let .failure(error):
                     Log.debug(error)
                 }
-              }
+            }
         }
     }
 
-    private func read(from url: URL) -> Result<Data,Error> {
-      let accessing = url.startAccessingSecurityScopedResource()
-      defer {
-        if accessing {
-          url.stopAccessingSecurityScopedResource()
+    private func read(from url: URL) -> Result<Data, Error> {
+        let accessing = url.startAccessingSecurityScopedResource()
+        defer {
+            if accessing {
+                url.stopAccessingSecurityScopedResource()
+            }
         }
-      }
 
-      return Result { try Data(contentsOf: url) }
+        return Result { try Data(contentsOf: url) }
     }
 }
 
@@ -146,15 +147,14 @@ extension ImportCharacterView {
         }
 
         fileprivate func tryLoading(_ string: String) async {
-            return await loadJSONfromData(string.data(using: .utf8)!)
-
+            await loadJSONfromData(string.data(using: .utf8)!)
         }
 
         func loadFromImported(_ data: Data) async {
             if UIImage(data: data) != nil {
-                return await loadData(from: data)
+                await loadData(from: data)
             } else {
-                return await loadJSONfromData(data)
+                await loadJSONfromData(data)
             }
         }
 
@@ -165,14 +165,14 @@ extension ImportCharacterView {
             } catch {
                 Log.debug("\(error)")
             }
-            
+
             do {
                 let decodedResponse = try JSONDecoder().decode(TavernCharacterData.self, from: data)
                 return try await character(for: decodedResponse)
             } catch {
                 Log.debug("\(error)")
             }
-            
+
             do {
                 let decodedResponse = try JSONDecoder().decode(TavernOne.self, from: data)
                 return try character(for: decodedResponse)
@@ -182,7 +182,7 @@ extension ImportCharacterView {
 
             showErrorAlert.toggle()
         }
-        
+
         func loadJSON(for urlString: String) async {
             do {
                 let request = URLRequest(url: URL(string: urlString)!)
@@ -328,8 +328,6 @@ extension ImportCharacterView {
             showErrorAlert.toggle()
         }
 
-
-
         func loadTavernImageUrlString(for characterId: String) async {
             chubId = characterId
             if chubId.contains("https://") {
@@ -362,7 +360,7 @@ extension ImportCharacterView {
 
         func loadData(from data: Data) async {
             let (imageData, image) = await readPNGTextChunks(from: data)
-            if let imageData = imageData, let image = image {
+            if let imageData, let image {
                 name = imageData.name
                 description = imageData.description
                 firstMessage = imageData.firstMes
