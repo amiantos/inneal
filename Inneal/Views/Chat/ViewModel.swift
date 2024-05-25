@@ -331,6 +331,9 @@ extension ChatView {
             var stopSequence = ["{{user}}:", "\n{{user}} "]
             for character in chat.characters ?? [] {
                 stopSequence.append("\n\(character.name): ")
+                character.name.components(separatedBy: .whitespaces).forEach { namePart in
+                    stopSequence.append("\n\(namePart): ")
+                }
             }
 
             let params = HordeRequestParams(
