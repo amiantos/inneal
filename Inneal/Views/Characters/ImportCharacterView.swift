@@ -331,7 +331,7 @@ extension ImportCharacterView {
         func loadTavernImageUrlString(for characterId: String) async {
             chubId = characterId
             if chubId.contains("https://") {
-                chubId = chubId.replacingOccurrences(of: "https://chub.ai/characters/", with: "").replacingOccurrences(of: "https://www.chub.ai/characters/", with: "")
+                chubId = chubId.replacingOccurrences(of: "https://chub.ai/characters/", with: "").replacingOccurrences(of: "https://www.chub.ai/characters/", with: "").replacingOccurrences(of: "https://venus.chub.ai/characters/", with: "")
             }
 
             var request = URLRequest(url: URL(string: "https://api.chub.ai/api/characters/download")!)
