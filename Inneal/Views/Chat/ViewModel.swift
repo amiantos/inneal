@@ -41,12 +41,12 @@ extension ChatView {
             }
         }
 
-        func getNewResponseToChat(statusMessage: Binding<String>, contentAlternate: Bool = false, character: Character? = nil) async -> ViewModelResponse {
+        func getNewResponseToChat(statusMessage: Binding<String>, contentAlternate: Bool = false, character: Character? = nil, imitation: Bool = false) async -> ViewModelResponse {
             Log.debug("Got request for new response to chat...")
-            return await getResponseFromHorde(statusMessage: statusMessage, contentAlternate, character)
+            return await getResponseFromHorde(statusMessage: statusMessage, contentAlternate, character, imitation)
         }
 
-        fileprivate func getResponseFromHorde(statusMessage: Binding<String>, _ contentAlternate: Bool = false, _ fromCharacter: Character? = nil) async -> ViewModelResponse {
+        fileprivate func getResponseFromHorde(statusMessage: Binding<String>, _ contentAlternate: Bool = false, _ fromCharacter: Character? = nil, _ imitation: Bool = false) async -> ViewModelResponse {
             Log.debug("Requesting new chat from the horde...")
             var currentRequestUUID: UUID?
 
@@ -318,7 +318,11 @@ extension ChatView {
 
             prompt.append("### New Roleplay:\n")
             prompt.append(messageHistory)
-            prompt.append("{{char}}:")
+            if imitation {
+                prompt.append("{{user}}:")
+            } else {
+                prompt.append("{{char}}:")
+            }
 
             prompt = prompt.swapPlaceholders(userName: userName, charName: character.name, userSettings: userSettings)
 
@@ -387,10 +391,8 @@ extension ChatView {
                                 var result = endTrimToSentence(input: generation.text, includeNewline: true)
                                 result = result.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
                                 result = trimToFirstNewline(text: result, characterName: character.name, userName: userName, multilineReplies: chat.allowMultilineReplies)
-                                // result = ensureEvenAsterisks(result)
-                                // result = ensureEvenQuotes(result)
                                 result = replaceMultipleNewlines(in: result)
-                                result = result.replacingOccurrences(of: userName, with: "{{user}}").replacingOccurrences(of: character.name, with: "{{char}}").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+                                result = result.replacingOccurrences(of: userName, with: "{{user}}").replacingOccurrences(of: "### New Roleplay:", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
                                 return ViewModelResponse(text: result, character: character, response: requestResponse.toJSONString(), request: requestString)
                             }
                             break
@@ -404,7 +406,7 @@ extension ChatView {
                                     statusMessage.wrappedValue = "Waiting..."
                                 }
                             } else {
-                                statusMessage.wrappedValue = "\(character.name) is typing..."
+                                statusMessage.wrappedValue = "\(imitation ? userName : character.name) is typing..."
                             }
                             try await Task.sleep(nanoseconds: 3_000_000_000)
                         }

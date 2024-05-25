@@ -293,6 +293,11 @@ struct ChatView: View {
                                         } label: {
                                             Label("Automatic", systemImage: "doc.badge.plus")
                                         }
+                                        Button {
+                                            requestMessage(imitation: true)
+                                        } label: {
+                                            Label("Imitate", systemImage: "doc.badge.plus")
+                                        }
                                         ForEach(chat.unwrappedCharacters, id: \.self) { character in
                                             Button {
                                                 requestMessage(fromCharacter: character)
@@ -491,7 +496,7 @@ struct ChatView: View {
         }
     }
 
-    func requestMessage(fromCharacter: Character? = nil) {
+    func requestMessage(fromCharacter: Character? = nil, imitation: Bool = false) {
         batchEditModeEnabled = false
         if let id = scrollID, id != "primary", let currentMessage = messages.last, !currentMessage.fromUser, let alternateContent = currentMessage.unwrappedContentAlternates.filter({ $0.uuid.uuidString == id }).first {
             let originalContent = currentMessage.content
@@ -518,8 +523,8 @@ struct ChatView: View {
         newMessage = ""
         try? modelContext.save()
         Task {
-            let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage, character: fromCharacter)
-            let newResponseMessage = ChatMessage(content: response.text, fromUser: false, chat: chat, character: response.character, request: response.request, response: response.response)
+            let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage, character: fromCharacter, imitation: imitation)
+            let newResponseMessage = ChatMessage(content: response.text, fromUser: imitation, chat: chat, character: (imitation ? nil : response.character), request: response.request, response: response.response)
             chat.dateUpdated = Date.now
             modelContext.insert(newResponseMessage)
             chat.dateUpdated = .now
