@@ -403,7 +403,7 @@ extension ChatView {
                                 result = trimToFirstNewline(text: result, characterName: character.name, userName: userName, multilineReplies: chat.allowMultilineReplies)
                                 result = replaceMultipleNewlines(in: result)
                                 result = result.replacingOccurrences(of: userName, with: "{{user}}").replacingOccurrences(of: "### New Roleplay:", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
-                                result = removeTrailingNewlines(result)
+                                result = removeTrailingNewlines(result).trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
 
                                 return ViewModelResponse(text: result, character: character, response: requestResponse.toJSONString(), request: requestString)
                             }
