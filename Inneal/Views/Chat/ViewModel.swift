@@ -33,16 +33,10 @@ extension ChatView {
             if let settingData = chat.hordeSettings,
                let decodedSettings = try? JSONDecoder().decode(HordeRequest.self, from: settingData)
             {
+                Log.debug("Loaded settings from chat...")
                 baseHordeRequest = decodedSettings
                 baseHordeParams = decodedSettings.params
             }
-        }
-
-        func saveSettingsToChat() {
-            Log.debug("Saving settings to chat...")
-            let hordeSettingsToSave = HordeRequest(prompt: "", params: baseHordeParams, models: baseHordeRequest.models, workers: baseHordeRequest.workers)
-            let serializedSettings = try? JSONEncoder().encode(hordeSettingsToSave)
-            chat.hordeSettings = serializedSettings
         }
 
         func getNewResponseToChat(statusMessage: Binding<String>, contentAlternate: Bool = false, character: Character? = nil) async -> ViewModelResponse {

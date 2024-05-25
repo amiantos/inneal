@@ -382,7 +382,7 @@ struct ChatView: View {
             }
         }
         .sheet(isPresented: $showingSettingsSheet) {
-            ChatSettingsView(chat: chat, hordeRequest: viewModel.baseHordeRequest, hordeParams: viewModel.baseHordeParams)
+            ChatSettingsView(chat: chat, hordeRequest: viewModel.baseHordeRequest, hordeParams: viewModel.baseHordeParams).interactiveDismissDisabled()
         }
         .sheet(isPresented: $showingCharacterSheet) {
             if let character = characterBeingEdited {
@@ -401,11 +401,6 @@ struct ChatView: View {
         .sheet(isPresented: $showRequestDetails, content: {
             GenerationDetailsView(responseDetails: $responseDetails, requestDetails: $requestDetails)
         })
-        .onChange(of: showingSettingsSheet) { _, newValue in
-            if !newValue {
-                viewModel.saveSettingsToChat()
-            }
-        }
         .onChange(of: scrollID) { _, newValue in
             if newValue == "newAlternate" {
                 getNewAlternateResponseToChat()

@@ -339,21 +339,15 @@ struct ChatSettingsView: View {
             .navigationTitle("Chat Settings")
             .toolbar {
                 ToolbarItemGroup(placement: .cancellationAction) {
-                    Button("Done") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
-                ToolbarItemGroup(placement: .primaryAction) {
-//                    Menu {
-//                        Picker("Chat API", selection: $service) {
-//                            ForEach(Services.allCases) { mode in
-//                                Text(mode.rawValue)
-//                            }
-//                        }
-//                    } label: {
-//                        Text(service.rawValue)
-//                    }
-                    Text("AI Horde")
+                ToolbarItemGroup(placement: .confirmationAction) {
+                    Button("Save") {
+                        saveSettingsToChat()
+                        dismiss()
+                    }
                 }
             }
             #if os(iOS)
@@ -365,6 +359,17 @@ struct ChatSettingsView: View {
                     await viewModel.populateModels()
                 }
             })
+        }
+    }
+
+    func saveSettingsToChat() {
+        Log.debug("Saving settings to chat...")
+        do {
+            let hordeSettingsToSave = HordeRequest(prompt: "", params: hordeParams, models: hordeRequest.models, workers: hordeRequest.workers)
+            let serializedSettings = try JSONEncoder().encode(hordeSettingsToSave)
+            chat.hordeSettings = serializedSettings
+        } catch {
+            Log.error("Unable to save settings to chat: \(error)")
         }
     }
 }
