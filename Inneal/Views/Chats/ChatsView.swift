@@ -21,6 +21,7 @@ struct ChatsView: View {
     @State private var showingCharactersSheet = false
     @State private var showingPersonaSheet = false
     @State private var selectedChat: Chat?
+    @State private var userSettings: UserSettings?
 
     let gridItems = [
         GridItem(.fixed(30), spacing: -5, alignment: .leading),
@@ -36,8 +37,8 @@ struct ChatsView: View {
         NavigationSplitView {
             ChatList
         } detail: {
-            if let selectedChat {
-                ChatView(for: selectedChat, modelContext: modelContext).id(selectedChat)
+            if let selectedChat, let userSettings {
+                ChatView(for: selectedChat, modelContext: modelContext, userSettings: userSettings).id(selectedChat)
             } else {
                 ContentUnavailableView("Use sidebar navigation", systemImage: "sidebar.left")
             }
@@ -52,7 +53,9 @@ struct ChatsView: View {
             CharactersView()
         }
         .sheet(isPresented: $showingPersonaSheet) {
-            SettingsView()
+            if userSettings != nil {
+                UserSettingsView(userSettings: userSettings!)
+            }
         }
         .fullScreenCover(isPresented: $showingIntroSheet) {
             IntroductionView()
@@ -70,6 +73,22 @@ struct ChatsView: View {
         .onChange(of: chats.count) { oldValue, newValue in
             if (newValue - oldValue) > 0, Preferences.standard.firstTimeSetupCompleted {
                 selectedChat = chats.first
+            }
+        }
+        .onAppear {
+            do {
+                let descriptor = FetchDescriptor<UserSettings>()
+                let configurations = try modelContext.fetch(descriptor)
+                if !configurations.isEmpty, let settings = configurations.first {
+                    userSettings = settings
+                    Log.debug("Loaded user settings from DB, name: \(settings.defaultUserName), character: \(settings.userCharacter?.name ?? "nil")")
+                } else {
+                    let settings = UserSettings(userCharacter: nil, defaultUserName: Preferences.standard.defaultName)
+                    modelContext.insert(settings)
+                    userSettings = settings
+                }
+            } catch {
+                Log.error("Errorl loading or creating user settings")
             }
         }
     }
@@ -157,7 +176,7 @@ struct ChatsView: View {
                                 .lineLimit(1)
                                 .font(.body.bold())
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(((chat.unwrappedMessages.last?.content ?? "") + "\n").swapPlaceholders(userName: chat.userName, charName: chat.characters?.first?.name))
+                            Text(((chat.unwrappedMessages.last?.content ?? "") + "\n").swapPlaceholders(userName: chat.userName, charName: chat.unwrappedMessages.last?.character?.name, userSettings: userSettings ?? UserSettings(userCharacter: nil, defaultUserName: "You")))
                                 .lineLimit(2)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)

@@ -12,6 +12,7 @@ import SwiftUI
 struct ChatView: View {
     let chat: Chat
     var viewModel: ChatView.ViewModel
+    var userSettings: UserSettings
     @Environment(\.horizontalSizeClass) private var sizeClass
     @State var newMessage: String = ""
     @Environment(\.modelContext) var modelContext
@@ -37,12 +38,13 @@ struct ChatView: View {
     @State var selectedForDeletion: Set<ChatMessage> = .init()
     @State private var showingChatlog: Bool = false
 
-    init(for chat: Chat, modelContext: ModelContext) {
+    init(for chat: Chat, modelContext: ModelContext, userSettings: UserSettings) {
         Log.debug("Init ChatView for \(chat.name)")
         self.chat = chat
         let id = chat.uuid
         _messages = Query(filter: #Predicate { $0.chatUUID == id }, sort: \.dateCreated)
-        viewModel = ChatView.ViewModel(for: chat, modelContext: modelContext)
+        viewModel = ChatView.ViewModel(for: chat, modelContext: modelContext, userSettings: userSettings)
+        self.userSettings = userSettings
     }
 
     var body: some View {
@@ -91,7 +93,7 @@ struct ChatView: View {
                                                 ScrollView(.horizontal) {
                                                     LazyHStack(alignment: .top, spacing: 0) {
                                                         HStack {
-                                                            MessageCell(contentMessage: message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
+                                                            MessageCell(contentMessage: message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name, userSettings: userSettings), isCurrentUser: message.fromUser)
                                                                 .fixedSize(horizontal: false, vertical: true)
                                                                 .readIntrinsicContentSize(to: $textSize)
                                                                 .contextMenu {
@@ -140,7 +142,7 @@ struct ChatView: View {
                                                                 if !showPendingMessage {
                                                                     Image(systemName: "chevron.left")
                                                                 }
-                                                                MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
+                                                                MessageCell(contentMessage: alternate.string.swapPlaceholders(userName: chat.userName, charName: message.character?.name, userSettings: userSettings), isCurrentUser: message.fromUser)
                                                                     .fixedSize(horizontal: false, vertical: true)
                                                                     .readIntrinsicContentSize(to: $textSize)
                                                                     .contextMenu {
@@ -213,7 +215,7 @@ struct ChatView: View {
                                                     }
                                                 }
                                             } else {
-                                                MessageCell(contentMessage: message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name), isCurrentUser: message.fromUser)
+                                                MessageCell(contentMessage: message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name, userSettings: userSettings), isCurrentUser: message.fromUser)
                                                     .contextMenu {
                                                         Button(role: .destructive) {
                                                             deleteMessage(message: message)
@@ -377,12 +379,23 @@ struct ChatView: View {
                                 showingCharacterSheet.toggle()
                             }
                         }
+                        if chat.userCharacter != nil {
+                            Button("Edit \(chat.userCharacter!.name)", systemImage: "person") {
+                                characterBeingEdited = chat.userCharacter!
+                                showingCharacterSheet.toggle()
+                            }
+                        } else if chat.userName == nil, userSettings.userCharacter != nil {
+                            Button("Edit \(userSettings.userCharacter!.name)", systemImage: "person") {
+                                characterBeingEdited = userSettings.userCharacter!
+                                showingCharacterSheet.toggle()
+                            }
+                        }
                     }
                 }
             }
         }
         .sheet(isPresented: $showingSettingsSheet) {
-            ChatSettingsView(chat: chat, hordeRequest: viewModel.baseHordeRequest, hordeParams: viewModel.baseHordeParams).interactiveDismissDisabled()
+            ChatSettingsView(userSettings: userSettings, chat: chat, hordeRequest: viewModel.baseHordeRequest, hordeParams: viewModel.baseHordeParams).interactiveDismissDisabled()
         }
         .sheet(isPresented: $showingCharacterSheet) {
             if let character = characterBeingEdited {
@@ -396,7 +409,7 @@ struct ChatView: View {
             TextEditorView(text: $alternateTextToEdit)
         })
         .sheet(isPresented: $showingChatlog, content: {
-            SelectableChatLogView(chat: chat)
+            SelectableChatLogView(chat: chat, userSettings: userSettings)
         })
         .sheet(isPresented: $showRequestDetails, content: {
             GenerationDetailsView(responseDetails: $responseDetails, requestDetails: $requestDetails)
@@ -531,12 +544,12 @@ struct ChatView: View {
 
     func copyText(contentAlternate: ContentAlternate) {
         let pasteboard = UIPasteboard.general
-        pasteboard.string = contentAlternate.string.swapPlaceholders(userName: chat.userName, charName: contentAlternate.message?.character?.name)
+        pasteboard.string = contentAlternate.string.swapPlaceholders(userName: chat.userName, charName: contentAlternate.message?.character?.name, userSettings: userSettings)
     }
 
     func copyMessageText(message: ChatMessage) {
         let pasteboard = UIPasteboard.general
-        pasteboard.string = message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name)
+        pasteboard.string = message.content.swapPlaceholders(userName: chat.userName, charName: message.character?.name, userSettings: userSettings)
     }
 }
 
@@ -569,7 +582,7 @@ struct ChatView: View {
         container.mainContext.insert(message)
     }
     return NavigationStack {
-        ChatView(for: chat, modelContext: modelContext)
+        ChatView(for: chat, modelContext: modelContext, userSettings: UserSettings(userCharacter: nil, defaultUserName: "Seymour"))
             .modelContainer(container)
             .navigationTitle("Edit Character")
     }

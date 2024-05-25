@@ -21,14 +21,16 @@ extension ChatView {
     class ViewModel {
         var chat: Chat
         var modelContext: ModelContext
+        var userSettings: UserSettings
         let hordeAPI: HordeAPI = .init()
 
         var baseHordeRequest: HordeRequest = defaultHordeRequest
         var baseHordeParams: HordeRequestParams = defaultHordeParams
 
-        init(for chat: Chat, modelContext: ModelContext) {
+        init(for chat: Chat, modelContext: ModelContext, userSettings: UserSettings) {
             self.chat = chat
             self.modelContext = modelContext
+            self.userSettings = userSettings
 
             if let settingData = chat.hordeSettings,
                let decodedSettings = try? JSONDecoder().decode(HordeRequest.self, from: settingData)
@@ -49,6 +51,16 @@ extension ChatView {
             var currentRequestUUID: UUID?
 
             var hordeApiKey = "0000000000"
+
+            var userName = chat.userName ?? userSettings.defaultUserName
+            var userCharacter = chat.userCharacter
+            if userCharacter == nil, chat.userName == nil, let uChar = userSettings.userCharacter {
+                userCharacter = uChar
+                userName = uChar.name
+            }
+            if userCharacter != nil {
+                Log.debug("User character in use, name: \(userName)")
+            }
 
             do {
                 let descriptor = FetchDescriptor<APIConfiguration>(predicate: #Predicate { $0.serviceName == "horde" })
@@ -124,6 +136,11 @@ extension ChatView {
             var permanentPrompt = character.characterDescription.isEmpty ? "" : "\(character.characterDescription)\n"
             permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
             permanentPrompt += character.scenario.isEmpty ? "" : "\(character.scenario)\n"
+            
+            if let userCharacter {
+                permanentPrompt += "\n\nDescription of \(userName): \(userCharacter.characterDescription.swapPlaceholders(userName: character.name, charName: userCharacter.name, userSettings: userSettings))"
+            }
+
             let permanentTokens = countTokens(permanentPrompt)
             Log.debug("Permanent tokens: \(permanentTokens)")
 
@@ -264,7 +281,7 @@ extension ChatView {
                 _ = history.removeFirst()
             }
             for m in history {
-                let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: chat.userName, charName: m.character?.name)
+                let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: userName, charName: m.character?.name, userSettings: userSettings)
                 let tokens = countTokens(message)
                 if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
                     messageHistory = "\(message)\(messageHistory)"
@@ -293,7 +310,7 @@ extension ChatView {
             prompt.append(messageHistory)
             prompt.append("{{char}}:")
 
-            prompt = prompt.swapPlaceholders(userName: chat.userName, charName: character.name)
+            prompt = prompt.swapPlaceholders(userName: userName, charName: character.name, userSettings: userSettings)
 
             Log.debug("Total token count: \(countTokens(prompt))")
 
@@ -317,7 +334,7 @@ extension ChatView {
                 repPenSlope: baseHordeParams.repPenSlope,
                 samplerOrder: baseHordeParams.samplerOrder,
                 useDefaultBadwordsids: baseHordeParams.useDefaultBadwordsids,
-                stopSequence: stopSequence.map { $0.swapPlaceholders(userName: chat.userName, charName: character.name) },
+                stopSequence: stopSequence.map { $0.swapPlaceholders(userName: userName, charName: character.name, userSettings: userSettings) },
                 minP: baseHordeParams.minP,
                 dynatempRange: baseHordeParams.dynatempRange,
                 dynatempExponent: baseHordeParams.dynatempExponent,
@@ -359,11 +376,11 @@ extension ChatView {
                                 statusMessage.wrappedValue = "Text from \(generation.model)"
                                 var result = endTrimToSentence(input: generation.text, includeNewline: true)
                                 result = result.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
-                                result = trimToFirstNewline(text: result, characterName: character.name, userName: chat.userName ?? Preferences.standard.defaultName, multilineReplies: chat.allowMultilineReplies)
+                                result = trimToFirstNewline(text: result, characterName: character.name, userName: userName, multilineReplies: chat.allowMultilineReplies)
                                 // result = ensureEvenAsterisks(result)
                                 // result = ensureEvenQuotes(result)
                                 result = replaceMultipleNewlines(in: result)
-                                result = result.replacingOccurrences(of: chat.userName ?? Preferences.standard.defaultName, with: "{{user}}").replacingOccurrences(of: character.name, with: "{{char}}").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+                                result = result.replacingOccurrences(of: userName, with: "{{user}}").replacingOccurrences(of: character.name, with: "{{char}}").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
                                 return ViewModelResponse(text: result, character: character, response: requestResponse.toJSONString(), request: requestString)
                             }
                             break
