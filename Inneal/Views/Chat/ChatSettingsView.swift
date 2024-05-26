@@ -37,6 +37,7 @@ struct ChatSettingsView: View {
 
     @State var settingsMode: SettingsMode = .basic
     @State var customUserName: String = ""
+    @State var contextTemplate: ContextTemplate = .automatic
 
     var body: some View {
         NavigationStack {
@@ -255,6 +256,15 @@ struct ChatSettingsView: View {
                         Section(footer: Text("Whether to allow multiple lines in AI responses. Disable this if the AI starts generating rubbish.")) {
                             Toggle("Multiline Replies", isOn: $chat.allowMultilineReplies)
                         }
+
+                        Section {
+                            Picker("Context Template", selection: $contextTemplate) {
+                                ForEach(ContextTemplate.allCases) { template in
+                                    Text(template.rawValue)
+                                }
+                            }
+                        }
+
                         Section(footer: Text("Randomness of sampling. High values can increase creativity but may make text less sensible. Lower values will make text more predictable but can become repetitious.")) {
                             LabeledContent("Temperature", value: String(format: "%.1f", hordeParams.temperature))
                             Slider(value: $hordeParams.temperature, in: 0.1 ... 2, step: 0.1)
@@ -315,30 +325,6 @@ struct ChatSettingsView: View {
                                 ProgressView()
                                 ProgressView()
                             }
-                        }.onAppear {
-                            if currentHordeConfigObject == nil {
-                                do {
-                                    let descriptor = FetchDescriptor<APIConfiguration>(predicate: #Predicate { $0.serviceName == "horde" })
-                                    let configurations = try modelContext.fetch(descriptor)
-                                    if configurations.isEmpty {
-                                        Log.debug("Configs empty, creating")
-                                        let baseHordeConfig = APIConfiguration(serviceName: "horde", configurationData: "0000000000".data(using: .utf8)!)
-                                        modelContext.insert(baseHordeConfig)
-                                        currentHordeConfigObject = baseHordeConfig
-                                        viewModel.currentKudos = nil
-                                        viewModel.currentUserName = nil
-                                    } else if let hordeConfig = configurations.first, let configData = hordeConfig.configurationData, let keyString = String(data: configData, encoding: .utf8) {
-                                        Log.debug("Found config, loading in")
-                                        viewModel.apiKey = keyString
-                                        currentHordeConfigObject = hordeConfig
-                                        viewModel.currentKudos = nil
-                                        viewModel.currentUserName = nil
-                                    }
-                                    viewModel.onAppear()
-                                } catch {
-                                    fatalError("Unable to find or create AI Horde config")
-                                }
-                            }
                         }
                         Link("Visit AIHorde.net", destination: URL(string: "https://aihorde.net")!)
                     }
@@ -376,8 +362,36 @@ struct ChatSettingsView: View {
             #endif
             .onAppear(perform: {
                 customUserName = chat.userName ?? ""
+                if chat.contextTemplate == "llama3" {
+                    contextTemplate = .llama3Instruct
+                } else {
+                    contextTemplate = .automatic
+                }
                 Task {
                     await viewModel.populateModels()
+                }
+                if currentHordeConfigObject == nil {
+                    do {
+                        let descriptor = FetchDescriptor<APIConfiguration>(predicate: #Predicate { $0.serviceName == "horde" })
+                        let configurations = try modelContext.fetch(descriptor)
+                        if configurations.isEmpty {
+                            Log.debug("Configs empty, creating")
+                            let baseHordeConfig = APIConfiguration(serviceName: "horde", configurationData: "0000000000".data(using: .utf8)!)
+                            modelContext.insert(baseHordeConfig)
+                            currentHordeConfigObject = baseHordeConfig
+                            viewModel.currentKudos = nil
+                            viewModel.currentUserName = nil
+                        } else if let hordeConfig = configurations.first, let configData = hordeConfig.configurationData, let keyString = String(data: configData, encoding: .utf8) {
+                            Log.debug("Found config, loading in")
+                            viewModel.apiKey = keyString
+                            currentHordeConfigObject = hordeConfig
+                            viewModel.currentKudos = nil
+                            viewModel.currentUserName = nil
+                        }
+                        viewModel.onAppear()
+                    } catch {
+                        fatalError("Unable to find or create AI Horde config")
+                    }
                 }
             })
         }
@@ -389,6 +403,12 @@ struct ChatSettingsView: View {
             let hordeSettingsToSave = HordeRequest(prompt: "", params: hordeParams, models: hordeRequest.models, workers: hordeRequest.workers)
             let serializedSettings = try JSONEncoder().encode(hordeSettingsToSave)
             chat.hordeSettings = serializedSettings
+            switch contextTemplate {
+            case .automatic:
+                chat.contextTemplate = nil
+            case .llama3Instruct:
+                chat.contextTemplate = "llama3"
+            }
         } catch {
             Log.error("Unable to save settings to chat: \(error)")
         }

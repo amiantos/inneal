@@ -44,6 +44,12 @@ enum Services: String, Codable, CaseIterable, Identifiable {
     var id: Self { self }
 }
 
+enum ContextTemplate: String, Codable, CaseIterable, Identifiable {
+    case automatic = "Automatic"
+    case llama3Instruct = "Llama 3"
+    var id: Self { self }
+}
+
 @Model
 class UserSettings {
     var userCharacter: Character?
@@ -91,6 +97,10 @@ class Chat {
     var preferredModel: PreferredModel = PreferredModel.any
     var preferredContextWindow: PreferredContextWindow = PreferredContextWindow.large
     var preferredResponseSize: PreferredResponseSize = PreferredResponseSize.small
+
+    // Context
+
+    var contextTemplate: String?
 
     // Computed Properties
 
