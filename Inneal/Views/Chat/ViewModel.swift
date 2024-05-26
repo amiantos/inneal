@@ -143,7 +143,7 @@ extension ChatView {
             permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
             permanentPrompt += character.scenario.isEmpty ? "" : "Scenario: \(character.scenario)\n"
 
-            let postHistoryPrompt = character.postHistoryInstructions.isEmpty ? "" : "\(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines))\n"
+            var postHistoryPrompt = character.postHistoryInstructions.isEmpty ? "" : "\(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines))\n"
 
             if let userCharacter, userCharacter != character {
                 permanentPrompt += "\n"

@@ -255,13 +255,6 @@ struct ChatSettingsView: View {
                         Section(footer: Text("Whether to allow multiple lines in AI responses. Disable this if the AI starts generating rubbish.")) {
                             Toggle("Multiline Replies", isOn: $chat.allowMultilineReplies)
                         }
-                        Section {
-                            Picker("Context Template", selection: $chat.contextTemplate) {
-                                ForEach(ContextTemplate.allCases) { template in
-                                    Text(template.rawValue)
-                                }
-                            }
-                        }
                         Section(footer: Text("Randomness of sampling. High values can increase creativity but may make text less sensible. Lower values will make text more predictable but can become repetitious.")) {
                             LabeledContent("Temperature", value: String(format: "%.1f", hordeParams.temperature))
                             Slider(value: $hordeParams.temperature, in: 0.1 ... 2, step: 0.1)
