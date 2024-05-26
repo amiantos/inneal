@@ -44,175 +44,390 @@ enum Services: String, Codable, CaseIterable, Identifiable {
     var id: Self { self }
 }
 
-@Model
-class UserSettings {
-    var userCharacter: Character?
-    var defaultUserName: String = "You"
-
-    init(userCharacter: Character?, defaultUserName: String) {
-        self.userCharacter = userCharacter
-        self.defaultUserName = defaultUserName
-    }
+enum ContextTemplate: String, Codable, CaseIterable, Identifiable {
+    case automatic = "Automatic"
+    case llama3Instruct = "Llama 3"
+    var id: Self { self }
 }
 
-@Model
-class APIConfiguration {
-    let serviceName: String = "horde"
-    @Attribute(.allowsCloudEncryption) var configurationData: Data?
+enum InnealSchemaV1: VersionedSchema {
+    static var models: [any PersistentModel.Type] = [UserSettings.self, APIConfiguration.self, Chat.self, ContentAlternate.self, ChatMessage.self, Character.self]
+    static var versionIdentifier: Schema.Version = Schema.Version(1, 0, 0)
 
-    init(serviceName: String, configurationData: Data) {
-        if !["horde"].contains(serviceName) {
-            fatalError("Service name \(serviceName) not recognized and cannot be saved.")
+    @Model
+    class UserSettings {
+        var userCharacter: Character?
+        var defaultUserName: String = "You"
+
+        init(userCharacter: Character?, defaultUserName: String) {
+            self.userCharacter = userCharacter
+            self.defaultUserName = defaultUserName
         }
-        self.serviceName = serviceName
-        self.configurationData = configurationData
-    }
-}
-
-@Model
-class Chat {
-    var uuid: UUID = UUID()
-    var dateCreated: Date = Date.now
-    var dateUpdated: Date = Date.now
-    @Relationship(deleteRule: .cascade, inverse: \ChatMessage.chat) var messages: [ChatMessage]? = [ChatMessage]()
-    @Relationship var characters: [Character]? = [Character]()
-
-    var name: String = "Unnamed Chat"
-    var userName: String?
-    var userCharacter: Character?
-    var allowMultilineReplies: Bool = true
-
-    var service: Services = Services.horde
-
-    // Horde Specific
-
-    var hordeSettings: Data?
-    var autoModeEnabled: Bool = true
-    var preferredModel: PreferredModel = PreferredModel.any
-    var preferredContextWindow: PreferredContextWindow = PreferredContextWindow.large
-    var preferredResponseSize: PreferredResponseSize = PreferredResponseSize.small
-
-    // Computed Properties
-
-    var unwrappedMessages: [ChatMessage] {
-        let unwrappedMessages: [ChatMessage] = messages ?? []
-        return unwrappedMessages.sorted { $0.dateCreated < $1.dateCreated }
     }
 
-    var unwrappedCharacters: [Character] {
-        let unwrappedCharacters: [Character] = characters ?? []
-        return unwrappedCharacters.sorted { $0.name < $1.name }
-    }
+    @Model
+    class APIConfiguration {
+        let serviceName: String = "horde"
+        @Attribute(.allowsCloudEncryption) var configurationData: Data?
 
-    // Init
-
-    init(name: String?, characters: [Character]) {
-        self.name = name ?? "\(characters.first!.name)"
-        self.characters = characters
-    }
-}
-
-@Model
-class ContentAlternate {
-    let uuid: UUID = UUID()
-    var string: String = ""
-    @Relationship var message: ChatMessage?
-    var dateCreated: Date = Date.now
-    var request: String?
-    var response: String?
-
-    init(string: String, message: ChatMessage, request: String? = nil, response: String? = nil) {
-        self.string = string
-        self.message = message
-        self.request = request
-        self.response = response
-    }
-}
-
-@Model
-class ChatMessage {
-    var uuid: UUID = UUID()
-    var content: String = ""
-    var fromUser: Bool = false
-    var chat: Chat?
-    var dateCreated: Date = Date.now
-    var chatUUID: UUID = UUID()
-
-    var request: String?
-    var response: String?
-
-    @Relationship var character: Character?
-    @Relationship(deleteRule: .cascade, inverse: \ContentAlternate.message) var contentAlternates: [ContentAlternate]? = [ContentAlternate]()
-
-    init(content: String, fromUser: Bool, chat: Chat? = nil, character: Character? = nil, request: String? = nil, response: String? = nil) {
-        self.content = content
-        self.fromUser = fromUser
-        self.chat = chat
-        chatUUID = chat?.uuid ?? UUID()
-        self.character = character
-        self.request = request
-        self.response = response
-    }
-
-    var unwrappedContentAlternates: [ContentAlternate] {
-        let unwrappedMessages: [ContentAlternate] = contentAlternates ?? []
-        return unwrappedMessages.sorted { $0.dateCreated < $1.dateCreated }
-    }
-}
-
-@Model
-class Character: Transferable {
-    var name: String = ""
-    var characterDescription: String = ""
-    var personality: String = ""
-    var firstMessage: String = ""
-    var exampleMessage: String = ""
-    var scenario: String = ""
-    var creatorNotes: String = ""
-    var systemPrompt: String = ""
-    var postHistoryInstructions: String = ""
-    var alternateGreetings: [String] = [String]()
-    var tags: [String] = [String]()
-    var creator: String = ""
-    var characterVersion: String = "main"
-    var chubId: String = ""
-    @Attribute(.externalStorage) var avatar: Data?
-    @Relationship(deleteRule: .cascade, inverse: \Chat.characters) var chats: [Chat]? = [Chat]()
-    @Relationship(inverse: \Chat.userCharacter) var userChats: [Chat]? = [Chat]()
-    @Relationship(inverse: \UserSettings.userCharacter) var userSettings: [UserSettings]? = [UserSettings]()
-
-    @Relationship(inverse: \ChatMessage.character) var messages: [ChatMessage]? = [ChatMessage]()
-
-    init(name: String, characterDescription: String, personality: String, firstMessage: String, exampleMessage: String, scenario: String, creatorNotes: String, systemPrompt: String, postHistoryInstructions: String, alternateGreetings: [String], tags: [String], creator: String, characterVersion: String, chubId: String, avatar: Data? = nil) {
-        self.name = name
-        self.characterDescription = characterDescription
-        self.personality = personality
-        self.firstMessage = firstMessage
-        self.exampleMessage = exampleMessage
-        self.scenario = scenario
-        self.creatorNotes = creatorNotes
-        self.systemPrompt = systemPrompt
-        self.postHistoryInstructions = postHistoryInstructions
-        self.alternateGreetings = alternateGreetings
-        self.tags = tags
-        self.creator = creator
-        self.characterVersion = characterVersion
-        self.chubId = chubId
-        self.avatar = avatar
-    }
-
-    static var transferRepresentation: some TransferRepresentation {
-        let rep = DataRepresentation<Character>(exportedContentType: .json) { character in
-            let tavernData = TavernData(data: TavernCharacterData(name: character.name, description: character.characterDescription, personality: character.personality, firstMes: character.firstMessage, avatar: "", mesExample: character.exampleMessage, scenario: character.scenario, creatorNotes: character.creatorNotes, systemPrompt: character.systemPrompt, postHistoryInstructions: character.postHistoryInstructions, alternateGreetings: character.alternateGreetings, tags: character.tags, creator: character.creator, characterVersion: character.characterVersion), spec: "chara_card_v2", specVersion: "2.0")
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            return try! encoder.encode(tavernData)
+        init(serviceName: String, configurationData: Data) {
+            if !["horde"].contains(serviceName) {
+                fatalError("Service name \(serviceName) not recognized and cannot be saved.")
+            }
+            self.serviceName = serviceName
+            self.configurationData = configurationData
         }
-        return rep.suggestedFileName { obj in obj.suggestedFileName }
     }
 
-    var suggestedFileName: String { "\(name).json" }
+    @Model
+    class Chat {
+        var uuid: UUID = UUID()
+        var dateCreated: Date = Date.now
+        var dateUpdated: Date = Date.now
+        @Relationship(deleteRule: .cascade, inverse: \ChatMessage.chat) var messages: [ChatMessage]? = [ChatMessage]()
+        @Relationship var characters: [Character]? = [Character]()
+
+        var name: String = "Unnamed Chat"
+        var userName: String?
+        var userCharacter: Character?
+        var allowMultilineReplies: Bool = true
+
+        var service: Services = Services.horde
+
+        // Horde Specific
+
+        var hordeSettings: Data?
+        var autoModeEnabled: Bool = true
+        var preferredModel: PreferredModel = PreferredModel.any
+        var preferredContextWindow: PreferredContextWindow = PreferredContextWindow.large
+        var preferredResponseSize: PreferredResponseSize = PreferredResponseSize.small
+
+        // Computed Properties
+
+        var unwrappedMessages: [ChatMessage] {
+            let unwrappedMessages: [ChatMessage] = messages ?? []
+            return unwrappedMessages.sorted { $0.dateCreated < $1.dateCreated }
+        }
+
+        var unwrappedCharacters: [Character] {
+            let unwrappedCharacters: [Character] = characters ?? []
+            return unwrappedCharacters.sorted { $0.name < $1.name }
+        }
+
+        // Init
+
+        init(name: String?, characters: [Character]) {
+            self.name = name ?? "\(characters.first!.name)"
+            self.characters = characters
+        }
+    }
+
+    @Model
+    class ContentAlternate {
+        let uuid: UUID = UUID()
+        var string: String = ""
+        @Relationship var message: ChatMessage?
+        var dateCreated: Date = Date.now
+        var request: String?
+        var response: String?
+
+        init(string: String, message: ChatMessage, request: String? = nil, response: String? = nil) {
+            self.string = string
+            self.message = message
+            self.request = request
+            self.response = response
+        }
+    }
+
+    @Model
+    class ChatMessage {
+        var uuid: UUID = UUID()
+        var content: String = ""
+        var fromUser: Bool = false
+        var chat: Chat?
+        var dateCreated: Date = Date.now
+        var chatUUID: UUID = UUID()
+
+        var request: String?
+        var response: String?
+
+        @Relationship var character: Character?
+        @Relationship(deleteRule: .cascade, inverse: \ContentAlternate.message) var contentAlternates: [ContentAlternate]? = [ContentAlternate]()
+
+        init(content: String, fromUser: Bool, chat: Chat? = nil, character: Character? = nil, request: String? = nil, response: String? = nil) {
+            self.content = content
+            self.fromUser = fromUser
+            self.chat = chat
+            chatUUID = chat?.uuid ?? UUID()
+            self.character = character
+            self.request = request
+            self.response = response
+        }
+
+        var unwrappedContentAlternates: [ContentAlternate] {
+            let unwrappedMessages: [ContentAlternate] = contentAlternates ?? []
+            return unwrappedMessages.sorted { $0.dateCreated < $1.dateCreated }
+        }
+    }
+
+    @Model
+    class Character: Transferable {
+        var name: String = ""
+        var characterDescription: String = ""
+        var personality: String = ""
+        var firstMessage: String = ""
+        var exampleMessage: String = ""
+        var scenario: String = ""
+        var creatorNotes: String = ""
+        var systemPrompt: String = ""
+        var postHistoryInstructions: String = ""
+        var alternateGreetings: [String] = [String]()
+        var tags: [String] = [String]()
+        var creator: String = ""
+        var characterVersion: String = "main"
+        var chubId: String = ""
+        @Attribute(.externalStorage) var avatar: Data?
+        @Relationship(deleteRule: .cascade, inverse: \Chat.characters) var chats: [Chat]? = [Chat]()
+        @Relationship(inverse: \Chat.userCharacter) var userChats: [Chat]? = [Chat]()
+        @Relationship(inverse: \UserSettings.userCharacter) var userSettings: [UserSettings]? = [UserSettings]()
+
+        @Relationship(inverse: \ChatMessage.character) var messages: [ChatMessage]? = [ChatMessage]()
+
+        init(name: String, characterDescription: String, personality: String, firstMessage: String, exampleMessage: String, scenario: String, creatorNotes: String, systemPrompt: String, postHistoryInstructions: String, alternateGreetings: [String], tags: [String], creator: String, characterVersion: String, chubId: String, avatar: Data? = nil) {
+            self.name = name
+            self.characterDescription = characterDescription
+            self.personality = personality
+            self.firstMessage = firstMessage
+            self.exampleMessage = exampleMessage
+            self.scenario = scenario
+            self.creatorNotes = creatorNotes
+            self.systemPrompt = systemPrompt
+            self.postHistoryInstructions = postHistoryInstructions
+            self.alternateGreetings = alternateGreetings
+            self.tags = tags
+            self.creator = creator
+            self.characterVersion = characterVersion
+            self.chubId = chubId
+            self.avatar = avatar
+        }
+
+        static var transferRepresentation: some TransferRepresentation {
+            let rep = DataRepresentation<Character>(exportedContentType: .json) { character in
+                let tavernData = TavernData(data: TavernCharacterData(name: character.name, description: character.characterDescription, personality: character.personality, firstMes: character.firstMessage, avatar: "", mesExample: character.exampleMessage, scenario: character.scenario, creatorNotes: character.creatorNotes, systemPrompt: character.systemPrompt, postHistoryInstructions: character.postHistoryInstructions, alternateGreetings: character.alternateGreetings, tags: character.tags, creator: character.creator, characterVersion: character.characterVersion), spec: "chara_card_v2", specVersion: "2.0")
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .prettyPrinted
+                return try! encoder.encode(tavernData)
+            }
+            return rep.suggestedFileName { obj in obj.suggestedFileName }
+        }
+
+        var suggestedFileName: String { "\(name).json" }
+    }
 }
+
+enum InnealSchemaV2: VersionedSchema {
+    static var models: [any PersistentModel.Type] = [UserSettings.self, APIConfiguration.self, Chat.self, ContentAlternate.self, ChatMessage.self, Character.self]
+    static var versionIdentifier: Schema.Version = Schema.Version(1, 1, 0)
+
+    @Model
+    class UserSettings {
+        var userCharacter: Character?
+        var defaultUserName: String = "You"
+
+        init(userCharacter: Character?, defaultUserName: String) {
+            self.userCharacter = userCharacter
+            self.defaultUserName = defaultUserName
+        }
+    }
+
+    @Model
+    class APIConfiguration {
+        let serviceName: String = "horde"
+        @Attribute(.allowsCloudEncryption) var configurationData: Data?
+
+        init(serviceName: String, configurationData: Data) {
+            if !["horde"].contains(serviceName) {
+                fatalError("Service name \(serviceName) not recognized and cannot be saved.")
+            }
+            self.serviceName = serviceName
+            self.configurationData = configurationData
+        }
+    }
+
+    @Model
+    class Chat {
+        var uuid: UUID = UUID()
+        var dateCreated: Date = Date.now
+        var dateUpdated: Date = Date.now
+        @Relationship(deleteRule: .cascade, inverse: \ChatMessage.chat) var messages: [ChatMessage]? = [ChatMessage]()
+        @Relationship var characters: [Character]? = [Character]()
+
+        var name: String = "Unnamed Chat"
+        var userName: String?
+        var userCharacter: Character?
+        var allowMultilineReplies: Bool = true
+
+        var service: Services = Services.horde
+
+        // Horde Specific
+
+        var hordeSettings: Data?
+        var autoModeEnabled: Bool = true
+        var preferredModel: PreferredModel = PreferredModel.any
+        var preferredContextWindow: PreferredContextWindow = PreferredContextWindow.large
+        var preferredResponseSize: PreferredResponseSize = PreferredResponseSize.small
+        var contextTemplate: ContextTemplate = ContextTemplate.automatic
+
+        // Computed Properties
+
+        var unwrappedMessages: [ChatMessage] {
+            let unwrappedMessages: [ChatMessage] = messages ?? []
+            return unwrappedMessages.sorted { $0.dateCreated < $1.dateCreated }
+        }
+
+        var unwrappedCharacters: [Character] {
+            let unwrappedCharacters: [Character] = characters ?? []
+            return unwrappedCharacters.sorted { $0.name < $1.name }
+        }
+
+        // Init
+
+        init(name: String?, characters: [Character]) {
+            self.name = name ?? "\(characters.first!.name)"
+            self.characters = characters
+        }
+    }
+
+    @Model
+    class ContentAlternate {
+        let uuid: UUID = UUID()
+        var string: String = ""
+        @Relationship var message: ChatMessage?
+        var dateCreated: Date = Date.now
+        var request: String?
+        var response: String?
+
+        init(string: String, message: ChatMessage, request: String? = nil, response: String? = nil) {
+            self.string = string
+            self.message = message
+            self.request = request
+            self.response = response
+        }
+    }
+
+    @Model
+    class ChatMessage {
+        var uuid: UUID = UUID()
+        var content: String = ""
+        var fromUser: Bool = false
+        var chat: Chat?
+        var dateCreated: Date = Date.now
+        var chatUUID: UUID = UUID()
+
+        var request: String?
+        var response: String?
+
+        @Relationship var character: Character?
+        @Relationship(deleteRule: .cascade, inverse: \ContentAlternate.message) var contentAlternates: [ContentAlternate]? = [ContentAlternate]()
+
+        init(content: String, fromUser: Bool, chat: Chat? = nil, character: Character? = nil, request: String? = nil, response: String? = nil) {
+            self.content = content
+            self.fromUser = fromUser
+            self.chat = chat
+            chatUUID = chat?.uuid ?? UUID()
+            self.character = character
+            self.request = request
+            self.response = response
+        }
+
+        var unwrappedContentAlternates: [ContentAlternate] {
+            let unwrappedMessages: [ContentAlternate] = contentAlternates ?? []
+            return unwrappedMessages.sorted { $0.dateCreated < $1.dateCreated }
+        }
+    }
+
+    @Model
+    class Character: Transferable {
+        var name: String = ""
+        var characterDescription: String = ""
+        var personality: String = ""
+        var firstMessage: String = ""
+        var exampleMessage: String = ""
+        var scenario: String = ""
+        var creatorNotes: String = ""
+        var systemPrompt: String = ""
+        var postHistoryInstructions: String = ""
+        var alternateGreetings: [String] = [String]()
+        var tags: [String] = [String]()
+        var creator: String = ""
+        var characterVersion: String = "main"
+        var chubId: String = ""
+        @Attribute(.externalStorage) var avatar: Data?
+        @Relationship(deleteRule: .cascade, inverse: \Chat.characters) var chats: [Chat]? = [Chat]()
+        @Relationship(inverse: \Chat.userCharacter) var userChats: [Chat]? = [Chat]()
+        @Relationship(inverse: \UserSettings.userCharacter) var userSettings: [UserSettings]? = [UserSettings]()
+
+        @Relationship(inverse: \ChatMessage.character) var messages: [ChatMessage]? = [ChatMessage]()
+
+        init(name: String, characterDescription: String, personality: String, firstMessage: String, exampleMessage: String, scenario: String, creatorNotes: String, systemPrompt: String, postHistoryInstructions: String, alternateGreetings: [String], tags: [String], creator: String, characterVersion: String, chubId: String, avatar: Data? = nil) {
+            self.name = name
+            self.characterDescription = characterDescription
+            self.personality = personality
+            self.firstMessage = firstMessage
+            self.exampleMessage = exampleMessage
+            self.scenario = scenario
+            self.creatorNotes = creatorNotes
+            self.systemPrompt = systemPrompt
+            self.postHistoryInstructions = postHistoryInstructions
+            self.alternateGreetings = alternateGreetings
+            self.tags = tags
+            self.creator = creator
+            self.characterVersion = characterVersion
+            self.chubId = chubId
+            self.avatar = avatar
+        }
+
+        static var transferRepresentation: some TransferRepresentation {
+            let rep = DataRepresentation<Character>(exportedContentType: .json) { character in
+                let tavernData = TavernData(data: TavernCharacterData(name: character.name, description: character.characterDescription, personality: character.personality, firstMes: character.firstMessage, avatar: "", mesExample: character.exampleMessage, scenario: character.scenario, creatorNotes: character.creatorNotes, systemPrompt: character.systemPrompt, postHistoryInstructions: character.postHistoryInstructions, alternateGreetings: character.alternateGreetings, tags: character.tags, creator: character.creator, characterVersion: character.characterVersion), spec: "chara_card_v2", specVersion: "2.0")
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .prettyPrinted
+                return try! encoder.encode(tavernData)
+            }
+            return rep.suggestedFileName { obj in obj.suggestedFileName }
+        }
+
+        var suggestedFileName: String { "\(name).json" }
+    }
+}
+
+
+typealias UserSettings = InnealSchemaV2.UserSettings
+typealias APIConfiguration = InnealSchemaV2.APIConfiguration
+typealias Chat = InnealSchemaV2.Chat
+typealias ContentAlternate = InnealSchemaV2.ContentAlternate
+typealias ChatMessage = InnealSchemaV2.ChatMessage
+typealias Character = InnealSchemaV2.Character
+
+enum ChatMigrationPlan: SchemaMigrationPlan {
+    static var stages: [MigrationStage] = [migrateV1toV2]
+
+    static var schemas: [any VersionedSchema.Type] {
+        [InnealSchemaV1.self, InnealSchemaV2.self]
+    }
+
+    static let migrateV1toV2 = MigrationStage.custom(
+        fromVersion: InnealSchemaV1.self,
+        toVersion: InnealSchemaV2.self,
+        willMigrate: nil) { context in
+            let chats = try context.fetch(FetchDescriptor<InnealSchemaV2.Chat>())
+            chats.forEach { chat in
+                chat.contextTemplate = .automatic
+            }
+            try? context.save()
+        }
+}
+
 
 class CharacterPNGExporter: Transferable {
     let character: Character
