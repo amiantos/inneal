@@ -133,26 +133,16 @@ extension ChatView {
             var eligibleModels = baseHordeRequest.models
             var eligibleWorkers = baseHordeRequest.workers
 
-            var permanentPrompt = "## {{char}}\n- You're \"{{char}}\" in this never-ending roleplay with \"{{user}}\".\n### Input:\n"
-            if chat.unwrappedCharacters.count > 1 {
-                let presentCharacters = chat.unwrappedCharacters.filter { $0 != character }
-                let characterNames = presentCharacters.compactMap({"\"\($0.name)\""}).joined(separator: ", ")
-                permanentPrompt = "## {{char}}\n- You're \"{{char}}\" in this never-ending roleplay with \"{{user}}\", \(characterNames).\n### Input:\n"
-            }
-            permanentPrompt += character.characterDescription.isEmpty ? "" : "\(character.characterDescription)\n"
+            var permanentPrompt = character.characterDescription.isEmpty ? "" : "\(character.characterDescription)\n"
             permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
             permanentPrompt += character.scenario.isEmpty ? "" : "Scenario: \(character.scenario)\n"
-
-            var postHistoryPrompt = character.postHistoryInstructions.isEmpty ? "" : "\(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines))\n"
 
             if let userCharacter, userCharacter != character {
                 permanentPrompt += "\n"
                 permanentPrompt += "\(userCharacter.characterDescription.swapPlaceholders(userName: character.name, charName: userCharacter.name, userSettings: userSettings))\n"
             }
 
-            permanentPrompt += "### Response:\n(OOC) Understood. I will take this info into account for the roleplay. (end OOC)"
-
-            let permanentTokens = countTokens(permanentPrompt) + countTokens(postHistoryPrompt)
+            let permanentTokens = countTokens(permanentPrompt)
             Log.debug("Permanent tokens: \(permanentTokens)")
 
             if chat.autoModeEnabled {
@@ -307,7 +297,7 @@ extension ChatView {
             for m in exampleChats {
                 let tokens = countTokens(m)
                 if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
-                    exampleMessageHistory.append("### New Roleplay:\n\(m)\n")
+                    exampleMessageHistory.append("\(m)\n\n\n\n")
                     currentTokenCount += tokens
                 }
             }
@@ -318,9 +308,7 @@ extension ChatView {
                 prompt.append("\n")
             }
 
-            prompt.append("### New Roleplay:\n")
             prompt.append(messageHistory)
-            prompt.append(postHistoryPrompt)
 
             if imitation {
                 prompt.append("{{user}}:")
@@ -335,8 +323,11 @@ extension ChatView {
             var stopSequence = ["{{user}}:", "\n{{user}} "]
             for character in chat.characters ?? [] {
                 stopSequence.append("\n\(character.name): ")
-                character.name.components(separatedBy: .whitespaces).forEach { namePart in
-                    stopSequence.append("\n\(namePart): ")
+                let nameParts = character.name.components(separatedBy: .whitespaces)
+                if nameParts.count > 1 {
+                    nameParts.forEach { namePart in
+                        stopSequence.append("\n\(namePart): ")
+                    }
                 }
             }
 
