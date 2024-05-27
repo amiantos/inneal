@@ -133,24 +133,53 @@ extension ChatView {
             var eligibleModels = baseHordeRequest.models
             var eligibleWorkers = baseHordeRequest.workers
 
-            var permanentPrompt = "## {{char}}\n- You're \"{{char}}\" in this never-ending roleplay with \"{{user}}\".\n### Input:\n"
-            if chat.unwrappedCharacters.count > 1 {
-                let presentCharacters = chat.unwrappedCharacters.filter { $0 != character }
-                let characterNames = presentCharacters.compactMap({"\"\($0.name)\""}).joined(separator: ", ")
-                permanentPrompt = "## {{char}}\n- You're \"{{char}}\" in this never-ending roleplay with \"{{user}}\", \(characterNames).\n### Input:\n"
-            }
-            permanentPrompt += character.characterDescription.isEmpty ? "" : "\(character.characterDescription)\n"
-            permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
-            permanentPrompt += character.scenario.isEmpty ? "" : "Scenario: \(character.scenario)\n"
-
-            var postHistoryPrompt = character.postHistoryInstructions.isEmpty ? "" : "\(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines))\n"
-
-            if let userCharacter, userCharacter != character {
-                permanentPrompt += "\n"
-                permanentPrompt += "\(userCharacter.characterDescription.swapPlaceholders(userName: character.name, charName: userCharacter.name, userSettings: userSettings))\n"
+            var contextTemplate: ContextTemplate = .automatic
+            if chat.contextTemplate == "llama3" {
+                contextTemplate = .llama3Instruct
             }
 
-            permanentPrompt += "### Response:\n(OOC) Understood. I will take this info into account for the roleplay. (end OOC)"
+            // MARK: - Build permanent prompt
+            var permanentPrompt = ""
+            var postHistoryPrompt = ""
+
+            if contextTemplate == .llama3Instruct {
+                permanentPrompt += "<|start_header_id|>system<|end_header_id|>\n\nYou are an expert actor that can fully immerse yourself into any role given. You do not break character for any reason, even if someone tries addressing you as an AI or language model. Currently your role is {{char}}, which is described in detail below. As {{char}}, continue the exchange with {{user}}.\n"
+                if chat.unwrappedCharacters.count > 1 {
+                    let presentCharacters = chat.unwrappedCharacters.filter { $0 != character }
+                    let characterNames = presentCharacters.compactMap({"\($0.name)"}).joined(separator: ", ")
+                    permanentPrompt += "<|start_header_id|>system<|end_header_id|>\n\nYou are an expert actor that can fully immerse yourself into any role given. You do not break character for any reason, even if someone tries addressing you as an AI or language model. Currently your role is {{char}}, which is described in detail below. As {{char}}, continue the exchange with {{user}}, \(characterNames).\n"
+                }
+                permanentPrompt += character.characterDescription.isEmpty ? "" : "\(character.characterDescription)\n"
+                permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
+                permanentPrompt += character.scenario.isEmpty ? "" : "Scenario: \(character.scenario)\n\n"
+
+                postHistoryPrompt += character.postHistoryInstructions.isEmpty ? "" : "<|start_header_id|>[System]<|end_header_id|>\n\n\(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines))<|eot_id|>"
+
+                if let userCharacter, userCharacter != character {
+                    permanentPrompt += "[\(userCharacter.characterDescription.swapPlaceholders(userName: character.name, charName: userCharacter.name, userSettings: userSettings))]\n"
+                }
+                permanentPrompt += "<|eot_id|>"
+            } else {
+                // MARK - Default
+                permanentPrompt += "## {{char}}\n- You're \"{{char}}\" in this never-ending roleplay with \"{{user}}\".\n### Input:\n"
+                if chat.unwrappedCharacters.count > 1 {
+                    let presentCharacters = chat.unwrappedCharacters.filter { $0 != character }
+                    let characterNames = presentCharacters.compactMap({"\"\($0.name)\""}).joined(separator: ", ")
+                    permanentPrompt = "## {{char}}\n- You're \"{{char}}\" in this never-ending roleplay with \"{{user}}\", \(characterNames).\n### Input:\n"
+                }
+                permanentPrompt += character.characterDescription.isEmpty ? "" : "\(character.characterDescription)\n"
+                permanentPrompt += character.personality.isEmpty ? "" : "{{char}}'s personality: \(character.personality)\n"
+                permanentPrompt += character.scenario.isEmpty ? "" : "Scenario: \(character.scenario)\n"
+
+                postHistoryPrompt += character.postHistoryInstructions.isEmpty ? "" : "\(character.postHistoryInstructions.replacingOccurrences(of: "{{original}}", with: "").trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines))\n"
+
+                if let userCharacter, userCharacter != character {
+                    permanentPrompt += "\n"
+                    permanentPrompt += "\(userCharacter.characterDescription.swapPlaceholders(userName: character.name, charName: userCharacter.name, userSettings: userSettings))\n"
+                }
+
+                permanentPrompt += "### Response:\n(OOC) Understood. I will take this info into account for the roleplay. (end OOC)"
+            }
 
             let permanentTokens = countTokens(permanentPrompt) + countTokens(postHistoryPrompt)
             Log.debug("Permanent tokens: \(permanentTokens)")
@@ -283,60 +312,98 @@ extension ChatView {
             }
 
             var prompt = permanentPrompt
-            prompt += "\n\n"
             var currentTokenCount = permanentTokens
             Log.debug("Permanent prompt applied, \(currentTokenCount) tokens used, \(maxContentLength - currentTokenCount) remain.")
 
+            // MARK: - Build Message History
             var messageHistory = ""
             if contentAlternate {
                 _ = history.removeFirst()
             }
             for m in history {
-                let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: userName, charName: m.character?.name, userSettings: userSettings)
-                let tokens = countTokens(message)
-                if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
-                    messageHistory = "\(message)\(messageHistory)"
-                    currentTokenCount += tokens
+                if contextTemplate == .llama3Instruct {
+                    let message = "<|start_header_id|>[\(m.fromUser ? "{{user}}" : "{{char}}")]<|end_header_id|>\n\n\(m.content)<|eot_id|>".swapPlaceholders(userName: userName, charName: m.character?.name, userSettings: userSettings)
+                    let tokens = countTokens(message)
+                    if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
+                        messageHistory = "\(message)\(messageHistory)"
+                        currentTokenCount += tokens
+                    }
+                } else {
+                    let message = "\(m.fromUser ? "{{user}}" : "{{char}}"): \(m.content)\n".swapPlaceholders(userName: userName, charName: m.character?.name, userSettings: userSettings)
+                    let tokens = countTokens(message)
+                    if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
+                        messageHistory = "\(message)\(messageHistory)"
+                        currentTokenCount += tokens
+                    }
                 }
             }
             Log.debug("Built message history, \(currentTokenCount) tokens used, \(maxContentLength - currentTokenCount) remain.")
 
+            // MARK: - Example Message History
             var exampleMessageHistory = ""
-            var exampleChats = character.exampleMessage.components(separatedBy: "<START>")
-            exampleChats = exampleChats.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
-            for m in exampleChats {
-                let tokens = countTokens(m)
-                if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
-                    exampleMessageHistory.append("### New Roleplay:\n\(m)\n")
-                    currentTokenCount += tokens
+
+            if contextTemplate != .llama3Instruct {
+                var exampleChats = character.exampleMessage.components(separatedBy: "<START>")
+                exampleChats = exampleChats.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+                for m in exampleChats {
+                    let tokens = countTokens(m)
+                    if (maxContentLength - (currentTokenCount + tokens)) >= 0 {
+                        exampleMessageHistory.append("### New Roleplay:\n\(m)\n")
+                        currentTokenCount += tokens
+                    }
                 }
             }
             Log.debug("Built message examples, \(currentTokenCount) tokens used, \(maxContentLength - currentTokenCount) remain.")
+
 
             if !exampleMessageHistory.isEmpty {
                 prompt.append(exampleMessageHistory)
                 prompt.append("\n")
             }
 
-            prompt.append("### New Roleplay:\n")
-            prompt.append(messageHistory)
-            prompt.append(postHistoryPrompt)
-
-            if imitation {
-                prompt.append("{{user}}:")
+            if contextTemplate == .llama3Instruct {
+                prompt.append(messageHistory)
+                prompt.append(postHistoryPrompt)
+                if imitation {
+                    prompt.append("<|start_header_id|>[{{user}}]<|end_header_id|>\n")
+                } else {
+                    prompt.append("<|start_header_id|>[{{char}}]<|end_header_id|>\n")
+                }
             } else {
-                prompt.append("{{char}}:")
+                prompt.append("### New Roleplay:\n")
+                prompt.append(messageHistory)
+                prompt.append(postHistoryPrompt)
+
+                if imitation {
+                    prompt.append("{{user}}:")
+                } else {
+                    prompt.append("{{char}}:")
+                }
             }
 
             prompt = prompt.swapPlaceholders(userName: userName, charName: character.name, userSettings: userSettings)
 
             Log.debug("Total token count: \(countTokens(prompt))")
 
-            var stopSequence = ["{{user}}:", "\n{{user}} "]
-            for character in chat.characters ?? [] {
-                stopSequence.append("\n\(character.name): ")
-                character.name.components(separatedBy: .whitespaces).forEach { namePart in
-                    stopSequence.append("\n\(namePart): ")
+            // MARK: - Build Stop Sequences
+            var stopSequence: [String] = []
+            if contextTemplate == .llama3Instruct {
+                stopSequence.append(contentsOf: ["\n{{user}}:", "\n{{user}}", "<|eot_id|>", "<|start_header_id|>[{{user}}]<|end_header_id|>", "<|start_header_id|>system<|end_header_id|>"])
+                for character in chat.characters ?? [] {
+                    stopSequence.append("\n\(character.name):")
+                    stopSequence.append("<|start_header_id|>[\(character.name)]<|end_header_id|>")
+                    character.name.components(separatedBy: .whitespaces).forEach { namePart in
+                        stopSequence.append("\n\(namePart): ")
+                        stopSequence.append("<|start_header_id|>[\(namePart)]<|end_header_id|>")
+                    }
+                }
+            } else {
+                stopSequence.append(contentsOf: ["{{user}}:", "\n{{user}} "])
+                for character in chat.characters ?? [] {
+                    stopSequence.append("\n\(character.name): ")
+                    character.name.components(separatedBy: .whitespaces).forEach { namePart in
+                        stopSequence.append("\n\(namePart): ")
+                    }
                 }
             }
 
