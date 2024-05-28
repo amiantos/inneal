@@ -27,8 +27,7 @@ struct ChatView: View {
     @State var showingSettingsSheet: Bool = false
     @State private var scrollID: String?
     @State var textSize: CGSize = .init(width: 10, height: 10)
-    @State var characterBeingEdited: Character?
-    @State var showingCharacterSheet: Bool = false
+    @State private var selectedCharacter: Character?
     @State var statusMessage: String = "Sending message..."
     @State private var opacityLevel = 0.0
     @State private var requestDetails: String = ""
@@ -375,19 +374,16 @@ struct ChatView: View {
                     Menu("Characters") {
                         ForEach(chat.unwrappedCharacters, id: \.self) { character in
                             Button("Edit \(character.name)", systemImage: "person") {
-                                characterBeingEdited = character
-                                showingCharacterSheet.toggle()
+                                selectedCharacter = character
                             }
                         }
                         if chat.userCharacter != nil {
                             Button("Edit \(chat.userCharacter!.name)", systemImage: "person") {
-                                characterBeingEdited = chat.userCharacter!
-                                showingCharacterSheet.toggle()
+                                selectedCharacter = chat.userCharacter!
                             }
                         } else if chat.userName == nil, userSettings.userCharacter != nil {
                             Button("Edit \(userSettings.userCharacter!.name)", systemImage: "person") {
-                                characterBeingEdited = userSettings.userCharacter!
-                                showingCharacterSheet.toggle()
+                                selectedCharacter = userSettings.userCharacter!
                             }
                         }
                     }
@@ -397,11 +393,10 @@ struct ChatView: View {
         .sheet(isPresented: $showingSettingsSheet) {
             ChatSettingsView(userSettings: userSettings, chat: chat, hordeRequest: viewModel.baseHordeRequest, hordeParams: viewModel.baseHordeParams).interactiveDismissDisabled()
         }
-        .sheet(isPresented: $showingCharacterSheet) {
-            if let character = characterBeingEdited {
-                CharacterView(character: character)
-            }
-        }
+        .sheet(item: $selectedCharacter, content: { character in
+            CharacterView(character: character)
+                .interactiveDismissDisabled()
+        })
         .sheet(isPresented: $showTextEditor, content: {
             TextEditorView(text: $textToEdit)
         })
