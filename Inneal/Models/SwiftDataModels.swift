@@ -80,7 +80,7 @@ class Chat {
     var name: String = "Unnamed Chat"
     var userName: String?
     var userCharacter: Character?
-    var allowMultilineReplies: Bool = true
+    var allowMultilineReplies: Bool = false
 
     var service: Services = Services.horde
 
