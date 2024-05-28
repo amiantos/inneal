@@ -289,20 +289,15 @@ struct ChatView: View {
                                         .opacity(showPendingMessage ? 1 : 0)
                                     Menu {
                                         Button {
-                                            requestMessage()
-                                        } label: {
-                                            Label("Automatic", systemImage: "doc.badge.plus")
-                                        }
-                                        Button {
                                             requestMessage(imitation: true)
                                         } label: {
-                                            Label("Imitate", systemImage: "doc.badge.plus")
+                                            Label("Impersonate", systemImage: "person.2.wave.2")
                                         }
                                         ForEach(chat.unwrappedCharacters, id: \.self) { character in
                                             Button {
                                                 requestMessage(fromCharacter: character)
                                             } label: {
-                                                Label("\(character.name)", systemImage: "person.badge.plus")
+                                                Label("\(character.name)", systemImage: "person.wave.2")
                                             }
                                         }
                                     } label: {
