@@ -130,6 +130,8 @@ extension ImportCharacterView {
                 await tryLoading(string)
             } else if string.contains("chub.ai") {
                 await loadTavernImageUrlString(for: string)
+            } else if string.contains("characterhub.org") {
+                await loadTavernImageUrlString(for: string)
             } else if string.contains("pygmalion.chat") {
                 await loadPygmalionChatCharacter(for: string)
             } else if string.contains(".png") {
@@ -331,7 +333,7 @@ extension ImportCharacterView {
         func loadTavernImageUrlString(for characterId: String) async {
             chubId = characterId
             if chubId.contains("https://") {
-                chubId = chubId.replacingOccurrences(of: "https://chub.ai/characters/", with: "").replacingOccurrences(of: "https://www.chub.ai/characters/", with: "").replacingOccurrences(of: "https://venus.chub.ai/characters/", with: "")
+                chubId = chubId.replacingOccurrences(of: "https://chub.ai/characters/", with: "").replacingOccurrences(of: "https://www.chub.ai/characters/", with: "").replacingOccurrences(of: "https://venus.chub.ai/characters/", with: "").replacingOccurrences(of: "https://www.characterhub.org/characters/", with: "")
             }
 
             var request = URLRequest(url: URL(string: "https://api.chub.ai/api/characters/download")!)
