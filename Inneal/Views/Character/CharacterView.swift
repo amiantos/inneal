@@ -25,14 +25,23 @@ struct CharacterView: View {
             Form {
                 Section(header: Text("Basic Information"), footer: Text("Describe the character and the universe they reside in. This description will be sent with every request, so it will be the main thing that controls the personality of your character. Use {{char}} as a place holder for your character's name, if you intend for it to be changeable by the user.")) {
                     TextField("Character Name", text: $character.name, axis: .vertical)
-                        .lineLimit(1).keyboardType(.asciiCapable)
+                        .lineLimit(1)
+                    #if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                     TextField("Description", text: $character.characterDescription, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
+                        .lineLimit(20)
+    #if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                 }
 
                 Section(header: Text("Greeting / First Message"), footer: Text("The first message sets the tone for the entire chat, and is highly influential to the personality and behavior of your character. As the chat grows, this will be discarded to make room for chat history.")) {
                     TextField("First Message", text: $character.firstMessage, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
+                        .lineLimit(20)
+#if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                 }
 
                 Section(header: Text("Alternate Greetings / First Messages"), footer: Text("Alternate greetings allow you to create multiple different scenarios for one character card. Most people use these to create chats that progress a story in some way, like episodes in the story arc of a television series.")) {
@@ -73,25 +82,46 @@ struct CharacterView: View {
 
                 Section(header: Text("Other Attributes"), footer: Text("Example dialogues should include {{user}}: and {{char}}: as prefixes.")) {
                     TextField("Scenario (Optional)", text: $character.scenario, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
+                        .lineLimit(20)
+#if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                     TextField("Personality (Optional)", text: $character.personality, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
+                        .lineLimit(20)
+#if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                     TextField("Example Messages (Optional)", text: $character.exampleMessage, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
+                        .lineLimit(20)
+#if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                 }
 
                 Section(header: Text("Metadata")) {
                     TextField("Creator Name", text: $character.creator, axis: .vertical)
-                        .lineLimit(1).keyboardType(.asciiCapable)
+                        .lineLimit(1)
+#if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                     TextField("Creator Notes (Optional)", text: $character.creatorNotes, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
+                        .lineLimit(20)
+#if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                 }
 
                 Section(header: Text("Prompt Engineering")) {
                     TextField("System Prompt (Optional)", text: $character.systemPrompt, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
+                        .lineLimit(20)
+#if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                     TextField("Post-History Instructions (Optional)", text: $character.postHistoryInstructions, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
+                        .lineLimit(20)
+#if !os(macOS)
+                        .keyboardType(.asciiCapable)
+                    #endif
                 }
 
                 if !newCharacterMode {
@@ -153,8 +183,8 @@ struct CharacterView: View {
                 }
             }
             .onAppear {
-                if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
-                    avatarImage = Image(uiImage: uiImage)
+                if let avatar = character.avatar, let uiImage = InnealImage(data: avatar) {
+                    avatarImage = Image(innealImage: uiImage)
                 }
             }
             .sheet(isPresented: $showingHelpSheet) {

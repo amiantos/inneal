@@ -41,7 +41,9 @@ struct HelpView: View {
                 }
             }
             .navigationTitle("Inneal Help")
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
     }
 }
@@ -59,7 +61,7 @@ struct HelpTextView<Content: View>: View {
             content()
         }
         .padding()
-        .background(Color(UIColor.secondarySystemFill))
+        .background(.secondary)
         .clipShape(RoundedRectangle(cornerRadius: 25.0))
         .padding([.leading, .trailing, .bottom])
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -25,7 +25,9 @@ struct CharacterHelpView: View {
                 }
             }
             .navigationTitle("Character Editor FAQ")
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
     }
 }

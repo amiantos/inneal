@@ -8,7 +8,9 @@
 import Combine
 import SwiftData
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 struct CharactersView: View {
     @Environment(\.dismiss) var dismiss

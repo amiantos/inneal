@@ -16,9 +16,11 @@ struct TextEditorView: View {
             TextEditor(text: $text)
                 .ignoresSafeArea(.container)
                 .contentMargins(.horizontal, 15.0, for: .scrollContent)
-                .keyboardType(.asciiCapable)
                 .navigationTitle("Edit Message")
+            #if !os(macOS)
+                .keyboardType(.asciiCapable)
                 .navigationBarTitleDisplayMode(.inline)
+            #endif
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Done") {

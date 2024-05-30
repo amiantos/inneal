@@ -7,7 +7,9 @@
 
 import SwiftData
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 struct CreateChatView: View {
     @Environment(\.dismiss) var dismiss
@@ -35,8 +37,8 @@ struct CreateChatView: View {
                                     .aspectRatio(2 / 3, contentMode: .fill)
                                     .foregroundColor(.clear)
                                     .overlay {
-                                        if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
-                                            Image(uiImage: uiImage)
+                                        if let avatar = character.avatar, let uiImage = InnealImage(data: avatar) {
+                                            Image(innealImage: uiImage)
                                                 .resizable()
                                                 .scaledToFill()
                                         } else {

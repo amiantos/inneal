@@ -185,7 +185,7 @@ extension Data {
         }
     }
 }
-
+#if !os(macOS)
 extension View {
     var keyboardPublisher: AnyPublisher<Bool, Never> {
         Publishers
@@ -203,6 +203,7 @@ extension View {
             .eraseToAnyPublisher()
     }
 }
+#endif
 
 func extractAllWords(from value: String?) -> [String] {
     guard let value, !value.isEmpty else {

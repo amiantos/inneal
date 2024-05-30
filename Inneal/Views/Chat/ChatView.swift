@@ -190,8 +190,8 @@ struct ChatView: View {
                                                         .padding(10)
                                                         .containerRelativeFrame([.horizontal, .vertical])
                                                         .fixedSize(horizontal: false, vertical: true)
-                                                        .foregroundColor(Color(UIColor.label))
-                                                        .background(Color(UIColor.tertiarySystemFill))
+                                                        .foregroundColor(.primary)
+                                                        .background(.tertiary)
                                                         .cornerRadius(15)
 
                                                     }.scrollTargetLayout().frame(height: textSize.height)
@@ -273,6 +273,7 @@ struct ChatView: View {
                                     .onSubmit {
                                         requestMessage()
                                     }
+                                #if !os(macOS)
                                     .onReceive(keyboardPublisher) { value in
                                         if value {
                                             Log.debug("Keyboard Shown")
@@ -283,6 +284,7 @@ struct ChatView: View {
                                             Log.debug("Keyboard Hidden")
                                         }
                                     }
+                                #endif
                                 ZStack {
                                     ProgressView()
                                         .opacity(showPendingMessage ? 1 : 0)

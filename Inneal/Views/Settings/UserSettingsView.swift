@@ -8,7 +8,9 @@
 import Foundation
 import SwiftData
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 struct UserSettingsView: View {
     @Environment(\.dismiss) var dismiss

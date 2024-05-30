@@ -36,6 +36,8 @@
 		4493BDAD2BC671C10043D523 /* ChubModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAC2BC671C10043D523 /* ChubModels.swift */; };
 		4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAE2BC671E70043D523 /* OpenAIModels.swift */; };
 		4497E89C2BE60128007503A2 /* SelectableChatLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */; };
+		44D002AF2C0930E800D9737F /* macOS-UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D002AE2C0930E800D9737F /* macOS-UIImage.swift */; };
+		44D002B12C09343500D9737F /* InnealImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D002B02C09343500D9737F /* InnealImage.swift */; };
 		44ED93CC2BBE99EA001F6E72 /* CharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */; };
 		44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79422BD777AC0000C79C /* CharacterHelpView.swift */; };
 		44FA79452BD9D10A0000C79C /* GenerationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */; };
@@ -74,6 +76,8 @@
 		4493BDAC2BC671C10043D523 /* ChubModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChubModels.swift; sourceTree = "<group>"; };
 		4493BDAE2BC671E70043D523 /* OpenAIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModels.swift; sourceTree = "<group>"; };
 		4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableChatLogView.swift; sourceTree = "<group>"; };
+		44D002AE2C0930E800D9737F /* macOS-UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "macOS-UIImage.swift"; sourceTree = "<group>"; };
+		44D002B02C09343500D9737F /* InnealImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnealImage.swift; sourceTree = "<group>"; };
 		44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterView.swift; sourceTree = "<group>"; };
 		44FA79422BD777AC0000C79C /* CharacterHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterHelpView.swift; sourceTree = "<group>"; };
 		44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationDetailsView.swift; sourceTree = "<group>"; };
@@ -211,6 +215,8 @@
 			children = (
 				44259EDE2BBFCC1900623171 /* Utilities.swift */,
 				444441A62BC8F73E009E9F3B /* Logging.swift */,
+				44D002AE2C0930E800D9737F /* macOS-UIImage.swift */,
+				44D002B02C09343500D9737F /* InnealImage.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -353,10 +359,12 @@
 				44329E912BD5C0670011A2C8 /* TextEditorView.swift in Sources */,
 				44ED93CC2BBE99EA001F6E72 /* CharacterView.swift in Sources */,
 				44330EE52BCDDF1900E5E4DF /* HelpView.swift in Sources */,
+				44D002AF2C0930E800D9737F /* macOS-UIImage.swift in Sources */,
 				4493BDAD2BC671C10043D523 /* ChubModels.swift in Sources */,
 				44259EDC2BBFCA2F00623171 /* ImportCharacterView.swift in Sources */,
 				4412EFCB2BB140B500B0E415 /* InnealApp.swift in Sources */,
 				4412EFE02BB157BE00B0E415 /* ViewModel.swift in Sources */,
+				44D002B12C09343500D9737F /* InnealImage.swift in Sources */,
 				44259EE12BC08AB700623171 /* PreviewDataController.swift in Sources */,
 				4492E4382BC3B3B800B130F2 /* ChatSettingsView.swift in Sources */,
 				441E4D5F2BCD26EF00BDF5DF /* HordeDefaults.swift in Sources */,
@@ -515,8 +523,9 @@
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -551,8 +560,9 @@
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

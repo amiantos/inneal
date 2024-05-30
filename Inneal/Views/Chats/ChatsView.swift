@@ -57,9 +57,11 @@ struct ChatsView: View {
                 UserSettingsView(userSettings: userSettings!)
             }
         }
+        #if !os(macOS)
         .fullScreenCover(isPresented: $showingIntroSheet) {
             IntroductionView()
         }
+        #endif
         .onChange(of: scenePhase) { _, newValue in
             switch newValue {
             case .active:

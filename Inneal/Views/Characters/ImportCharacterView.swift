@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 struct ImportCharacterView: View {
     @Environment(\.dismiss) var dismiss
@@ -41,14 +43,16 @@ struct ImportCharacterView: View {
                 }
                 Section("Image Preview") {
                     if let image = viewModel.avatar {
-                        Image(uiImage: UIImage(data: image)!).resizable().scaledToFit()
+                        Image(innealImage: InnealImage(data: image)!).resizable().scaledToFit()
                     } else {
                         Text("")
                     }
                 }
             }
             .navigationTitle("Import Character")
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .navigation) {
                     Button("Cancel", role: .destructive) {
@@ -140,10 +144,12 @@ extension ImportCharacterView {
         }
 
         func importFromClipboard() async {
+            #if !os(macOS)
             let pasteboard = UIPasteboard.general
             if let string = pasteboard.string {
                 await detectTypeAndImport(string: string)
             }
+            #endif
         }
 
         fileprivate func tryLoading(_ string: String) async {

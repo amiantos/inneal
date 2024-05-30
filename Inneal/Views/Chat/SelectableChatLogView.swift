@@ -32,9 +32,11 @@ struct SelectableChatLogView: View {
             TextEditor(text: $text)
                 .ignoresSafeArea(.container)
                 .contentMargins(.horizontal, 15.0, for: .scrollContent)
+            #if !os(macOS)
                 .keyboardType(.asciiCapable)
-                .navigationTitle("Text Chatlog")
                 .navigationBarTitleDisplayMode(.inline)
+            #endif
+                .navigationTitle("Text Chatlog")
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Done") {

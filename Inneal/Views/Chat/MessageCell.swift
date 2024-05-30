@@ -15,8 +15,8 @@ struct MessageCell: View {
         Text(LocalizedStringKey(contentMessage))
             .lineLimit(nil)
             .padding(10)
-            .foregroundColor(isCurrentUser ? Color.white : Color(UIColor.label))
-            .background(isCurrentUser ? Color.accentColor : Color(UIColor.secondarySystemFill))
+            .foregroundColor(isCurrentUser ? Color.white : .primary)
+            .background(isCurrentUser ? Color.accentColor : .secondary)
             .cornerRadius(15)
             .frame(maxWidth: .infinity, alignment: isCurrentUser ? .trailing : .leading)
     }

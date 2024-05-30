@@ -7,7 +7,9 @@
 
 import Foundation
 import SwiftData
+#if canImport(UIKit)
 import UIKit
+#endif
 
 @MainActor
 enum PreviewDataController {
