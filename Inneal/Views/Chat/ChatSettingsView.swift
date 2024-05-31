@@ -315,30 +315,6 @@ struct ChatSettingsView: View {
                                 ProgressView()
                                 ProgressView()
                             }
-                        }.onAppear {
-                            if currentHordeConfigObject == nil {
-                                do {
-                                    let descriptor = FetchDescriptor<APIConfiguration>(predicate: #Predicate { $0.serviceName == "horde" })
-                                    let configurations = try modelContext.fetch(descriptor)
-                                    if configurations.isEmpty {
-                                        Log.debug("Configs empty, creating")
-                                        let baseHordeConfig = APIConfiguration(serviceName: "horde", configurationData: "0000000000".data(using: .utf8)!)
-                                        modelContext.insert(baseHordeConfig)
-                                        currentHordeConfigObject = baseHordeConfig
-                                        viewModel.currentKudos = nil
-                                        viewModel.currentUserName = nil
-                                    } else if let hordeConfig = configurations.first, let configData = hordeConfig.configurationData, let keyString = String(data: configData, encoding: .utf8) {
-                                        Log.debug("Found config, loading in")
-                                        viewModel.apiKey = keyString
-                                        currentHordeConfigObject = hordeConfig
-                                        viewModel.currentKudos = nil
-                                        viewModel.currentUserName = nil
-                                    }
-                                    viewModel.onAppear()
-                                } catch {
-                                    fatalError("Unable to find or create AI Horde config")
-                                }
-                            }
                         }
                         Link("Visit AIHorde.net", destination: URL(string: "https://aihorde.net")!)
                     }
@@ -378,6 +354,29 @@ struct ChatSettingsView: View {
                 customUserName = chat.userName ?? ""
                 Task {
                     await viewModel.populateModels()
+                }
+                if currentHordeConfigObject == nil {
+                    do {
+                        let descriptor = FetchDescriptor<APIConfiguration>(predicate: #Predicate { $0.serviceName == "horde" })
+                        let configurations = try modelContext.fetch(descriptor)
+                        if configurations.isEmpty {
+                            Log.debug("Configs empty, creating")
+                            let baseHordeConfig = APIConfiguration(serviceName: "horde", configurationData: "0000000000".data(using: .utf8)!)
+                            modelContext.insert(baseHordeConfig)
+                            currentHordeConfigObject = baseHordeConfig
+                            viewModel.currentKudos = nil
+                            viewModel.currentUserName = nil
+                        } else if let hordeConfig = configurations.first, let configData = hordeConfig.configurationData, let keyString = String(data: configData, encoding: .utf8) {
+                            Log.debug("Found config, loading in")
+                            viewModel.apiKey = keyString
+                            currentHordeConfigObject = hordeConfig
+                            viewModel.currentKudos = nil
+                            viewModel.currentUserName = nil
+                        }
+                        viewModel.onAppear()
+                    } catch {
+                        fatalError("Unable to find or create AI Horde config")
+                    }
                 }
             })
         }
