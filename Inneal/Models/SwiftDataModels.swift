@@ -152,6 +152,7 @@ class ChatMessage {
         self.character = character
         self.request = request
         self.response = response
+        self.uuid = UUID()
     }
 
     var unwrappedContentAlternates: [ContentAlternate] {
