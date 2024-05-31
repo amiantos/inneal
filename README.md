@@ -7,7 +7,9 @@ Inneal is a LLM roleplay chatbot client for the [AI Horde](https://aihorde.net),
 - [x] Beautiful native iPhone and iPad interface
 - [x] Create your own chatbots or import Tavern cards from interwebs
 - [x] Intuitive "swiping" feature that the kids are all talking about
-- [x] Optional "Auto Mode" takes the guesswork out of using the Horde, and how!
+- [x] Multi-character chat gives you that voyeuristic thrill of listening in
+- [x] Persona support, so you can become whoever you want in every chat
+- [x] "Auto Mode" takes the guesswork out of using the AI Horde, so you can get to chatting
 - [x] Built with vanilla SwiftUI and SwiftData, so there's a touch of charming jank to the UX
 - [X] CloudKit syncing of chats and characters between all your devices
 
