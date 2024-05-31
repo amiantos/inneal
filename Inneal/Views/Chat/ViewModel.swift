@@ -325,7 +325,7 @@ extension ChatView {
                 stopSequence.append("\n\(character.name): ")
                 let nameParts = character.name.components(separatedBy: .whitespaces)
                 if nameParts.count > 1 {
-                    nameParts.forEach { namePart in
+                    for namePart in nameParts {
                         stopSequence.append("\n\(namePart): ")
                     }
                 }
@@ -602,7 +602,7 @@ extension ChatView {
         }
 
         func removeTrailingNewlines(_ string: String) -> String {
-            return string.replacingOccurrences(of: "\\n\\*$", with: "", options: .regularExpression)
+            string.replacingOccurrences(of: "\\n\\*$", with: "", options: .regularExpression)
         }
     }
 }

@@ -20,7 +20,7 @@ struct ChatSettingsView: View {
     @Environment(\.dismiss) var dismiss
 
     @Query(sort: [SortDescriptor(\Character.name)]) var characters: [Character]
-    
+
     var userSettings: UserSettings
 
     @State var chat: Chat

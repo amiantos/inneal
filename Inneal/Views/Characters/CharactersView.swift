@@ -78,7 +78,6 @@ struct CharactersView: View {
                                 Label("Duplicate Character", systemImage: "doc.on.doc")
                             }
 
-
                             Button(role: .destructive) {
                                 deleteCharacter(character)
                             } label: {

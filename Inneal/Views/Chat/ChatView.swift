@@ -514,7 +514,7 @@ struct ChatView: View {
         try? modelContext.save()
         Task {
             let response = await viewModel.getNewResponseToChat(statusMessage: $statusMessage, character: fromCharacter, imitation: imitation)
-            let newResponseMessage = ChatMessage(content: response.text, fromUser: imitation, chat: chat, character: (imitation ? nil : response.character), request: response.request, response: response.response)
+            let newResponseMessage = ChatMessage(content: response.text, fromUser: imitation, chat: chat, character: imitation ? nil : response.character, request: response.request, response: response.response)
             chat.dateUpdated = Date.now
             modelContext.insert(newResponseMessage)
             chat.dateUpdated = .now
