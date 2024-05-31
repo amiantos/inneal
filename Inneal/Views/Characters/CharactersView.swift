@@ -17,6 +17,8 @@ struct CharactersView: View {
     @State private var showingSheet = false
     @State private var showingNewCharacterSheet = false
     @State private var selectedCharacter: Character?
+    @State private var characterToDelete: Character?
+    @State private var showingDeleteAlert: Bool = false
 
     let columns = [
         GridItem(.adaptive(minimum: 150)),
@@ -37,6 +39,34 @@ struct CharactersView: View {
                             Divider()
 
                             Button {
+                                copyJSON(character)
+                            } label: {
+                                Label("Copy JSON", systemImage: "doc.on.doc")
+                            }
+
+                            Group {
+                                if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
+                                    ShareLink(item: character, preview: SharePreview("\(character.name).json", image: Image(uiImage: uiImage))) {
+                                        Label("Share JSON", systemImage: "square.and.arrow.up")
+                                    }
+                                } else {
+                                    ShareLink(item: character, preview: .init("Share JSON")) {
+                                        Label("Share JSON", systemImage: "square.and.arrow.up")
+                                    }
+                                }
+                            }
+
+                            Group {
+                                if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
+                                    ShareLink(item: CharacterPNGExporter(character: character), preview: SharePreview("\(character.name).png", image: Image(uiImage: uiImage))) {
+                                        Label("Share Avatar", systemImage: "square.and.arrow.up")
+                                    }
+                                }
+                            }
+
+                            Divider()
+
+                            Button {
                                 selectedCharacter = character
                             } label: {
                                 Label("Edit Character", systemImage: "square.and.pencil")
@@ -48,34 +78,11 @@ struct CharactersView: View {
                                 Label("Duplicate Character", systemImage: "doc.on.doc")
                             }
 
-                            Divider()
 
-                            Button {
-                                copyJSON(character)
+                            Button(role: .destructive) {
+                                deleteCharacter(character)
                             } label: {
-                                Label("Copy as JSON", systemImage: "doc.on.doc")
-                            }
-
-                            Divider()
-
-                            Group {
-                                if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
-                                    ShareLink(item: character, preview: SharePreview("\(character.name).json", image: Image(uiImage: uiImage))) {
-                                        Label("Share as JSON", systemImage: "square.and.arrow.up")
-                                    }
-                                } else {
-                                    ShareLink(item: character, preview: .init("Share JSON")) {
-                                        Label("Share as JSON", systemImage: "square.and.arrow.up")
-                                    }
-                                }
-                            }
-
-                            Group {
-                                if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
-                                    ShareLink(item: CharacterPNGExporter(character: character), preview: SharePreview("\(character.name).png", image: Image(uiImage: uiImage))) {
-                                        Label("Share Avatar", systemImage: "square.and.arrow.up")
-                                    }
-                                }
+                                Label("Delete Character", systemImage: "trash")
                             }
                         } label: {
                             VStack(alignment: .leading) {
@@ -156,6 +163,16 @@ struct CharactersView: View {
             CharacterView(character: newCharacter, newCharacterMode: true)
                 .interactiveDismissDisabled()
         }
+        .alert("Delete Character?", isPresented: $showingDeleteAlert) {
+            Button("OK", role: .destructive) {
+                if let character = characterToDelete {
+                    modelContext.delete(character)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Deleting characters is not recoverable. Any chat featuring this character will be deleted as well. Are you sure you want to do this?\n\n\(characterToDelete?.name ?? "Error?!") told me to tell you that they will be sad and will miss you. 🥺")
+        }
     }
 
     func copyJSON(_ character: Character) {
@@ -213,6 +230,11 @@ struct CharactersView: View {
             avatar: character.avatar
         )
         modelContext.insert(newCharacter)
+    }
+
+    func deleteCharacter(_ character: Character) {
+        characterToDelete = character
+        showingDeleteAlert = true
     }
 }
 

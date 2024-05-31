@@ -15,8 +15,8 @@ struct CharacterView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var modelContext
     @Bindable var character: Character
-    @State var showingAlert = false
     @State var showingWarningAlert = false
+    @State var showingValidationAlert = false
     @State var newCharacterMode = false
     @State var showingHelpSheet = false
 
@@ -71,15 +71,6 @@ struct CharacterView: View {
                     }
                 }
 
-                Section(header: Text("Other Attributes"), footer: Text("Example dialogues should include {{user}}: and {{char}}: as prefixes.")) {
-                    TextField("Scenario (Optional)", text: $character.scenario, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
-                    TextField("Personality (Optional)", text: $character.personality, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
-                    TextField("Example Messages (Optional)", text: $character.exampleMessage, axis: .vertical)
-                        .lineLimit(20).keyboardType(.asciiCapable)
-                }
-
                 Section(header: Text("Metadata")) {
                     TextField("Creator Name", text: $character.creator, axis: .vertical)
                         .lineLimit(1).keyboardType(.asciiCapable)
@@ -87,26 +78,17 @@ struct CharacterView: View {
                         .lineLimit(20).keyboardType(.asciiCapable)
                 }
 
-                Section(header: Text("Prompt Engineering")) {
+                Section(header: Text("Other Attributes"), footer: Text("These are optional fields that are part of the Tavern card standard, but their use is no longer commonly recommended. They are included here for only for completeness, do not feel like you have to use them.")) {
+                    TextField("Scenario (Optional)", text: $character.scenario, axis: .vertical)
+                        .lineLimit(20).keyboardType(.asciiCapable)
+                    TextField("Personality (Optional)", text: $character.personality, axis: .vertical)
+                        .lineLimit(20).keyboardType(.asciiCapable)
+                    TextField("Example Messages (Optional)", text: $character.exampleMessage, axis: .vertical)
+                        .lineLimit(20).keyboardType(.asciiCapable)
                     TextField("System Prompt (Optional)", text: $character.systemPrompt, axis: .vertical)
                         .lineLimit(20).keyboardType(.asciiCapable)
                     TextField("Post-History Instructions (Optional)", text: $character.postHistoryInstructions, axis: .vertical)
                         .lineLimit(20).keyboardType(.asciiCapable)
-                }
-
-                if !newCharacterMode {
-                    Button("Delete Character", role: .destructive) {
-                        showingAlert = true
-                    }
-                    .alert("Delete Character?", isPresented: $showingAlert) {
-                        Button("OK", role: .destructive) {
-                            modelContext.delete(character)
-                            dismiss()
-                        }
-                        Button("Cancel", role: .cancel) {}
-                    } message: {
-                        Text("Deleting characters is not recoverable. Any chat featuring this character will be deleted as well. Are you sure you want to do this?\n\n\(character.name) told me to tell you that they will be sad and will miss you. 🥺")
-                    }
                 }
             }
             .navigationTitle(Text(newCharacterMode ? "New Character" : "Editing \(character.name)"))
@@ -132,11 +114,20 @@ struct CharacterView: View {
                             showingHelpSheet.toggle()
                         }
                         Button {
-                            Log.debug("Save?")
-                            modelContext.insert(character)
-                            dismiss()
+                            Log.debug("Save requested")
+                            if character.name.isEmpty || character.characterDescription.isEmpty {
+                                showingValidationAlert.toggle()
+                            } else {
+                                modelContext.insert(character)
+                                dismiss()
+                            }
                         } label: {
                             Text("Save")
+                        }
+                        .alert("Incomplete Character!", isPresented: $showingValidationAlert) {
+                            Button("OK", role: .cancel) {}
+                        } message: {
+                            Text("Characters require a name and description.")
                         }
                     }
                 } else {
