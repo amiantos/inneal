@@ -57,7 +57,7 @@ class UserSettings {
 
 @Model
 class APIConfiguration {
-    let serviceName: String = "horde"
+    private(set) var serviceName: String = "horde"
     @Attribute(.allowsCloudEncryption) var configurationData: Data?
 
     init(serviceName: String, configurationData: Data) {
@@ -114,7 +114,7 @@ class Chat {
 
 @Model
 class ContentAlternate {
-    let uuid: UUID = UUID()
+    private(set) var uuid: UUID = UUID()
     var string: String = ""
     @Relationship var message: ChatMessage?
     var dateCreated: Date = Date.now
