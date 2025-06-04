@@ -144,7 +144,8 @@ struct ChatsView: View {
                                     }
                                     LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
                                         ForEach(0 ..< 2, id: \.self) { idx in
-                                            if let avatar = chat.unwrappedCharacters[idx].avatar,
+                                            if idx < chat.unwrappedCharacters.count,
+                                               let avatar = chat.unwrappedCharacters[idx].avatar,
                                                let image = UIImage(data: avatar)
                                             {
                                                 Image(uiImage: image)
@@ -153,7 +154,7 @@ struct ChatsView: View {
                                                     .frame(width: 30, height: 30, alignment: .center)
                                                     .cornerRadius(15)
                                                     .offset(y: idx == 0 ? -5 : 5).shadow(radius: 5)
-                                            } else {
+                                            } else if idx < chat.unwrappedCharacters.count {
                                                 Image(systemName: "person.circle.fill")
                                                     .resizable()
                                                     .scaledToFill()
