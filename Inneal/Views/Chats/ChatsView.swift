@@ -38,7 +38,7 @@ struct ChatsView: View {
             ChatList
         } detail: {
             if let selectedChat, let userSettings {
-                ChatView(for: selectedChat, modelContext: modelContext, userSettings: userSettings).id(selectedChat)
+                NewChatView(for: selectedChat, modelContext: modelContext, userSettings: userSettings).id(selectedChat)
             } else {
                 ContentUnavailableView("Use sidebar navigation", systemImage: "sidebar.left")
             }
@@ -107,6 +107,7 @@ struct ChatsView: View {
                                     .scaledToFill()
                                     .frame(width: 60, height: 60, alignment: .center)
                                     .cornerRadius(30)
+                                    .glassEffect()
                                     .padding(.trailing, 5)
                             } else {
                                 Image(systemName: "person.circle.fill")
@@ -114,6 +115,7 @@ struct ChatsView: View {
                                     .scaledToFill()
                                     .frame(width: 60, height: 60, alignment: .center)
                                     .cornerRadius(30)
+                                    .glassEffect()
                                     .padding(.trailing, 5)
                             }
                         } else {

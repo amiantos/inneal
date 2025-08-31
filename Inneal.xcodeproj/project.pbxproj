@@ -35,6 +35,7 @@
 		4493BDAD2BC671C10043D523 /* ChubModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAC2BC671C10043D523 /* ChubModels.swift */; };
 		4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAE2BC671E70043D523 /* OpenAIModels.swift */; };
 		4497E89C2BE60128007503A2 /* SelectableChatLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */; };
+		44D8FDBF2E639A23005B6B72 /* NewChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D8FDBE2E639A23005B6B72 /* NewChatView.swift */; };
 		44ED93CC2BBE99EA001F6E72 /* CharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */; };
 		44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79422BD777AC0000C79C /* CharacterHelpView.swift */; };
 		44FA79452BD9D10A0000C79C /* GenerationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */; };
@@ -72,6 +73,7 @@
 		4493BDAC2BC671C10043D523 /* ChubModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChubModels.swift; sourceTree = "<group>"; };
 		4493BDAE2BC671E70043D523 /* OpenAIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModels.swift; sourceTree = "<group>"; };
 		4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableChatLogView.swift; sourceTree = "<group>"; };
+		44D8FDBE2E639A23005B6B72 /* NewChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChatView.swift; sourceTree = "<group>"; };
 		44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterView.swift; sourceTree = "<group>"; };
 		44FA79422BD777AC0000C79C /* CharacterHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterHelpView.swift; sourceTree = "<group>"; };
 		44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationDetailsView.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 				4412EFD92BB1571A00B0E415 /* MessageCell.swift */,
 				4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */,
 				4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */,
+				44D8FDBE2E639A23005B6B72 /* NewChatView.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 			files = (
 				4412EFE42BB2238C00B0E415 /* ChatsView.swift in Sources */,
 				4493BDA82BC670DD0043D523 /* HordeModels.swift in Sources */,
+				44D8FDBF2E639A23005B6B72 /* NewChatView.swift in Sources */,
 				4412EFE62BB2356E00B0E415 /* CreateChatView.swift in Sources */,
 				44259EE32BC0963B00623171 /* Preferences.swift in Sources */,
 				44259EDF2BBFCC1900623171 /* Utilities.swift in Sources */,
@@ -503,12 +507,12 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -539,12 +543,12 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
