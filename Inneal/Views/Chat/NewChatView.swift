@@ -86,8 +86,19 @@ struct NewChatView: View {
                     .glassEffectUnion(id: "2", namespace: unionNamespace)
                     //                .disabled(showPendingMessage)
                     //                .opacity(showPendingMessage ? 0 : 1)
-                }.padding([.leading, .trailing, .top])
+                }.padding([.leading, .trailing, .top, .bottom])
             }
+        }
+        .safeAreaBar(edge: .top) {
+            Text("Requesting a new message... Lorem iupsum long string that gets truncated eventually doesn't it?")
+                .font(.footnote)
+                .padding()
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .allowsHitTesting(false)
+                .glassEffect()
+                .padding([.leading, .trailing, .bottom])
         }
     }
 }
