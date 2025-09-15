@@ -9,7 +9,8 @@ import SwiftData
 import SwiftUI
 
 struct ChatsView: View {
-    @Query(sort: [SortDescriptor(\Chat.dateUpdated, order: .reverse)]) var chats: [Chat]
+    @Query(sort: [SortDescriptor(\Chat.dateUpdated, order: .reverse)])
+    var chats: [Chat]
     @Environment(\.modelContext) var modelContext
     @State private var showingSheet = false
     @State private var showingNameAlert = false
@@ -38,9 +39,16 @@ struct ChatsView: View {
             ChatList
         } detail: {
             if let selectedChat, let userSettings {
-                NewChatView(for: selectedChat, modelContext: modelContext, userSettings: userSettings).id(selectedChat)
+                NewChatView(
+                    for: selectedChat,
+                    modelContext: modelContext,
+                    userSettings: userSettings
+                ).id(selectedChat)
             } else {
-                ContentUnavailableView("Use sidebar navigation", systemImage: "sidebar.left")
+                ContentUnavailableView(
+                    "Use sidebar navigation",
+                    systemImage: "sidebar.left"
+                )
             }
         }
         .sheet(isPresented: $showingSheet) {
@@ -71,7 +79,9 @@ struct ChatsView: View {
             }
         }
         .onChange(of: chats.count) { oldValue, newValue in
-            if (newValue - oldValue) > 0, Preferences.standard.firstTimeSetupCompleted {
+            if (newValue - oldValue) > 0,
+                Preferences.standard.firstTimeSetupCompleted
+            {
                 selectedChat = chats.first
             }
         }
@@ -79,11 +89,17 @@ struct ChatsView: View {
             do {
                 let descriptor = FetchDescriptor<UserSettings>()
                 let configurations = try modelContext.fetch(descriptor)
-                if !configurations.isEmpty, let settings = configurations.first {
+                if !configurations.isEmpty, let settings = configurations.first
+                {
                     userSettings = settings
-                    Log.debug("Loaded user settings from DB, name: \(settings.defaultUserName), character: \(settings.userCharacter?.name ?? "nil")")
+                    Log.debug(
+                        "Loaded user settings from DB, name: \(settings.defaultUserName), character: \(settings.userCharacter?.name ?? "nil")"
+                    )
                 } else {
-                    let settings = UserSettings(userCharacter: nil, defaultUserName: Preferences.standard.defaultName)
+                    let settings = UserSettings(
+                        userCharacter: nil,
+                        defaultUserName: Preferences.standard.defaultName
+                    )
                     modelContext.insert(settings)
                     userSettings = settings
                 }
@@ -99,13 +115,18 @@ struct ChatsView: View {
                 NavigationLink(value: chat) {
                     HStack {
                         if chat.unwrappedCharacters.count == 1 {
-                            if let avatar = chat.unwrappedCharacters.first!.avatar,
-                               let image = UIImage(data: avatar)
+                            if let avatar = chat.unwrappedCharacters.first!
+                                .avatar,
+                                let image = UIImage(data: avatar)
                             {
                                 Image(uiImage: image)
                                     .resizable()
                                     .scaledToFill()
-                                    .frame(width: 60, height: 60, alignment: .center)
+                                    .frame(
+                                        width: 60,
+                                        height: 60,
+                                        alignment: .center
+                                    )
                                     .cornerRadius(30)
                                     .glassEffect()
                                     .padding(.trailing, 5)
@@ -113,7 +134,11 @@ struct ChatsView: View {
                                 Image(systemName: "person.circle.fill")
                                     .resizable()
                                     .scaledToFill()
-                                    .frame(width: 60, height: 60, alignment: .center)
+                                    .frame(
+                                        width: 60,
+                                        height: 60,
+                                        alignment: .center
+                                    )
                                     .cornerRadius(30)
                                     .glassEffect()
                                     .padding(.trailing, 5)
@@ -121,54 +146,111 @@ struct ChatsView: View {
                         } else {
                             Group {
                                 ZStack {
-                                    LazyHGrid(rows: hGridItems, alignment: .center, spacing: 0) {
-                                        ForEach(2 ..< 4, id: \.self) { idx in
-                                            if chat.unwrappedCharacters.count > idx {
-                                                if let avatar = chat.unwrappedCharacters[idx].avatar,
-                                                   let image = UIImage(data: avatar)
+                                    LazyHGrid(
+                                        rows: hGridItems,
+                                        alignment: .center,
+                                        spacing: 0
+                                    ) {
+                                        ForEach(2..<4, id: \.self) { idx in
+                                            if chat.unwrappedCharacters.count
+                                                > idx
+                                            {
+                                                if let avatar =
+                                                    chat.unwrappedCharacters[
+                                                        idx
+                                                    ].avatar,
+                                                    let image = UIImage(
+                                                        data: avatar
+                                                    )
                                                 {
                                                     Image(uiImage: image)
                                                         .resizable()
                                                         .scaledToFill()
-                                                        .frame(width: 30, height: 30, alignment: .center)
+                                                        .frame(
+                                                            width: 30,
+                                                            height: 30,
+                                                            alignment: .center
+                                                        )
                                                         .cornerRadius(15)
-                                                        .offset(x: idx == 3 ? -5 : 5).shadow(radius: 5)
+                                                        .offset(
+                                                            x: idx == 3 ? -5 : 5
+                                                        ).shadow(radius: 5)
                                                 } else {
-                                                    Image(systemName: "person.circle.fill")
-                                                        .resizable()
-                                                        .scaledToFill()
-                                                        .frame(width: 30, height: 30, alignment: .center)
-                                                        .cornerRadius(15)
-                                                        .offset(x: idx == 3 ? -5 : 5).shadow(radius: 5)
+                                                    Image(
+                                                        systemName:
+                                                            "person.circle.fill"
+                                                    )
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(
+                                                        width: 30,
+                                                        height: 30,
+                                                        alignment: .center
+                                                    )
+                                                    .cornerRadius(15)
+                                                    .offset(
+                                                        x: idx == 3 ? -5 : 5
+                                                    ).shadow(radius: 5)
                                                 }
                                             }
                                         }
                                     }
-                                    LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
-                                        ForEach(0 ..< 2, id: \.self) { idx in
-                                            if idx < chat.unwrappedCharacters.count,
-                                               let avatar = chat.unwrappedCharacters[idx].avatar,
-                                               let image = UIImage(data: avatar)
+                                    LazyVGrid(
+                                        columns: gridItems,
+                                        alignment: .center,
+                                        spacing: 0
+                                    ) {
+                                        ForEach(0..<2, id: \.self) { idx in
+                                            if idx
+                                                < chat.unwrappedCharacters.count,
+                                                let avatar =
+                                                    chat.unwrappedCharacters[
+                                                        idx
+                                                    ].avatar,
+                                                let image = UIImage(
+                                                    data: avatar
+                                                )
                                             {
                                                 Image(uiImage: image)
                                                     .resizable()
                                                     .scaledToFill()
-                                                    .frame(width: 30, height: 30, alignment: .center)
+                                                    .frame(
+                                                        width: 30,
+                                                        height: 30,
+                                                        alignment: .center
+                                                    )
                                                     .cornerRadius(15)
-                                                    .offset(y: idx == 0 ? -5 : 5).shadow(radius: 5)
-                                            } else if idx < chat.unwrappedCharacters.count {
-                                                Image(systemName: "person.circle.fill")
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(width: 30, height: 30, alignment: .center)
-                                                    .cornerRadius(15)
-                                                    .offset(y: idx == 0 ? -5 : 5).shadow(radius: 5)
+                                                    .offset(
+                                                        y: idx == 0 ? -5 : 5
+                                                    ).shadow(radius: 5)
+                                            } else if idx
+                                                < chat.unwrappedCharacters.count
+                                            {
+                                                Image(
+                                                    systemName:
+                                                        "person.circle.fill"
+                                                )
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(
+                                                    width: 30,
+                                                    height: 30,
+                                                    alignment: .center
+                                                )
+                                                .cornerRadius(15)
+                                                .offset(y: idx == 0 ? -5 : 5)
+                                                .shadow(radius: 5)
                                             }
                                         }
                                     }
                                 }
                             }
-                            .frame(minWidth: 60, idealWidth: 60, minHeight: 60, idealHeight: 60)
+                            .frame(
+                                minWidth: 60,
+                                idealWidth: 60,
+                                minHeight: 60,
+                                idealHeight: 60
+                            )
                             .background(.ultraThinMaterial)
                             .fixedSize()
                             .cornerRadius(30)
@@ -179,11 +261,23 @@ struct ChatsView: View {
                                 .lineLimit(1)
                                 .font(.body.bold())
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(((chat.unwrappedMessages.last?.content ?? "") + "\n").swapPlaceholders(userName: chat.userName, charName: chat.unwrappedMessages.last?.character?.name, userSettings: userSettings ?? UserSettings(userCharacter: nil, defaultUserName: "You")))
-                                .lineLimit(2)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text(
+                                ((chat.unwrappedMessages.last?.content ?? "")
+                                    + "\n").swapPlaceholders(
+                                        userName: chat.userName,
+                                        charName: chat.unwrappedMessages.last?
+                                            .character?.name,
+                                        userSettings: userSettings
+                                            ?? UserSettings(
+                                                userCharacter: nil,
+                                                defaultUserName: "You"
+                                            )
+                                    )
+                            )
+                            .lineLimit(2)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
                 }
@@ -204,7 +298,10 @@ struct ChatsView: View {
                 Button {
                     showingCharactersSheet.toggle()
                 } label: {
-                    Label("Characters", systemImage: "person.crop.rectangle.stack")
+                    Label(
+                        "Characters",
+                        systemImage: "person.crop.rectangle.stack"
+                    )
                 }
                 Button {
                     showingSheet.toggle()
