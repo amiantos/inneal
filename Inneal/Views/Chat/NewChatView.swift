@@ -25,6 +25,8 @@ struct NewChatView: View {
     @State private var showingChatlog: Bool = false
     @State private var batchEditModeEnabled: Bool = false
     @State private var selectedCharacter: Character?
+    @State private var keyboardShowing: Bool = false
+    @FocusState private var isTextFieldFocused: Bool
     
     @State private var currentAlternateIndex: Int = -1
     
@@ -73,41 +75,6 @@ struct NewChatView: View {
                         
                         MessageCell(contentMessage: (message == messages.last && isPendingAlternate ? "..." : (message == messages.last && !message.unwrappedContentAlternates.isEmpty && currentAlternateIndex >= 0 && currentAlternateIndex < message.unwrappedContentAlternates.count ? message.unwrappedContentAlternates[currentAlternateIndex].string : message.content)).swapPlaceholders(userName: chat.userName, charName: message.character?.name, userSettings: userSettings), isCurrentUser: message.fromUser)
                             .padding(message.fromUser ? .leading : .trailing, message.fromUser ? 30 : 0)
-                        if !message.fromUser && message == messages.last {
-                            GlassEffectContainer {
-                                HStack {
-                                    if !message.unwrappedContentAlternates.isEmpty {
-                                        Button {
-                                            if !message.unwrappedContentAlternates.isEmpty {
-                                                if currentAlternateIndex == -1 {
-                                                    currentAlternateIndex = 0
-                                                } else {
-                                                    if min(currentAlternateIndex + 1, message.unwrappedContentAlternates.count - 1) == currentAlternateIndex {
-                                                        currentAlternateIndex = -1
-                                                    } else {
-                                                        currentAlternateIndex = min(currentAlternateIndex + 1, message.unwrappedContentAlternates.count - 1)
-                                                    }
-                                                }
-                                            }
-                                        } label: {
-                                            Label("Undo", systemImage: "arrow.uturn.backward")
-                                        }
-                                        .buttonStyle(.glass)
-                                        .glassEffectUnion(id: "back-retry", namespace: buttonUnionNamespace)
-                                        .disabled(isPendingAlternate)
-                                    }
-                                    
-                                    Button {
-                                        getNewAlternateResponseToChat()
-                                    } label: {
-                                        Label("Reroll", systemImage: "dice")
-                                    }
-                                    .buttonStyle(.glass)
-                                    .glassEffectUnion(id: "back-retry", namespace: buttonUnionNamespace)
-                                    .disabled(isPendingAlternate)
-                                }
-                            }
-                        }
                     }
                 }
                 .padding([.leading, .trailing])
@@ -149,7 +116,6 @@ struct NewChatView: View {
         }
         .safeAreaBar(edge: .bottom) {
             GlassEffectContainer(spacing: 10.0) {
-            
                 HStack(spacing: 10.0) {
                     TextField("AI Horde", text: $newMessage, axis: .vertical)
                         .keyboardType(.asciiCapable)
@@ -160,7 +126,61 @@ struct NewChatView: View {
                         .onSubmit {
                             requestMessage()
                         }
+                        .onReceive(keyboardPublisher) { value in
+                            if value {
+                                Log.debug("Keyboard Shown")
+                                keyboardShowing.toggle()
+                            } else {
+                                Log.debug("Keyboard Hidden")
+                            }
+                        }
+                        .focused($isTextFieldFocused)
                     
+                    if !isTextFieldFocused, let lastMessage = messages.last, !lastMessage.fromUser {
+                        GlassEffectContainer {
+                            HStack {
+                                if !lastMessage.unwrappedContentAlternates.isEmpty {
+                                    Button {
+                                        if !lastMessage.unwrappedContentAlternates.isEmpty {
+                                            if currentAlternateIndex == -1 {
+                                                currentAlternateIndex = 0
+                                            } else {
+                                                if min(currentAlternateIndex + 1, lastMessage.unwrappedContentAlternates.count - 1) == currentAlternateIndex {
+                                                    currentAlternateIndex = -1
+                                                } else {
+                                                    currentAlternateIndex = min(currentAlternateIndex + 1, lastMessage.unwrappedContentAlternates.count - 1)
+                                                }
+                                            }
+                                        }
+                                    } label: {
+                                        Label("Undo", systemImage: "arrow.uturn.backward").labelStyle(.iconOnly).padding([.top, .bottom],  5)
+                                    }
+                                    .buttonStyle(.glass)
+                                    .glassEffectUnion(id: "back-retry", namespace: buttonUnionNamespace)
+                                    .disabled(isPendingAlternate)
+                                }
+                                
+                                if !(messages.first == messages.last) {
+                                    Button {
+                                        getNewAlternateResponseToChat()
+                                    } label: {
+                                        Label("Reroll", systemImage: "dice").labelStyle(.iconOnly).padding([.top, .bottom], 5)
+                                    }
+                                    .buttonStyle(.glass)
+                                    .glassEffectUnion(id: "back-retry", namespace: buttonUnionNamespace)
+                                    .disabled(isPendingAlternate)
+                                }
+                            }
+                        }
+                    }
+                    
+                    if isTextFieldFocused {
+                        Button {
+                            isTextFieldFocused.toggle()
+                        } label: {
+                            Label("Close", systemImage: "xmark").labelStyle(.iconOnly).padding([.top, .bottom], 5)
+                        }.buttonStyle(.glass).glassEffectUnion(id: "1", namespace: unionNamespace)
+                    }
                     
                     Menu {
                         Button {
@@ -176,7 +196,7 @@ struct NewChatView: View {
                             }
                         }
                     } label: {
-                        Image(systemName: newMessage.isEmpty ? "plus" : "arrow.up").padding(5)
+                        Image(systemName: !isTextFieldFocused ? "plus" : "arrow.up").padding([.top, .bottom], 5)
                     } primaryAction: {
                         requestMessage()
                     }
