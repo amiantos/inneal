@@ -144,10 +144,16 @@ struct NewChatView: View {
                                 )
                                 .contextMenu {
                                     Button(role: .destructive) {
-                                        deleteMessage(message: message)
+                                        if messages.last == message && !message.fromUser && currentAlternateIndex != -1 {
+                                            delete(contentAlternate: message.unwrappedContentAlternates[
+                                                currentAlternateIndex
+                                            ])
+                                        } else {
+                                            deleteMessage(message: message)
+                                        }
                                     } label: {
                                         Label(
-                                            "Delete Message",
+                                            (currentAlternateIndex != -1 ? "Delete Alternate" : "Delete Message"),
                                             systemImage: "trash"
                                         )
                                     }
@@ -177,7 +183,7 @@ struct NewChatView: View {
                                         }
                                     } label: {
                                         Label(
-                                            "Edit",
+                                            "Edit Text",
                                             systemImage: "square.and.pencil"
                                         )
                                     }
@@ -187,10 +193,21 @@ struct NewChatView: View {
                                             message.request != nil
                                         {
                                             Button {
-                                                showRequestDetails(
-                                                    message.request,
-                                                    message.response
-                                                )
+                                                if messages.last == message && !message.fromUser && currentAlternateIndex != -1 {
+                                                    showRequestDetails(
+                                                        message.unwrappedContentAlternates[
+                                                            currentAlternateIndex
+                                                        ].request,
+                                                        message.unwrappedContentAlternates[
+                                                            currentAlternateIndex
+                                                        ].response
+                                                    )
+                                                } else {
+                                                    showRequestDetails(
+                                                        message.request,
+                                                        message.response
+                                                    )
+                                                }
                                             } label: {
                                                 Label(
                                                     "Generation Details",
@@ -584,6 +601,11 @@ struct NewChatView: View {
             }
         }
         modelContext.delete(message)
+    }
+    
+    func delete(contentAlternate: ContentAlternate) {
+        currentAlternateIndex -= 1
+        modelContext.delete(contentAlternate)
     }
 
     func selectMessage(_ message: ChatMessage) {
