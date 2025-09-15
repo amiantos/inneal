@@ -129,9 +129,10 @@ struct NewChatView: View {
                         .onReceive(keyboardPublisher) { value in
                             if value {
                                 Log.debug("Keyboard Shown")
-                                keyboardShowing.toggle()
+                                keyboardShowing = true
                             } else {
                                 Log.debug("Keyboard Hidden")
+                                keyboardShowing = false
                             }
                         }
                         .focused($isTextFieldFocused)
@@ -204,7 +205,7 @@ struct NewChatView: View {
                     .glassEffectUnion(id: "2", namespace: unionNamespace)
                     //                .disabled(showPendingMessage)
                     //                .opacity(showPendingMessage ? 0 : 1)
-                }.padding([.leading, .trailing, .top, .bottom])
+                }.padding((isTextFieldFocused && keyboardShowing ? [.leading, .trailing, .top, .bottom] : [.leading, .trailing, .top]))
             }
         
         }
