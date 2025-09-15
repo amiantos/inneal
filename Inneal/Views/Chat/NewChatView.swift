@@ -162,9 +162,19 @@ struct NewChatView: View {
                                     }
 
                                     Button {
-                                        textToEdit = message.content
-                                        messageBeingEdited = message
-                                        showTextEditor.toggle()
+                                        if messages.last == message && !message.fromUser && currentAlternateIndex != -1 {
+                                            alternateTextToEdit = message.unwrappedContentAlternates[
+                                                currentAlternateIndex
+                                            ].string
+                                            alternateBeingEdited = message.unwrappedContentAlternates[
+                                                currentAlternateIndex
+                                            ]
+                                            showAlternateTextEditor.toggle()
+                                        } else {
+                                            textToEdit = message.content
+                                            messageBeingEdited = message
+                                            showTextEditor.toggle()
+                                        }
                                     } label: {
                                         Label(
                                             "Edit",
