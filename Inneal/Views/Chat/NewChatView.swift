@@ -9,25 +9,37 @@ import SwiftData
 import SwiftUI
 
 struct NewChatView: View {
-    let chat: Chat
-    var userSettings: UserSettings
-    var viewModel: ChatView.ViewModel
-    @Environment(\.modelContext) var modelContext
+    private let chat: Chat
+    private var userSettings: UserSettings
+    private var viewModel: ChatView.ViewModel
+    @Environment(\.modelContext) private var modelContext
 
-    @Query var messages: [ChatMessage]
-    @State var newMessage: String = ""
-    @State var showPendingMessage: Bool = false
-    @State var isPendingAlternate: Bool = false
-    @State var statusMessage: String = "Sending message..."
+    @Query private var messages: [ChatMessage]
+    @State private var newMessage: String = ""
+    @State private var showPendingMessage: Bool = false
+    @State private var isPendingAlternate: Bool = false
+    @State private var statusMessage: String = "Sending message..."
     @State private var opacityLevel = 0.0
 
-    @State var showingSettingsSheet: Bool = false
+    @State private var showingSettingsSheet: Bool = false
     @State private var showingConfirmationDialog: Bool = false
     @State private var showingChatlog: Bool = false
     @State private var batchEditModeEnabled: Bool = false
+    @State private var selectedForDeletion: Set<ChatMessage> = .init()
     @State private var selectedCharacter: Character?
     @State private var keyboardShowing: Bool = false
     @FocusState private var isTextFieldFocused: Bool
+
+    @State private var textToEdit: String = ""
+    @State private var showTextEditor: Bool = false
+    @State private var alternateTextToEdit: String = ""
+    @State private var showAlternateTextEditor: Bool = false
+    @State private var alternateBeingEdited: ContentAlternate?
+    @State private var messageBeingEdited: ChatMessage?
+
+    @State private var showRequestDetails: Bool = false
+    @State private var requestDetails: String = ""
+    @State private var responseDetails: String = ""
 
     @State private var currentAlternateIndex: Int = -1
 
@@ -56,25 +68,40 @@ struct NewChatView: View {
             ScrollView {
                 VStack {
                     ForEach(messages) { message in
-                        VStack {
-                            if !message.fromUser {
-                                HStack(alignment: .center) {
-                                    if let character = message.character,
-                                        let avatar = character.avatar,
-                                        let image = UIImage(data: avatar)
-                                    {
-                                        Image(uiImage: image)
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(
-                                                width: 40,
-                                                height: 40,
-                                                alignment: .leading
+                        HStack(alignment: .center, spacing: 10) {
+                            if batchEditModeEnabled {
+                                Button {
+                                    selectMessage(message)
+                                } label: {
+                                    Image(
+                                        systemName:
+                                            selectedForDeletion.contains(
+                                                message
+                                            ) ? "trash.circle" : "circle"
+                                    )
+                                }
+                            }
+                            VStack {
+                                if !message.fromUser {
+                                    HStack(alignment: .center) {
+                                        if let character = message.character,
+                                            let avatar = character.avatar,
+                                            let image = UIImage(data: avatar)
+                                        {
+                                            Image(uiImage: image)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(
+                                                    width: 40,
+                                                    height: 40,
+                                                    alignment: .leading
+                                                )
+                                                .clipShape(Circle())
+                                                .glassEffect()
+                                        } else {
+                                            Image(
+                                                systemName: "person.circle.fill"
                                             )
-                                            .clipShape(Circle())
-                                            .glassEffect()
-                                    } else {
-                                        Image(systemName: "person.circle.fill")
                                             .resizable()
                                             .scaledToFit()
                                             .frame(
@@ -84,41 +111,90 @@ struct NewChatView: View {
                                             )
                                             .clipShape(Circle())
                                             .glassEffect()
+                                        }
+                                        Text(
+                                            message.character?.name
+                                                ?? "Unknown Character"
+                                        )
+                                        .font(.footnote)
+                                        .frame(
+                                            maxWidth: .infinity,
+                                            minHeight: 30,
+                                            alignment: .leading
+                                        )
                                     }
-                                    Text(
-                                        message.character?.name
-                                            ?? "Unknown Character"
-                                    )
-                                    .font(.footnote)
-                                    .frame(
-                                        maxWidth: .infinity,
-                                        minHeight: 30,
-                                        alignment: .leading
-                                    )
                                 }
+                                MessageCell(
+                                    contentMessage: (message == messages.last
+                                        && !message.unwrappedContentAlternates
+                                            .isEmpty
+                                        && currentAlternateIndex >= 0
+                                        && currentAlternateIndex
+                                            < message.unwrappedContentAlternates
+                                            .count
+                                        ? message.unwrappedContentAlternates[
+                                            currentAlternateIndex
+                                        ].string : message.content)
+                                        .swapPlaceholders(
+                                            userName: chat.userName,
+                                            charName: message.character?.name,
+                                            userSettings: userSettings
+                                        ),
+                                    isCurrentUser: message.fromUser
+                                )
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        deleteMessage(message: message)
+                                    } label: {
+                                        Label(
+                                            "Delete Message",
+                                            systemImage: "trash"
+                                        )
+                                    }
+
+                                    Button {
+                                        copyMessageText(message: message)
+                                    } label: {
+                                        Label(
+                                            "Copy Text",
+                                            systemImage: "doc.on.doc"
+                                        )
+                                    }
+
+                                    Button {
+                                        textToEdit = message.content
+                                        messageBeingEdited = message
+                                        showTextEditor.toggle()
+                                    } label: {
+                                        Label(
+                                            "Edit",
+                                            systemImage: "square.and.pencil"
+                                        )
+                                    }
+
+                                    Group {
+                                        if !message.fromUser,
+                                            message.request != nil
+                                        {
+                                            Button {
+                                                showRequestDetails(
+                                                    message.request,
+                                                    message.response
+                                                )
+                                            } label: {
+                                                Label(
+                                                    "Generation Details",
+                                                    systemImage: "info.circle"
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(
+                                    message.fromUser ? .leading : .trailing,
+                                    message.fromUser ? 30 : 0
+                                )
                             }
-                            MessageCell(
-                                contentMessage: (message == messages.last
-                                    && !message.unwrappedContentAlternates
-                                        .isEmpty
-                                    && currentAlternateIndex >= 0
-                                    && currentAlternateIndex
-                                        < message.unwrappedContentAlternates
-                                        .count
-                                    ? message.unwrappedContentAlternates[
-                                        currentAlternateIndex
-                                    ].string : message.content)
-                                    .swapPlaceholders(
-                                        userName: chat.userName,
-                                        charName: message.character?.name,
-                                        userSettings: userSettings
-                                    ),
-                                isCurrentUser: message.fromUser
-                            )
-                            .padding(
-                                message.fromUser ? .leading : .trailing,
-                                message.fromUser ? 30 : 0
-                            )
                         }.id(message)
                     }
                     .padding([.leading, .trailing])
@@ -138,47 +214,60 @@ struct NewChatView: View {
             .navigationTitle(chat.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItemGroup(placement: .secondaryAction) {
-                    Button("Chat Settings", systemImage: "gearshape") {
-                        showingSettingsSheet.toggle()
-                    }
-                    Button("Chatlog View", systemImage: "list.clipboard") {
-                        showingChatlog.toggle()
-                    }
-                    if !showPendingMessage {
-                        Button("Batch Delete Mode", systemImage: "trash") {
-                            batchEditModeEnabled = true
+                if batchEditModeEnabled {
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button("Delete Selected", systemImage: "trash") {
+                            batchDeleteMessages()
+                        }
+                        Button("Done") {
+                            selectedForDeletion.removeAll()
+                            batchEditModeEnabled = false
                         }
                     }
-                    Menu {
-                        ForEach(chat.unwrappedCharacters, id: \.self) {
-                            character in
-                            Button(
-                                "Edit \(character.name)",
-                                systemImage: "person"
-                            ) {
-                                selectedCharacter = character
+                } else {
+                    ToolbarItemGroup(placement: .secondaryAction) {
+                        Button("Chat Settings", systemImage: "gearshape") {
+                            showingSettingsSheet.toggle()
+                        }
+                        Button("Chatlog View", systemImage: "list.clipboard") {
+                            showingChatlog.toggle()
+                        }
+                        if !showPendingMessage {
+                            Button("Batch Delete Mode", systemImage: "trash") {
+                                batchEditModeEnabled = true
                             }
                         }
-                        if chat.userCharacter != nil {
-                            Button(
-                                "Edit \(chat.userCharacter!.name)",
-                                systemImage: "person"
-                            ) {
-                                selectedCharacter = chat.userCharacter!
+                        Menu {
+                            ForEach(chat.unwrappedCharacters, id: \.self) {
+                                character in
+                                Button(
+                                    "Edit \(character.name)",
+                                    systemImage: "person"
+                                ) {
+                                    selectedCharacter = character
+                                }
                             }
-                        } else if chat.userName == nil,
-                            userSettings.userCharacter != nil
-                        {
-                            Button(
-                                "Edit \(userSettings.userCharacter!.name)",
-                                systemImage: "person"
-                            ) {
-                                selectedCharacter = userSettings.userCharacter!
+                            if chat.userCharacter != nil {
+                                Button(
+                                    "Edit \(chat.userCharacter!.name)",
+                                    systemImage: "person"
+                                ) {
+                                    selectedCharacter = chat.userCharacter!
+                                }
+                            } else if chat.userName == nil,
+                                userSettings.userCharacter != nil
+                            {
+                                Button(
+                                    "Edit \(userSettings.userCharacter!.name)",
+                                    systemImage: "person"
+                                ) {
+                                    selectedCharacter = userSettings
+                                        .userCharacter!
+                                }
                             }
+                        } label: {
+                            Label("Characters", systemImage: "person.2")
                         }
-                    } label: {
-                        Label("Characters", systemImage: "person.2")
                     }
                 }
             }
@@ -398,6 +487,27 @@ struct NewChatView: View {
                 ).interactiveDismissDisabled()
             }
             .sheet(
+                isPresented: $showTextEditor,
+                content: {
+                    TextEditorView(text: $textToEdit)
+                }
+            )
+            .sheet(
+                isPresented: $showAlternateTextEditor,
+                content: {
+                    TextEditorView(text: $alternateTextToEdit)
+                }
+            )
+            .sheet(
+                isPresented: $showRequestDetails,
+                content: {
+                    GenerationDetailsView(
+                        responseDetails: $responseDetails,
+                        requestDetails: $requestDetails
+                    )
+                }
+            )
+            .sheet(
                 item: $selectedCharacter,
                 content: { character in
                     CharacterView(character: character)
@@ -425,6 +535,62 @@ struct NewChatView: View {
                     proxy.scrollTo(messages.last, anchor: .bottom)
                 }
             }
+            .onChange(of: showTextEditor) { _, newValue in
+                if !newValue {
+                    messageBeingEdited?.content = textToEdit
+                    try? modelContext.save()
+                }
+            }
+            .onChange(of: showAlternateTextEditor) { _, newValue in
+                if !newValue {
+                    alternateBeingEdited?.string = alternateTextToEdit
+                    try? modelContext.save()
+                }
+            }
+        }
+    }
+
+    func copyMessageText(message: ChatMessage) {
+        let pasteboard = UIPasteboard.general
+        pasteboard.string = message.content.swapPlaceholders(
+            userName: chat.userName,
+            charName: message.character?.name,
+            userSettings: userSettings
+        )
+    }
+
+    func batchDeleteMessages() {
+        for message in selectedForDeletion {
+            deleteMessage(message: message)
+        }
+        selectedForDeletion.removeAll()
+        batchEditModeEnabled = false
+    }
+
+    func deleteMessage(message: ChatMessage) {
+        if !message.unwrappedContentAlternates.isEmpty {
+            for alternate in message.unwrappedContentAlternates {
+                modelContext.delete(alternate)
+            }
+        }
+        modelContext.delete(message)
+    }
+
+    func selectMessage(_ message: ChatMessage) {
+        if selectedForDeletion.contains(message) {
+            selectedForDeletion.remove(message)
+        } else {
+            selectedForDeletion.insert(message)
+        }
+    }
+
+    func showRequestDetails(_ request: String?, _ response: String?) {
+        if let request, let response {
+            let jsonRequestData = Data(request.utf8)
+            requestDetails = jsonRequestData.printJson() ?? ""
+            let jsonResponseData = Data(response.utf8)
+            responseDetails = jsonResponseData.printJson() ?? ""
+            showRequestDetails.toggle()
         }
     }
 
@@ -495,6 +661,7 @@ struct NewChatView: View {
         showPendingMessage.toggle()
         newMessage = ""
         currentAlternateIndex = -1
+        isTextFieldFocused = false
         try? modelContext.save()
         Task {
             let response = await viewModel.getNewResponseToChat(
