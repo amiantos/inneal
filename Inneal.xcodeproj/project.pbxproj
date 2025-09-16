@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		440E47BF2E79053100C6F05C /* MessageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440E47BE2E79053100C6F05C /* MessageHeader.swift */; };
 		4412EFCB2BB140B500B0E415 /* InnealApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCA2BB140B500B0E415 /* InnealApp.swift */; };
 		4412EFCD2BB140B500B0E415 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCC2BB140B500B0E415 /* ChatView.swift */; };
 		4412EFCF2BB140B600B0E415 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4412EFCE2BB140B600B0E415 /* Assets.xcassets */; };
@@ -42,6 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		440E47BE2E79053100C6F05C /* MessageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHeader.swift; sourceTree = "<group>"; };
 		4412EFC72BB140B500B0E415 /* Inneal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inneal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4412EFCA2BB140B500B0E415 /* InnealApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnealApp.swift; sourceTree = "<group>"; };
 		4412EFCC2BB140B500B0E415 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
@@ -90,6 +92,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		440E47BC2E79050600C6F05C /* Chat v2 */ = {
+			isa = PBXGroup;
+			children = (
+				44D8FDBE2E639A23005B6B72 /* NewChatView.swift */,
+				440E47BE2E79053100C6F05C /* MessageHeader.swift */,
+			);
+			path = "Chat v2";
+			sourceTree = "<group>";
+		};
 		4412EFBE2BB140B500B0E415 = {
 			isa = PBXGroup;
 			children = (
@@ -140,7 +151,6 @@
 				4412EFD92BB1571A00B0E415 /* MessageCell.swift */,
 				4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */,
 				4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */,
-				44D8FDBE2E639A23005B6B72 /* NewChatView.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -150,6 +160,7 @@
 			children = (
 				4412EFE72BB235DE00B0E415 /* Chats */,
 				4412EFE12BB220C900B0E415 /* Chat */,
+				440E47BC2E79050600C6F05C /* Chat v2 */,
 				44259EDD2BBFCB6600623171 /* Characters */,
 				4497E89D2BE61E93007503A2 /* Character */,
 				44B70AB52BC369F5001B71AA /* Settings */,
@@ -348,6 +359,7 @@
 				4412EFDE2BB1578300B0E415 /* SwiftDataModels.swift in Sources */,
 				4497E89C2BE60128007503A2 /* SelectableChatLogView.swift in Sources */,
 				44330EEA2BCF762A00E5E4DF /* IntroductionView.swift in Sources */,
+				440E47BF2E79053100C6F05C /* MessageHeader.swift in Sources */,
 				444441A72BC8F73E009E9F3B /* Logging.swift in Sources */,
 				44259EDA2BBFC7FC00623171 /* CharactersView.swift in Sources */,
 				44329E912BD5C0670011A2C8 /* TextEditorView.swift in Sources */,
