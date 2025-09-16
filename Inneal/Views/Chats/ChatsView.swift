@@ -22,6 +22,7 @@ struct ChatsView: View {
     @State private var showingPersonaSheet = false
     @State private var selectedChat: Chat?
     @State private var userSettings: UserSettings?
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     let gridItems = [
         GridItem(.fixed(30), spacing: -5, alignment: .leading),
@@ -38,13 +39,28 @@ struct ChatsView: View {
             ChatList
         } detail: {
             if let selectedChat, let userSettings {
-                NewChatView(for: selectedChat, modelContext: modelContext, userSettings: userSettings).id(selectedChat)
+                NewChatView(for: selectedChat, modelContext: modelContext, userSettings: userSettings,
+                            onNewItem: { selectedCharacters in
+                    addNewChat(selectedCharacters: selectedCharacters)
+                } ).id(selectedChat)
             } else {
-                ContentUnavailableView("Use sidebar navigation", systemImage: "sidebar.left")
+                ContentUnavailableView("Use sidebar navigation", systemImage: "sidebar.left").toolbar {
+                    if horizontalSizeClass == .regular {
+                        ToolbarItemGroup(placement: .topBarLeading) {
+                            Button {
+                                showingSheet.toggle()
+                            } label: {
+                                Label("New Chat", systemImage: "square.and.pencil").labelStyle(.titleAndIcon)
+                            }
+                        }
+                    }
+                }
             }
         }
         .sheet(isPresented: $showingSheet) {
-            CreateChatView()
+            CreateChatView(onNewItem: { selectedCharacters in
+                addNewChat(selectedCharacters: selectedCharacters)
+            })
         }
         .sheet(isPresented: $showingHelpSheet) {
             HelpView()
@@ -90,6 +106,33 @@ struct ChatsView: View {
             } catch {
                 Log.error("Errorl loading or creating user settings")
             }
+        }
+    }
+    
+    private func addNewChat(selectedCharacters: [Character]) {
+        if !selectedCharacters.isEmpty {
+            guard let characterNames = selectedCharacters.compactMap({ $0.name }) as? [String] else { return }
+            let chatName = characterNames.joined(separator: " & ")
+            Log.debug("Chat Name \(chatName)")
+
+            let chat = Chat(name: chatName, characters: Array(selectedCharacters))
+            modelContext.insert(chat)
+            for character in selectedCharacters {
+                let message = ChatMessage(
+                    content: character.firstMessage,
+                    fromUser: false,
+                    chat: chat,
+                    character: character
+                )
+                modelContext.insert(message)
+
+                for greeting in character.alternateGreetings {
+                    let contentAlternate = ContentAlternate(string: greeting, message: message)
+                    modelContext.insert(contentAlternate)
+                }
+            }
+            
+            selectedChat = chat
         }
     }
 
@@ -190,13 +233,26 @@ struct ChatsView: View {
         }
         .navigationTitle("\(chats.count) Chats")
         .navigationBarTitleDisplayMode(.large)
+        .toolbar(removing: .sidebarToggle)
         .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
+            if horizontalSizeClass == .compact {
+                ToolbarSpacer(.flexible, placement: .bottomBar)
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Button {
+                        showingSheet.toggle()
+                    } label: {
+                        Label("New Chat", systemImage: "square.and.pencil").labelStyle(.iconOnly)
+                    }
+                }
+            }
+            ToolbarItemGroup(placement: .topBarLeading) {
                 Button {
                     showingHelpSheet.toggle()
                 } label: {
                     Label("Help", systemImage: "questionmark.circle")
                 }
+            }
+            ToolbarItemGroup(placement: .primaryAction) {
                 Button {
                     showingPersonaSheet.toggle()
                 } label: {
@@ -206,11 +262,6 @@ struct ChatsView: View {
                     showingCharactersSheet.toggle()
                 } label: {
                     Label("Characters", systemImage: "person.crop.rectangle.stack")
-                }
-                Button {
-                    showingSheet.toggle()
-                } label: {
-                    Label("New Chat", systemImage: "plus.bubble").labelStyle(.titleAndIcon)
                 }
             }
         }

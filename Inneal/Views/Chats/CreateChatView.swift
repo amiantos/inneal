@@ -17,6 +17,7 @@ struct CreateChatView: View {
     @Query(sort: [SortDescriptor(\Character.name)]) var characters: [Character]
     @State var selectedCharacters: Set<Character> = .init()
     @State var showingWarningAlert = false
+    let onNewItem: ([Character]) -> Void
 
     let columns = [
         GridItem(.adaptive(minimum: 150)),
@@ -126,35 +127,16 @@ struct CreateChatView: View {
 
     fileprivate func createChat() {
         if !selectedCharacters.isEmpty {
-            guard let characterNames = selectedCharacters.compactMap({ $0.name }) as? [String] else { return }
-            let chatName = characterNames.joined(separator: " & ")
-            Log.debug("Chat Name \(chatName)")
-
-            let chat = Chat(name: chatName, characters: Array(selectedCharacters))
-            if !userName.isEmpty {
-                chat.userName = userName
-            }
-            modelContext.insert(chat)
-            for character in selectedCharacters {
-                let message = ChatMessage(
-                    content: character.firstMessage,
-                    fromUser: false,
-                    chat: chat,
-                    character: character
-                )
-                modelContext.insert(message)
-
-                for greeting in character.alternateGreetings {
-                    let contentAlternate = ContentAlternate(string: greeting, message: message)
-                    modelContext.insert(contentAlternate)
-                }
-            }
-
+            onNewItem(selectedCharacters.sorted { $0.name < $1.name })
             dismiss()
         }
     }
 }
 
-#Preview {
-    CreateChatView().modelContainer(PreviewDataController.previewContainer)
-}
+//#Preview {
+//    func onNewItem(selectedCharacters: [Character]) {
+//        continue
+//    }
+//    CreateChatView(onNewItem: onNewItem).modelContainer(PreviewDataController.previewContainer)
+//}
+
