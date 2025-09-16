@@ -41,18 +41,22 @@ struct NewChatView: View {
     @State private var showRequestDetails: Bool = false
     @State private var requestDetails: String = ""
     @State private var responseDetails: String = ""
-    
+
     @State private var showingNewChatSheet: Bool = false
 
     @State private var currentAlternateIndex: Int = -1
 
     @Namespace var unionNamespace
     @Namespace var buttonUnionNamespace
-    
+
     let onNewItem: ([Character]) -> Void
 
-    init(for chat: Chat, modelContext: ModelContext, userSettings: UserSettings, onNewItem: @escaping ([Character]) -> Void)
-    {
+    init(
+        for chat: Chat,
+        modelContext: ModelContext,
+        userSettings: UserSettings,
+        onNewItem: @escaping ([Character]) -> Void
+    ) {
         Log.debug("Init ChatView for \(chat.name)")
         self.onNewItem = onNewItem
         self.chat = chat
@@ -89,7 +93,9 @@ struct NewChatView: View {
                             }
                             VStack {
                                 MessageHeader(message: message)
-                                if !isPendingAlternate || messages.last != message {
+                                if !isPendingAlternate
+                                    || messages.last != message
+                                {
                                     MessageCell(
                                         contentMessage: getMessageContent(
                                             for: message
@@ -101,10 +107,17 @@ struct NewChatView: View {
                                     }
                                     .padding(
                                         message.fromUser ? .leading : .trailing,
-                                        message.fromUser ? (horizontalSizeClass == .compact ? 30 : 80) : (horizontalSizeClass == .compact ? 30 : 80)
+                                        message.fromUser
+                                            ? (horizontalSizeClass == .compact
+                                                ? 30 : 80)
+                                            : (horizontalSizeClass == .compact
+                                                ? 30 : 80)
                                     )
                                 } else {
-                                    MessageCell(contentMessage: "*\(statusMessage)*", isCurrentUser: false)
+                                    MessageCell(
+                                        contentMessage: "*\(statusMessage)*",
+                                        isCurrentUser: false
+                                    )
                                 }
                             }
                         }.id(message)
@@ -136,7 +149,10 @@ struct NewChatView: View {
                             Button {
                                 showingNewChatSheet.toggle()
                             } label: {
-                                Label("New Chat", systemImage: "square.and.pencil").labelStyle(.titleAndIcon)
+                                Label(
+                                    "New Chat",
+                                    systemImage: "square.and.pencil"
+                                ).labelStyle(.titleAndIcon)
                             }
                         }
                     }
@@ -177,7 +193,7 @@ struct NewChatView: View {
                         }
                     }
                     ToolbarItemGroup(placement: .secondaryAction) {
-                         regularTopToolbarItems()
+                        regularTopToolbarItems()
                     }
                 }
             }
@@ -202,9 +218,10 @@ struct NewChatView: View {
                                         showingConfirmationDialog = true
                                     }
                                 } label: {
-                                    Label("Close", systemImage: "xmark").labelStyle(
-                                        .iconOnly
-                                    ).padding([.top, .bottom], 7)
+                                    Label("Close", systemImage: "xmark")
+                                        .labelStyle(
+                                            .iconOnly
+                                        ).padding([.top, .bottom], 7)
                                 }
                                 .buttonStyle(.glass)
                                 .confirmationDialog(
@@ -257,14 +274,19 @@ struct NewChatView: View {
                                 .regular.interactive(),
                                 in: RoundedRectangle(cornerRadius: 20)
                             )
-                            .glassEffectUnion(id: "1", namespace: unionNamespace)
-                            
-                            if !isTextFieldFocused, let lastMessage = messages.last,
-                               !lastMessage.fromUser
+                            .glassEffectUnion(
+                                id: "1",
+                                namespace: unionNamespace
+                            )
+
+                            if !isTextFieldFocused,
+                                let lastMessage = messages.last,
+                                !lastMessage.fromUser
                             {
                                 GlassEffectContainer {
                                     HStack {
-                                        if !lastMessage.unwrappedContentAlternates
+                                        if !lastMessage
+                                            .unwrappedContentAlternates
                                             .isEmpty
                                         {
                                             Button {
@@ -272,15 +294,17 @@ struct NewChatView: View {
                                                     .unwrappedContentAlternates
                                                     .isEmpty
                                                 {
-                                                    if currentAlternateIndex == -1 {
+                                                    if currentAlternateIndex
+                                                        == -1
+                                                    {
                                                         currentAlternateIndex =
-                                                        lastMessage
+                                                            lastMessage
                                                             .unwrappedContentAlternates
                                                             .count - 1
                                                     } else {
                                                         currentAlternateIndex =
-                                                        currentAlternateIndex
-                                                        - 1
+                                                            currentAlternateIndex
+                                                            - 1
                                                     }
                                                 }
                                             } label: {
@@ -300,10 +324,10 @@ struct NewChatView: View {
                                             )
                                             .disabled(
                                                 isPendingAlternate
-                                                || showPendingMessage
+                                                    || showPendingMessage
                                             )
                                         }
-                                        
+
                                         if !(messages.first == messages.last) {
                                             Button {
                                                 getNewAlternateResponseToChat()
@@ -324,13 +348,13 @@ struct NewChatView: View {
                                             )
                                             .disabled(
                                                 isPendingAlternate
-                                                || showPendingMessage
+                                                    || showPendingMessage
                                             )
                                         }
                                     }
                                 }
                             }
-                            
+
                             if isTextFieldFocused {
                                 if newMessage != "" {
                                     Button {
@@ -357,10 +381,15 @@ struct NewChatView: View {
                                             systemImage: "person.bubble"
                                         )
                                     }
-                                    ForEach(chat.unwrappedCharacters, id: \.self) {
+                                    ForEach(
+                                        chat.unwrappedCharacters,
+                                        id: \.self
+                                    ) {
                                         character in
                                         Button {
-                                            requestMessage(fromCharacter: character)
+                                            requestMessage(
+                                                fromCharacter: character
+                                            )
                                         } label: {
                                             Label(
                                                 "\(character.name)",
@@ -370,11 +399,14 @@ struct NewChatView: View {
                                     }
                                     Text("Generate Message")
                                 } label: {
-                                    Label("Generate Message", systemImage: "plus.bubble")
-                                        .labelStyle(.iconOnly).padding(
-                                            [.top, .bottom],
-                                            5
-                                        )
+                                    Label(
+                                        "Generate Message",
+                                        systemImage: "plus.bubble"
+                                    )
+                                    .labelStyle(.iconOnly).padding(
+                                        [.top, .bottom],
+                                        5
+                                    )
                                 }
                                 .buttonStyle(.glass)
                                 .glassEffectUnion(
@@ -386,8 +418,8 @@ struct NewChatView: View {
                             }
                         }.padding(
                             (isTextFieldFocused && keyboardShowing
-                             ? [.leading, .trailing, .top, .bottom]
-                             : [.leading, .trailing, .top])
+                                ? [.leading, .trailing, .top, .bottom]
+                                : [.leading, .trailing, .top])
                         )
                     }
                 }
@@ -805,7 +837,8 @@ struct NewChatView: View {
                 defaultUserName: "Seymour"
             ),
             onNewItem: { blah in
-            print(blah)}
+                print(blah)
+            }
         )
         .modelContainer(container)
         .navigationTitle("Seymour")
