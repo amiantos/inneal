@@ -471,7 +471,6 @@ extension ChatSettingsView {
                 let message = ChatMessage(content: "Lorem ipsum dolor sit amet. {{user}}? {{char}}? {{User}}? {{Char}}? consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", fromUser: i % 2 == 0 ? true : false, chat: chat, character: character)
                 container.mainContext.insert(message)
             }
-            try? container.mainContext.save()
 
             return ChatSettingsView(userSettings: UserSettings(userCharacter: nil, defaultUserName: "You"), chat: chat, hordeRequest: hordeRequest, hordeParams: hordeParams).modelContainer(container)
         }

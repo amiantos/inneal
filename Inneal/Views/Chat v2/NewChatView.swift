@@ -459,13 +459,11 @@ struct NewChatView: View {
             .onChange(of: showTextEditor) { _, newValue in
                 if !newValue {
                     messageBeingEdited?.content = textToEdit
-                    try? modelContext.save()
                 }
             }
             .onChange(of: showAlternateTextEditor) { _, newValue in
                 if !newValue {
                     alternateBeingEdited?.string = alternateTextToEdit
-                    try? modelContext.save()
                 }
             }
         }
@@ -721,7 +719,6 @@ struct NewChatView: View {
         newMessage = ""
         currentAlternateIndex = -1
         isTextFieldFocused = false
-        try? modelContext.save()
         Task {
             let response = await viewModel.getNewResponseToChat(
                 statusMessage: $statusMessage,
@@ -739,7 +736,6 @@ struct NewChatView: View {
             chat.dateUpdated = Date.now
             modelContext.insert(newResponseMessage)
             chat.dateUpdated = .now
-            try? modelContext.save()
             showPendingMessage.toggle()
         }
     }
