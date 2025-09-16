@@ -83,19 +83,23 @@ struct NewChatView: View {
                             }
                             VStack {
                                 MessageHeader(message: message)
-                                MessageCell(
-                                    contentMessage: getMessageContent(
-                                        for: message
-                                    ),
-                                    isCurrentUser: message.fromUser
-                                )
-                                .contextMenu {
-                                    contextMenu(for: message)
+                                if !isPendingAlternate || messages.last != message {
+                                    MessageCell(
+                                        contentMessage: getMessageContent(
+                                            for: message
+                                        ),
+                                        isCurrentUser: message.fromUser
+                                    )
+                                    .contextMenu {
+                                        contextMenu(for: message)
+                                    }
+                                    .padding(
+                                        message.fromUser ? .leading : .trailing,
+                                        message.fromUser ? 30 : 0
+                                    )
+                                } else {
+                                    MessageCell(contentMessage: "*\(statusMessage)*", isCurrentUser: false)
                                 }
-                                .padding(
-                                    message.fromUser ? .leading : .trailing,
-                                    message.fromUser ? 30 : 0
-                                )
                             }
                         }.id(message)
                     }
@@ -127,19 +131,214 @@ struct NewChatView: View {
                 }
             }
             .safeAreaBar(edge: .bottom) {
-                bottomToolbar()
-            }
-            .safeAreaBar(edge: .top) {
-                if showPendingMessage {
-                    Text(statusMessage)
-                        .padding()
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .glassEffect()
-                        .padding([.leading, .trailing])
-                        .font(.footnote)
+                GlassEffectContainer {
+                    VStack {
+                        if showPendingMessage && !isPendingAlternate {
+                            Text(statusMessage)
+                                .font(.footnote)
+                                .frame(maxWidth: .infinity)
+                                .padding([.top, .leading, .trailing])
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                        }
+                        HStack(alignment: .bottom) {
+                            if isTextFieldFocused {
+                                Button {
+                                    if newMessage == "" {
+                                        isTextFieldFocused.toggle()
+                                    } else {
+                                        showingConfirmationDialog = true
+                                    }
+                                } label: {
+                                    Label("Close", systemImage: "xmark").labelStyle(
+                                        .iconOnly
+                                    ).padding([.top, .bottom], 7)
+                                }
+                                .buttonStyle(.glass)
+                                .confirmationDialog(
+                                    "Delete drafted message?",
+                                    isPresented: $showingConfirmationDialog,
+                                    titleVisibility: .visible
+                                ) {
+                                    Button("Delete", role: .destructive) {
+                                        newMessage = ""
+                                        isTextFieldFocused.toggle()
+                                    }
+                                    Button("Cancel", role: .cancel) {
+                                        // do nothing
+                                        print("Canceled")
+                                    }
+                                }
+                            }
+                            TextField(
+                                "AI Horde",
+                                text: $newMessage,
+                                axis: .vertical
+                            )
+                            .keyboardType(.asciiCapable)
+                            .lineLimit(5)
+                            .padding(
+                                EdgeInsets(
+                                    top: 11,
+                                    leading: 10,
+                                    bottom: 11,
+                                    trailing: 10
+                                )
+                            )
+                            .onSubmit {
+                                if newMessage != "" {
+                                    requestMessage()
+                                }
+                            }
+                            .onReceive(keyboardPublisher) { value in
+                                if value {
+                                    Log.debug("Keyboard Shown")
+                                    keyboardShowing = true
+                                } else {
+                                    Log.debug("Keyboard Hidden")
+                                    keyboardShowing = false
+                                }
+                            }
+                            .focused($isTextFieldFocused)
+                            .glassEffect(
+                                .regular.interactive(),
+                                in: RoundedRectangle(cornerRadius: 20)
+                            )
+                            .glassEffectUnion(id: "1", namespace: unionNamespace)
+                            
+                            if !isTextFieldFocused, let lastMessage = messages.last,
+                               !lastMessage.fromUser
+                            {
+                                GlassEffectContainer {
+                                    HStack {
+                                        if !lastMessage.unwrappedContentAlternates
+                                            .isEmpty
+                                        {
+                                            Button {
+                                                if !lastMessage
+                                                    .unwrappedContentAlternates
+                                                    .isEmpty
+                                                {
+                                                    if currentAlternateIndex == -1 {
+                                                        currentAlternateIndex =
+                                                        lastMessage
+                                                            .unwrappedContentAlternates
+                                                            .count - 1
+                                                    } else {
+                                                        currentAlternateIndex =
+                                                        currentAlternateIndex
+                                                        - 1
+                                                    }
+                                                }
+                                            } label: {
+                                                Label(
+                                                    "Cycle Alternates",
+                                                    systemImage:
+                                                        "arrow.trianglehead.2.clockwise.rotate.90"
+                                                ).labelStyle(.iconOnly).padding(
+                                                    [.top, .bottom],
+                                                    5
+                                                )
+                                            }
+                                            .buttonStyle(.glass)
+                                            .glassEffectUnion(
+                                                id: "back-retry",
+                                                namespace: buttonUnionNamespace
+                                            )
+                                            .disabled(
+                                                isPendingAlternate
+                                                || showPendingMessage
+                                            )
+                                        }
+                                        
+                                        if !(messages.first == messages.last) {
+                                            Button {
+                                                getNewAlternateResponseToChat()
+                                            } label: {
+                                                Label(
+                                                    "New Alternate",
+                                                    systemImage: "dice"
+                                                )
+                                                .labelStyle(.iconOnly).padding(
+                                                    [.top, .bottom],
+                                                    5
+                                                )
+                                            }
+                                            .buttonStyle(.glass)
+                                            .glassEffectUnion(
+                                                id: "back-retry",
+                                                namespace: buttonUnionNamespace
+                                            )
+                                            .disabled(
+                                                isPendingAlternate
+                                                || showPendingMessage
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if isTextFieldFocused {
+                                if newMessage != "" {
+                                    Button {
+                                        requestMessage()
+                                    } label: {
+                                        Label("Send", systemImage: "arrow.up")
+                                            .labelStyle(.iconOnly).padding(
+                                                [.top, .bottom],
+                                                5
+                                            )
+                                    }
+                                    .buttonStyle(.glassProminent)
+                                    .disabled(
+                                        isPendingAlternate || showPendingMessage
+                                    )
+                                }
+                            } else {
+                                Menu {
+                                    Button {
+                                        requestMessage(imitation: true)
+                                    } label: {
+                                        Label(
+                                            "Impersonate",
+                                            systemImage: "person.bubble"
+                                        )
+                                    }
+                                    ForEach(chat.unwrappedCharacters, id: \.self) {
+                                        character in
+                                        Button {
+                                            requestMessage(fromCharacter: character)
+                                        } label: {
+                                            Label(
+                                                "\(character.name)",
+                                                systemImage: "text.bubble"
+                                            )
+                                        }
+                                    }
+                                } label: {
+                                    Label("New Message", systemImage: "plus.bubble")
+                                        .labelStyle(.iconOnly).padding(
+                                            [.top, .bottom],
+                                            5
+                                        )
+                                }
+                                .buttonStyle(.glass)
+                                .glassEffectUnion(
+                                    id: "back-retry",
+                                    namespace: buttonUnionNamespace
+                                )
+                                .disabled(isPendingAlternate)
+                                .disabled(showPendingMessage)
+                            }
+                        }.padding(
+                            (isTextFieldFocused && keyboardShowing
+                             ? [.leading, .trailing, .top, .bottom]
+                             : [.leading, .trailing, .top])
+                        )
+                    }
                 }
+
             }
             .sheet(isPresented: $showingSettingsSheet) {
                 ChatSettingsView(
@@ -188,14 +387,18 @@ struct NewChatView: View {
             )
             .onChange(of: isTextFieldFocused) { _, newValue in
                 if newValue {
-                    withAnimation {
-                        proxy.scrollTo(messages.last, anchor: .bottom)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        withAnimation {
+                            proxy.scrollTo(messages.last, anchor: .bottom)
+                        }
                     }
                 }
             }
             .onChange(of: currentAlternateIndex) { _, _ in
-                withAnimation {
-                    proxy.scrollTo(messages.last, anchor: .bottom)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    withAnimation {
+                        proxy.scrollTo(messages.last, anchor: .bottom)
+                    }
                 }
             }
             .onChange(of: showTextEditor) { _, newValue in
@@ -231,206 +434,6 @@ struct NewChatView: View {
                 charName: message.character?.name,
                 userSettings: userSettings
             )
-    }
-
-    @ViewBuilder
-    func bottomToolbar() -> some View {
-        GlassEffectContainer {
-            HStack(alignment: .bottom) {
-                if isTextFieldFocused {
-                    Button {
-                        if newMessage == "" {
-                            isTextFieldFocused.toggle()
-                        } else {
-                            showingConfirmationDialog = true
-                        }
-                    } label: {
-                        Label("Close", systemImage: "xmark").labelStyle(
-                            .iconOnly
-                        ).padding([.top, .bottom], 7)
-                    }
-                    .buttonStyle(.glass)
-                    .confirmationDialog(
-                        "Delete drafted message?",
-                        isPresented: $showingConfirmationDialog,
-                        titleVisibility: .visible
-                    ) {
-                        Button("Delete", role: .destructive) {
-                            newMessage = ""
-                            isTextFieldFocused.toggle()
-                        }
-                        Button("Cancel", role: .cancel) {
-                            // do nothing
-                            print("Canceled")
-                        }
-                    }
-                }
-                TextField(
-                    "AI Horde",
-                    text: $newMessage,
-                    axis: .vertical
-                )
-                .keyboardType(.asciiCapable)
-                .lineLimit(5)
-                .padding(
-                    EdgeInsets(
-                        top: 11,
-                        leading: 10,
-                        bottom: 11,
-                        trailing: 10
-                    )
-                )
-                .onSubmit {
-                    if newMessage != "" {
-                        requestMessage()
-                    }
-                }
-                .onReceive(keyboardPublisher) { value in
-                    if value {
-                        Log.debug("Keyboard Shown")
-                        keyboardShowing = true
-                    } else {
-                        Log.debug("Keyboard Hidden")
-                        keyboardShowing = false
-                    }
-                }
-                .focused($isTextFieldFocused)
-                .glassEffect(
-                    .regular.interactive(),
-                    in: RoundedRectangle(cornerRadius: 20)
-                )
-                .glassEffectUnion(id: "1", namespace: unionNamespace)
-
-                if !isTextFieldFocused, let lastMessage = messages.last,
-                    !lastMessage.fromUser
-                {
-                    GlassEffectContainer {
-                        HStack {
-                            if !lastMessage.unwrappedContentAlternates
-                                .isEmpty
-                            {
-                                Button {
-                                    if !lastMessage
-                                        .unwrappedContentAlternates
-                                        .isEmpty
-                                    {
-                                        if currentAlternateIndex == -1 {
-                                            currentAlternateIndex =
-                                                lastMessage
-                                                .unwrappedContentAlternates
-                                                .count - 1
-                                        } else {
-                                            currentAlternateIndex =
-                                                currentAlternateIndex
-                                                - 1
-                                        }
-                                    }
-                                } label: {
-                                    Label(
-                                        "Cycle Alternates",
-                                        systemImage:
-                                            "arrow.trianglehead.2.clockwise.rotate.90"
-                                    ).labelStyle(.iconOnly).padding(
-                                        [.top, .bottom],
-                                        5
-                                    )
-                                }
-                                .buttonStyle(.glass)
-                                .glassEffectUnion(
-                                    id: "back-retry",
-                                    namespace: buttonUnionNamespace
-                                )
-                                .disabled(
-                                    isPendingAlternate
-                                        || showPendingMessage
-                                )
-                            }
-
-                            if !(messages.first == messages.last) {
-                                Button {
-                                    getNewAlternateResponseToChat()
-                                } label: {
-                                    Label(
-                                        "New Alternate",
-                                        systemImage: "dice"
-                                    )
-                                    .labelStyle(.iconOnly).padding(
-                                        [.top, .bottom],
-                                        5
-                                    )
-                                }
-                                .buttonStyle(.glass)
-                                .glassEffectUnion(
-                                    id: "back-retry",
-                                    namespace: buttonUnionNamespace
-                                )
-                                .disabled(
-                                    isPendingAlternate
-                                        || showPendingMessage
-                                )
-                            }
-                        }
-                    }
-                }
-
-                if isTextFieldFocused {
-                    if newMessage != "" {
-                        Button {
-                            requestMessage()
-                        } label: {
-                            Label("Send", systemImage: "arrow.up")
-                                .labelStyle(.iconOnly).padding(
-                                    [.top, .bottom],
-                                    5
-                                )
-                        }
-                        .buttonStyle(.glassProminent)
-                        .disabled(
-                            isPendingAlternate || showPendingMessage
-                        )
-                    }
-                } else {
-                    Menu {
-                        Button {
-                            requestMessage(imitation: true)
-                        } label: {
-                            Label(
-                                "Impersonate",
-                                systemImage: "person.bubble"
-                            )
-                        }
-                        ForEach(chat.unwrappedCharacters, id: \.self) {
-                            character in
-                            Button {
-                                requestMessage(fromCharacter: character)
-                            } label: {
-                                Label(
-                                    "\(character.name)",
-                                    systemImage: "text.bubble"
-                                )
-                            }
-                        }
-                    } label: {
-                        Label("New Message", systemImage: "plus.bubble")
-                            .labelStyle(.iconOnly).padding(
-                                [.top, .bottom],
-                                5
-                            )
-                    }
-                    .buttonStyle(.glass)
-                    .glassEffectUnion(
-                        id: "back-retry",
-                        namespace: buttonUnionNamespace
-                    )
-                    .disabled(isPendingAlternate)
-                    .disabled(showPendingMessage)
-                }
-            }.padding(
-                (isTextFieldFocused && keyboardShowing
-                    ? [.leading, .trailing, .top, .bottom]
-                    : [.leading, .trailing, .top])
-            )
-        }
     }
 
     @ViewBuilder
