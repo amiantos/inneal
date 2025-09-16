@@ -27,7 +27,6 @@ struct MessageHeader: View {
                             alignment: .leading
                         )
                         .clipShape(Circle())
-                        .glassEffect()
                 } else {
                     Image(
                         systemName: "person.circle.fill"
@@ -40,7 +39,6 @@ struct MessageHeader: View {
                         alignment: .leading
                     )
                     .clipShape(Circle())
-                    .glassEffect()
                 }
                 Text(
                     message.character?.name

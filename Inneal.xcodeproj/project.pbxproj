@@ -97,6 +97,7 @@
 			children = (
 				44D8FDBE2E639A23005B6B72 /* NewChatView.swift */,
 				440E47BE2E79053100C6F05C /* MessageHeader.swift */,
+				4412EFD92BB1571A00B0E415 /* MessageCell.swift */,
 			);
 			path = "Chat v2";
 			sourceTree = "<group>";
@@ -148,7 +149,6 @@
 			children = (
 				4412EFCC2BB140B500B0E415 /* ChatView.swift */,
 				4412EFDF2BB157BE00B0E415 /* ViewModel.swift */,
-				4412EFD92BB1571A00B0E415 /* MessageCell.swift */,
 				4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */,
 				4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */,
 			);

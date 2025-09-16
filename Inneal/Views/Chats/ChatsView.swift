@@ -107,7 +107,6 @@ struct ChatsView: View {
                                     .scaledToFill()
                                     .frame(width: 60, height: 60, alignment: .center)
                                     .cornerRadius(30)
-                                    .glassEffect()
                                     .padding(.trailing, 5)
                             } else {
                                 Image(systemName: "person.circle.fill")
@@ -115,7 +114,6 @@ struct ChatsView: View {
                                     .scaledToFill()
                                     .frame(width: 60, height: 60, alignment: .center)
                                     .cornerRadius(30)
-                                    .glassEffect()
                                     .padding(.trailing, 5)
                             }
                         } else {
