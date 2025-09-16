@@ -13,6 +13,7 @@ struct NewChatView: View {
     private var userSettings: UserSettings
     private var viewModel: ChatView.ViewModel
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     @Query private var messages: [ChatMessage]
     @State private var newMessage: String = ""
@@ -95,7 +96,7 @@ struct NewChatView: View {
                                     }
                                     .padding(
                                         message.fromUser ? .leading : .trailing,
-                                        message.fromUser ? 30 : 0
+                                        message.fromUser ? (horizontalSizeClass == .compact ? 30 : 80) : (horizontalSizeClass == .compact ? 30 : 80)
                                     )
                                 } else {
                                     MessageCell(contentMessage: "*\(statusMessage)*", isCurrentUser: false)
@@ -306,7 +307,7 @@ struct NewChatView: View {
                                         requestMessage(imitation: true)
                                     } label: {
                                         Label(
-                                            "Impersonate",
+                                            "You (Impersonate)",
                                             systemImage: "person.bubble"
                                         )
                                     }
@@ -321,8 +322,9 @@ struct NewChatView: View {
                                             )
                                         }
                                     }
+                                    Text("Generate Message")
                                 } label: {
-                                    Label("New Message", systemImage: "plus.bubble")
+                                    Label("Generate Message", systemImage: "plus.bubble")
                                         .labelStyle(.iconOnly).padding(
                                             [.top, .bottom],
                                             5
