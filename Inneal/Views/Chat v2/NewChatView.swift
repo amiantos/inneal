@@ -67,7 +67,7 @@ struct NewChatView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                VStack {
+                VStack(spacing: 10) {
                     ForEach(messages) { message in
                         HStack(alignment: .center, spacing: 10) {
                             if batchEditModeEnabled {
