@@ -227,6 +227,7 @@ struct NewChatView: View {
                                 text: $newMessage,
                                 axis: .vertical
                             )
+                            .focused($isTextFieldFocused)
                             .keyboardType(.asciiCapable)
                             .lineLimit(5)
                             .padding(
@@ -246,12 +247,12 @@ struct NewChatView: View {
                                 if value {
                                     Log.debug("Keyboard Shown")
                                     keyboardShowing = true
+                                    isTextFieldFocused = true
                                 } else {
                                     Log.debug("Keyboard Hidden")
                                     keyboardShowing = false
                                 }
                             }
-                            .focused($isTextFieldFocused)
                             .glassEffect(
                                 .regular.interactive(),
                                 in: RoundedRectangle(cornerRadius: 20)
