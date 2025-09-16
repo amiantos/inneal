@@ -169,7 +169,6 @@ struct ChatsView: View {
                                 }
                             }
                             .frame(minWidth: 60, idealWidth: 60, minHeight: 60, idealHeight: 60)
-                            .background(.ultraThinMaterial)
                             .fixedSize()
                             .cornerRadius(30)
                             .padding(.trailing, 5)
