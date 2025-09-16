@@ -740,71 +740,73 @@ struct NewChatView: View {
         }
     }
 }
-//
-//#Preview {
-//    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-//    let container = try! ModelContainer(for: Chat.self, configurations: config)
-//    let modelContext = container.mainContext
-//    let character = Character(
-//        name: "Bradley Root",
-//        characterDescription: "Bradley is a software engineer",
-//        personality: "",
-//        firstMessage: "Hi! I'm Bradley!",
-//        exampleMessage: "",
-//        scenario: "",
-//        creatorNotes: "",
-//        systemPrompt: "",
-//        postHistoryInstructions: "",
-//        alternateGreetings: [],
-//        tags: [],
-//        creator: "Brad Root",
-//        characterVersion: "main",
-//        chubId: "",
-//        avatar: UIImage(named: "brad-drawn")!.pngData()!
-//    )
-//    container.mainContext.insert(character)
-//    let chat = Chat(name: "Chat Name", characters: [character])
-//    container.mainContext.insert(chat)
-//    for i in 1..<10 {
-//        let message = ChatMessage(
-//            content:
-//                "Lorem ipsum dolor sit amet. {{user}}? {{char}}? {{User}}? {{Char}}? consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-//            fromUser: i % 2 == 0 ? true : false,
-//            chat: chat,
-//            character: character
-//        )
-//        message.contentAlternates = [
-//            ContentAlternate(
-//                string: "Blah",
-//                message: message,
-//                request: nil,
-//                response: nil
-//            ),
-//            ContentAlternate(
-//                string: "Blah 2",
-//                message: message,
-//                request: nil,
-//                response: nil
-//            ),
-//            ContentAlternate(
-//                string: "Blah 3",
-//                message: message,
-//                request: nil,
-//                response: nil
-//            ),
-//        ]
-//        container.mainContext.insert(message)
-//    }
-//    return NavigationStack {
-//        NewChatView(
-//            for: chat,
-//            modelContext: modelContext,
-//            userSettings: UserSettings(
-//                userCharacter: nil,
-//                defaultUserName: "Seymour"
-//            )
-//        )
-//        .modelContainer(container)
-//        .navigationTitle("Seymour")
-//    }
-//}
+
+#Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Chat.self, configurations: config)
+    let modelContext = container.mainContext
+    let character = Character(
+        name: "Bradley Root",
+        characterDescription: "Bradley is a software engineer",
+        personality: "",
+        firstMessage: "Hi! I'm Bradley!",
+        exampleMessage: "",
+        scenario: "",
+        creatorNotes: "",
+        systemPrompt: "",
+        postHistoryInstructions: "",
+        alternateGreetings: [],
+        tags: [],
+        creator: "Brad Root",
+        characterVersion: "main",
+        chubId: "",
+        avatar: UIImage(named: "brad-drawn")!.pngData()!
+    )
+    container.mainContext.insert(character)
+    let chat = Chat(name: "Chat Name", characters: [character])
+    container.mainContext.insert(chat)
+    for i in 1..<10 {
+        let message = ChatMessage(
+            content:
+                "Lorem ipsum dolor sit amet. {{user}}? {{char}}? {{User}}? {{Char}}? consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            fromUser: i % 2 == 0 ? true : false,
+            chat: chat,
+            character: character
+        )
+        message.contentAlternates = [
+            ContentAlternate(
+                string: "Blah",
+                message: message,
+                request: nil,
+                response: nil
+            ),
+            ContentAlternate(
+                string: "Blah 2",
+                message: message,
+                request: nil,
+                response: nil
+            ),
+            ContentAlternate(
+                string: "Blah 3",
+                message: message,
+                request: nil,
+                response: nil
+            ),
+        ]
+        container.mainContext.insert(message)
+    }
+    return NavigationStack {
+        NewChatView(
+            for: chat,
+            modelContext: modelContext,
+            userSettings: UserSettings(
+                userCharacter: nil,
+                defaultUserName: "Seymour"
+            ),
+            onNewItem: { blah in
+            print(blah)}
+        )
+        .modelContainer(container)
+        .navigationTitle("Seymour")
+    }
+}

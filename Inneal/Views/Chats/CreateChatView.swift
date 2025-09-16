@@ -133,10 +133,8 @@ struct CreateChatView: View {
     }
 }
 
-//#Preview {
-//    func onNewItem(selectedCharacters: [Character]) {
-//        continue
-//    }
-//    CreateChatView(onNewItem: onNewItem).modelContainer(PreviewDataController.previewContainer)
-//}
+#Preview {
+    CreateChatView(onNewItem: { blah in
+    print(blah)}).modelContainer(PreviewDataController.previewContainer)
+}
 
