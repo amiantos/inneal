@@ -125,6 +125,11 @@ struct NewChatView: View {
                         batchEditingToolbarItems()
                     }
                 } else {
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button("Chat Settings", systemImage: "gearshape") {
+                            showingSettingsSheet.toggle()
+                        }
+                    }
                     ToolbarItemGroup(placement: .secondaryAction) {
                         regularTopToolbarItems()
                     }
@@ -438,9 +443,6 @@ struct NewChatView: View {
 
     @ViewBuilder
     func regularTopToolbarItems() -> some View {
-        Button("Chat Settings", systemImage: "gearshape") {
-            showingSettingsSheet.toggle()
-        }
         Button("Chatlog View", systemImage: "list.clipboard") {
             showingChatlog.toggle()
         }
@@ -478,7 +480,7 @@ struct NewChatView: View {
                 }
             }
         } label: {
-            Label("Characters", systemImage: "person.2")
+            Label("Edit Characters", systemImage: "person.2")
         }
     }
 

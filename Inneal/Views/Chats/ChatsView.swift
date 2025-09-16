@@ -177,6 +177,7 @@ struct ChatsView: View {
                             Text(chat.name)
                                 .lineLimit(1)
                                 .font(.body.bold())
+                                .foregroundColor(.primary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             Text(((chat.unwrappedMessages.last?.content ?? "") + "\n").swapPlaceholders(userName: chat.userName, charName: chat.unwrappedMessages.last?.character?.name, userSettings: userSettings ?? UserSettings(userCharacter: nil, defaultUserName: "You")))
                                 .lineLimit(2)
@@ -188,17 +189,20 @@ struct ChatsView: View {
                 }
             }
             .onDelete(perform: deleteChats)
-            .listSectionSeparator(.hidden, edges: .top)
         }
-        .listStyle(.plain)
         .navigationTitle("\(chats.count) Chats")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .bottomBar) {
+                Button {
+                    showingHelpSheet.toggle()
+                } label: {
+                    Label("Help", systemImage: "questionmark.circle")
+                }
                 Button {
                     showingPersonaSheet.toggle()
                 } label: {
-                    Label("You", systemImage: "person")
+                    Label("Your Persona", systemImage: "person")
                 }
                 Button {
                     showingCharactersSheet.toggle()
@@ -208,14 +212,7 @@ struct ChatsView: View {
                 Button {
                     showingSheet.toggle()
                 } label: {
-                    Label("New Chat", systemImage: "square.and.pencil")
-                }
-            }
-            ToolbarItemGroup(placement: .topBarLeading) {
-                Button {
-                    showingHelpSheet.toggle()
-                } label: {
-                    Label("Help", systemImage: "questionmark.circle")
+                    Label("New Chat", systemImage: "plus.bubble").labelStyle(.titleAndIcon)
                 }
             }
         }
