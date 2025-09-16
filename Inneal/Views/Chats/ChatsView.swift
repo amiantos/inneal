@@ -86,11 +86,6 @@ struct ChatsView: View {
                 break
             }
         }
-        .onChange(of: chats.count) { oldValue, newValue in
-            if (newValue - oldValue) > 0, Preferences.standard.firstTimeSetupCompleted {
-                selectedChat = chats.first
-            }
-        }
         .onAppear {
             do {
                 let descriptor = FetchDescriptor<UserSettings>()
