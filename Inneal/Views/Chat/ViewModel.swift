@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-extension ChatView {
+extension NewChatView {
     struct ViewModelResponse {
         let text: String
         let character: Character?

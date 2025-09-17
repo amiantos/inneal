@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		440E47BF2E79053100C6F05C /* MessageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440E47BE2E79053100C6F05C /* MessageHeader.swift */; };
 		4412EFCB2BB140B500B0E415 /* InnealApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCA2BB140B500B0E415 /* InnealApp.swift */; };
-		4412EFCD2BB140B500B0E415 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCC2BB140B500B0E415 /* ChatView.swift */; };
 		4412EFCF2BB140B600B0E415 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4412EFCE2BB140B600B0E415 /* Assets.xcassets */; };
 		4412EFD22BB140B600B0E415 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4412EFD12BB140B600B0E415 /* Preview Assets.xcassets */; };
 		4412EFDA2BB1571A00B0E415 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFD92BB1571A00B0E415 /* MessageCell.swift */; };
@@ -46,7 +45,6 @@
 		440E47BE2E79053100C6F05C /* MessageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHeader.swift; sourceTree = "<group>"; };
 		4412EFC72BB140B500B0E415 /* Inneal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inneal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4412EFCA2BB140B500B0E415 /* InnealApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnealApp.swift; sourceTree = "<group>"; };
-		4412EFCC2BB140B500B0E415 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		4412EFCE2BB140B600B0E415 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4412EFD12BB140B600B0E415 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4412EFD82BB156CF00B0E415 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -92,16 +90,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		440E47BC2E79050600C6F05C /* Chat v2 */ = {
-			isa = PBXGroup;
-			children = (
-				44D8FDBE2E639A23005B6B72 /* NewChatView.swift */,
-				440E47BE2E79053100C6F05C /* MessageHeader.swift */,
-				4412EFD92BB1571A00B0E415 /* MessageCell.swift */,
-			);
-			path = "Chat v2";
-			sourceTree = "<group>";
-		};
 		4412EFBE2BB140B500B0E415 = {
 			isa = PBXGroup;
 			children = (
@@ -147,7 +135,9 @@
 		4412EFE12BB220C900B0E415 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				4412EFCC2BB140B500B0E415 /* ChatView.swift */,
+				44D8FDBE2E639A23005B6B72 /* NewChatView.swift */,
+				440E47BE2E79053100C6F05C /* MessageHeader.swift */,
+				4412EFD92BB1571A00B0E415 /* MessageCell.swift */,
 				4412EFDF2BB157BE00B0E415 /* ViewModel.swift */,
 				4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */,
 				4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */,
@@ -160,7 +150,6 @@
 			children = (
 				4412EFE72BB235DE00B0E415 /* Chats */,
 				4412EFE12BB220C900B0E415 /* Chat */,
-				440E47BC2E79050600C6F05C /* Chat v2 */,
 				44259EDD2BBFCB6600623171 /* Characters */,
 				4497E89D2BE61E93007503A2 /* Character */,
 				44B70AB52BC369F5001B71AA /* Settings */,
@@ -354,7 +343,6 @@
 				44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */,
 				4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */,
 				4412EFE92BB2750B00B0E415 /* UserSettingsView.swift in Sources */,
-				4412EFCD2BB140B500B0E415 /* ChatView.swift in Sources */,
 				4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */,
 				4412EFDE2BB1578300B0E415 /* SwiftDataModels.swift in Sources */,
 				4497E89C2BE60128007503A2 /* SelectableChatLogView.swift in Sources */,

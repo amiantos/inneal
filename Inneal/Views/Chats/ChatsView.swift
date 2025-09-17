@@ -335,8 +335,8 @@ struct ChatsView: View {
             .onDelete(perform: deleteChats)
             .listSectionSeparator(.hidden, edges: .top)
         }
-        .navigationTitle(horizontalSizeClass == .compact ? "Inneal" : "")
-        .navigationSubtitle(horizontalSizeClass == .compact ? "\(chats.count) Chats" : "")
+        .navigationTitle("Inneal")
+        .navigationSubtitle("\(chats.count) Chats")
         .navigationBarTitleDisplayMode(.inline)
         .listStyle(.inset)
         .toolbar(removing: .sidebarToggle)

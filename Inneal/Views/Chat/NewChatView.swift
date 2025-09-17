@@ -11,7 +11,7 @@ import SwiftUI
 struct NewChatView: View {
     private let chat: Chat
     private var userSettings: UserSettings
-    private var viewModel: ChatView.ViewModel
+    private var viewModel: NewChatView.ViewModel
     @Environment(\.modelContext) private var modelContext
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
@@ -66,7 +66,7 @@ struct NewChatView: View {
             sort: \.dateCreated
         )
         self.userSettings = userSettings
-        viewModel = ChatView.ViewModel(
+        viewModel = NewChatView.ViewModel(
             for: chat,
             modelContext: modelContext,
             userSettings: userSettings
