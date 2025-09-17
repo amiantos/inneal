@@ -185,7 +185,6 @@ struct ChatsView: View {
     var ChatList: some View {
         List(selection: $selectedChat) {
             ForEach(chats, id: \.self) { chat in
-                NavigationLink(value: chat) {
                     HStack {
                         if chat.unwrappedCharacters.count == 1 {
                             if let avatar = chat.unwrappedCharacters.first!
@@ -351,7 +350,6 @@ struct ChatsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
-                }
             }
             .onDelete(perform: deleteChats)
             .listSectionSeparator(.hidden, edges: .top)

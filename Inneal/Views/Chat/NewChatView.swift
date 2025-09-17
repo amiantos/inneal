@@ -326,6 +326,7 @@ struct NewChatView: View {
                                 requestMessage()
                             }
                         }
+                        #if os(iOS)
                         .onReceive(keyboardPublisher) { value in
                             if value {
                                 Log.debug("Keyboard Shown")
@@ -335,6 +336,7 @@ struct NewChatView: View {
                                 keyboardShowing = false
                             }
                         }
+                        #endif
                         .glassEffect(
                             in: RoundedRectangle(cornerRadius: 20)
                         )

@@ -11,10 +11,6 @@ extension NSColor {
     static var label: NSColor {
         return NSColor.labelColor
     }
-
-    static var secondarySystemFill: NSColor {
-        return NSColor.secondarySystemFill
-    }
 }
 
 typealias UIColor = NSColor
