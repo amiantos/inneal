@@ -748,7 +748,6 @@ struct NewChatView: View {
         showPendingMessage.toggle()
         newMessage = ""
         currentAlternateIndex = -1
-        focusedField = nil
         Task {
             let response = await viewModel.getNewResponseToChat(
                 statusMessage: $statusMessage,
