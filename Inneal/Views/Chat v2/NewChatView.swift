@@ -218,7 +218,7 @@ struct NewChatView: View {
                     }
 
                     HStack(alignment: .bottom) {
-                        if focusedField == .textField {
+                        if focusedField == .textField && keyboardShowing {
                             Button {
                                 if newMessage == "" {
                                     focusedField = nil
@@ -322,26 +322,24 @@ struct NewChatView: View {
                             in: RoundedRectangle(cornerRadius: 20)
                         )
 
-                        if focusedField == .textField {
-                            if newMessage != "" {
-                                Spacer()
-                                Button {
-                                    requestMessage()
-                                } label: {
-                                    Label("Send", systemImage: "arrow.up")
-                                        .labelStyle(.iconOnly).frame(
-                                            width: 30,
-                                            height: 30
-                                        )
-                                }
-                                .buttonStyle(.glassProminent)
-                                .disabled(
-                                    isPendingAlternate || showPendingMessage
-                                )
+                        if focusedField == .textField, newMessage != "" {
+                            Spacer()
+                            Button {
+                                requestMessage()
+                            } label: {
+                                Label("Send", systemImage: "arrow.up")
+                                    .labelStyle(.iconOnly).frame(
+                                        width: 30,
+                                        height: 30
+                                    )
                             }
+                            .buttonStyle(.glassProminent)
+                            .disabled(
+                                isPendingAlternate || showPendingMessage
+                            )
                         }
 
-                        if focusedField == nil {
+                        if newMessage == "" {
                             if let lastMessage = messages.last,
                                 !lastMessage.fromUser
                             {
