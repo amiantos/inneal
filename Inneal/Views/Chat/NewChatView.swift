@@ -721,6 +721,7 @@ struct NewChatView: View {
                 )
                 let newAlternate = ContentAlternate(
                     string: response.text,
+                    message: message,
                     request: response.request,
                     response: response.response
                 )

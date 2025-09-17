@@ -121,14 +121,7 @@ class ContentAlternate {
     var request: String?
     var response: String?
 
-    init(string: String, message: ChatMessage? = nil, request: String? = nil, response: String? = nil) {
-        self.string = string
-        self.message = message
-        self.request = request
-        self.response = response
-    }
-    
-    init(string: String, request: String? = nil, response: String? = nil) {
+    init(string: String, message: ChatMessage, request: String? = nil, response: String? = nil) {
         self.string = string
         self.message = message
         self.request = request
