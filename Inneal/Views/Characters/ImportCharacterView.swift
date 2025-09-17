@@ -50,13 +50,13 @@ struct ImportCharacterView: View {
             .navigationTitle("Import Character")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    Button("Cancel", role: .destructive) {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", systemImage: "xmark") {
                         dismiss()
-                    }.foregroundStyle(.red)
+                    }
                 }
-                ToolbarItemGroup(placement: .primaryAction) {
-                    Button("Add") {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add", systemImage: "checkmark") {
                         let character = viewModel.getCharacter()
                         modelContext.insert(character)
                         dismiss()
@@ -126,6 +126,7 @@ extension ImportCharacterView {
         var showErrorAlert: Bool = false
 
         func detectTypeAndImport(string: String) async {
+            Log.debug(string)
             if string.contains("{") {
                 await tryLoading(string)
             } else if string.contains("chub.ai") {
@@ -351,6 +352,8 @@ extension ImportCharacterView {
                 if let response = response as? HTTPURLResponse {
                     if (200 ..< 300) ~= response.statusCode {
                         return await loadData(from: data)
+                    } else {
+                        Log.debug(response)
                     }
                 }
 
@@ -378,6 +381,8 @@ extension ImportCharacterView {
                 postHistoryInstructions = imageData.postHistoryInstructions
                 creator = imageData.creator
                 characterVersion = imageData.characterVersion
+            } else {
+                Log.debug("\(data)")
             }
         }
 

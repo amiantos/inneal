@@ -142,10 +142,8 @@ struct CharactersView: View {
                     }
                 }
                 ToolbarItem(placement: .cancellationAction) {
-                    Button {
+                    Button("Cancel", systemImage: "xmark") {
                         dismiss()
-                    } label: {
-                        Text("Done")
                     }
                 }
             }

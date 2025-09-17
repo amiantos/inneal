@@ -85,12 +85,12 @@ struct CreateChatView: View {
             .navigationTitle("New Chat")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", role: .destructive) {
+                    Button("Cancel", systemImage: "xmark") {
                         dismiss()
-                    }.foregroundStyle(.red)
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Create") {
+                    Button("Create", systemImage: "checkmark") {
                         tryCreateChat()
                     }
                     .disabled(selectedCharacters.isEmpty)

@@ -95,7 +95,7 @@ struct CharacterView: View {
             .toolbar {
                 if newCharacterMode {
                     ToolbarItemGroup(placement: .cancellationAction) {
-                        Button("Cancel", role: .destructive) {
+                        Button("Cancel", systemImage: "xmark") {
                             showingWarningAlert.toggle()
                         }
                         .foregroundStyle(.red)
@@ -113,7 +113,9 @@ struct CharacterView: View {
                         Button("Help", systemImage: "questionmark.circle") {
                             showingHelpSheet.toggle()
                         }
-                        Button {
+                    }
+                    ToolbarItemGroup(placement: .confirmationAction) {
+                        Button("Save", systemImage: "checkmark") {
                             Log.debug("Save requested")
                             if character.name.isEmpty || character.characterDescription.isEmpty {
                                 showingValidationAlert.toggle()
@@ -121,8 +123,6 @@ struct CharacterView: View {
                                 modelContext.insert(character)
                                 dismiss()
                             }
-                        } label: {
-                            Text("Save")
                         }
                         .alert("Incomplete Character!", isPresented: $showingValidationAlert) {
                             Button("OK", role: .cancel) {}
@@ -137,7 +137,7 @@ struct CharacterView: View {
                         }
                     }
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Done") {
+                        Button("Close", systemImage: "xmark") {
                             dismiss()
                         }
                     }

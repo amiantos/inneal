@@ -32,7 +32,7 @@ struct GenerationDetailsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") {
+                    Button("Done", systemImage: "xmark") {
                         dismiss()
                     }
                 }

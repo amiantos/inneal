@@ -327,12 +327,12 @@ struct ChatSettingsView: View {
             .navigationTitle("Chat Settings")
             .toolbar {
                 ToolbarItemGroup(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("Cancel", systemImage: "xmark") {
                         dismiss()
                     }
                 }
                 ToolbarItemGroup(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button("Save", systemImage: "checkmark") {
                         saveSettingsToChat()
                         dismiss()
                     }

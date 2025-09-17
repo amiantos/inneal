@@ -44,7 +44,9 @@ struct UserSettingsView: View {
             .navigationTitle("About You")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: { Text("Done") }
+                    Button("Done", systemImage: "xmark") {
+                        dismiss()
+                    }
                 }
             }
             .onChange(of: userSettings.userCharacter) {

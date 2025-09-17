@@ -232,16 +232,6 @@ struct ChatsView: View {
         .listStyle(.inset)
         .toolbar(removing: .sidebarToggle)
         .toolbar {
-            if horizontalSizeClass == .compact {
-                ToolbarSpacer(.flexible, placement: .bottomBar)
-                ToolbarItemGroup(placement: .bottomBar) {
-                    Button {
-                        showingSheet.toggle()
-                    } label: {
-                        Label("New Chat", systemImage: "square.and.pencil").labelStyle(.iconOnly)
-                    }
-                }
-            }
             ToolbarItemGroup(placement: .topBarLeading) {
                 Button {
                     showingHelpSheet.toggle()
@@ -249,7 +239,7 @@ struct ChatsView: View {
                     Label("Help", systemImage: "questionmark.circle")
                 }
             }
-            ToolbarItemGroup(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .automatic) {
                 Button {
                     showingPersonaSheet.toggle()
                 } label: {
@@ -259,6 +249,16 @@ struct ChatsView: View {
                     showingCharactersSheet.toggle()
                 } label: {
                     Label("Characters", systemImage: "person.crop.rectangle.stack")
+                }
+            }
+            if horizontalSizeClass == .compact {
+                ToolbarSpacer(.flexible, placement: .primaryAction)
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button {
+                        showingSheet.toggle()
+                    } label: {
+                        Label("New Chat", systemImage: "square.and.pencil").labelStyle(.iconOnly).frame(width:30, height:30)
+                    }
                 }
             }
         }

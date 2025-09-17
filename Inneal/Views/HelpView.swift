@@ -37,7 +37,9 @@ struct HelpView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: { Text("Done") }
+                    Button("Cancel", systemImage: "xmark") {
+                        dismiss()
+                    }
                 }
             }
             .navigationTitle("Inneal Help")
