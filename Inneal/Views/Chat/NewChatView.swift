@@ -313,6 +313,7 @@ struct NewChatView: View {
                             text: $newMessage,
                             axis: .vertical
                         )
+                        .textFieldStyle(.plain)
                         .keyboardType(.asciiCapable)
                         .lineLimit(5)
                         .padding(
@@ -355,7 +356,7 @@ struct NewChatView: View {
                                         height: 30
                                     )
                             }
-                            .buttonStyle(.glassProminent)
+                            .buttonStyle(.glass)
                             .disabled(
                                 isPendingAlternate || showPendingMessage
                             )
@@ -441,11 +442,15 @@ struct NewChatView: View {
                     }
                 }
                 .padding([.leading, .trailing], (horizontalSizeClass == .regular ? 25 : nil))
+                #if os(iOS)
                 .padding(
                     (keyboardShowing
                         ? [.top, .bottom]
                         : [.top])
                 )
+                #else
+                .padding([.top, .bottom])
+                #endif
 
             }
             .sheet(isPresented: $showingSettingsSheet) {
