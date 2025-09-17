@@ -161,8 +161,52 @@ class ChatMessage {
     }
 }
 
+struct CharacterTransferData: Transferable {
+    let name: String
+    let characterDescription: String
+    let personality: String
+    let firstMessage: String
+    let exampleMessage: String
+    let scenario: String
+    let creatorNotes: String
+    let systemPrompt: String
+    let postHistoryInstructions: String
+    let alternateGreetings: [String]
+    let tags: [String]
+    let creator: String
+    let characterVersion: String
+
+    init(from character: Character) {
+        self.name = character.name
+        self.characterDescription = character.characterDescription
+        self.personality = character.personality
+        self.firstMessage = character.firstMessage
+        self.exampleMessage = character.exampleMessage
+        self.scenario = character.scenario
+        self.creatorNotes = character.creatorNotes
+        self.systemPrompt = character.systemPrompt
+        self.postHistoryInstructions = character.postHistoryInstructions
+        self.alternateGreetings = character.alternateGreetings
+        self.tags = character.tags
+        self.creator = character.creator
+        self.characterVersion = character.characterVersion
+    }
+
+    static var transferRepresentation: some TransferRepresentation {
+        let rep = DataRepresentation<CharacterTransferData>(exportedContentType: .json) { characterData in
+            let tavernData = TavernData(data: TavernCharacterData(name: characterData.name, description: characterData.characterDescription, personality: characterData.personality, firstMes: characterData.firstMessage, avatar: "", mesExample: characterData.exampleMessage, scenario: characterData.scenario, creatorNotes: characterData.creatorNotes, systemPrompt: characterData.systemPrompt, postHistoryInstructions: characterData.postHistoryInstructions, alternateGreetings: characterData.alternateGreetings, tags: characterData.tags, creator: characterData.creator, characterVersion: characterData.characterVersion), spec: "chara_card_v2", specVersion: "2.0")
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            return try! encoder.encode(tavernData)
+        }
+        return rep.suggestedFileName { obj in obj.suggestedFileName }
+    }
+
+    var suggestedFileName: String { "\(name).json" }
+}
+
 @Model
-class Character: Transferable {
+class Character {
     var name: String = ""
     var characterDescription: String = ""
     var personality: String = ""
@@ -201,34 +245,23 @@ class Character: Transferable {
         self.chubId = chubId
         self.avatar = avatar
     }
-
-    static var transferRepresentation: some TransferRepresentation {
-        let rep = DataRepresentation<Character>(exportedContentType: .json) { character in
-            let tavernData = TavernData(data: TavernCharacterData(name: character.name, description: character.characterDescription, personality: character.personality, firstMes: character.firstMessage, avatar: "", mesExample: character.exampleMessage, scenario: character.scenario, creatorNotes: character.creatorNotes, systemPrompt: character.systemPrompt, postHistoryInstructions: character.postHistoryInstructions, alternateGreetings: character.alternateGreetings, tags: character.tags, creator: character.creator, characterVersion: character.characterVersion), spec: "chara_card_v2", specVersion: "2.0")
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            return try! encoder.encode(tavernData)
-        }
-        return rep.suggestedFileName { obj in obj.suggestedFileName }
-    }
-
-    var suggestedFileName: String { "\(name).json" }
 }
 
-class CharacterPNGExporter: Transferable {
-    let character: Character
+struct CharacterPNGExporter: Transferable {
+    let characterName: String
+    let avatarData: Data?
 
     init(character: Character) {
-        self.character = character
+        self.characterName = character.name
+        self.avatarData = character.avatar
     }
 
     static var transferRepresentation: some TransferRepresentation {
-        let rep = DataRepresentation<CharacterPNGExporter>(exportedContentType: .png) { trans in
-            guard let avatar = trans.character.avatar else { return Data() }
-            return avatar
+        let rep = DataRepresentation<CharacterPNGExporter>(exportedContentType: .png) { exporter in
+            return exporter.avatarData ?? Data()
         }
         return rep.suggestedFileName { obj in obj.suggestedFileName }
     }
 
-    var suggestedFileName: String { "\(character.name).png" }
+    var suggestedFileName: String { "\(characterName).png" }
 }

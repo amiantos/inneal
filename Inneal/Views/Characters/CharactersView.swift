@@ -49,11 +49,11 @@ struct CharactersView: View {
 
                             Group {
                                 if let avatar = character.avatar, let uiImage = UIImage(data: avatar) {
-                                    ShareLink(item: character, preview: SharePreview("\(character.name).json", image: Image(uiImage: uiImage))) {
+                                    ShareLink(item: CharacterTransferData(from: character), preview: SharePreview("\(character.name).json", image: Image(uiImage: uiImage))) {
                                         Label("Share JSON", systemImage: "square.and.arrow.up")
                                     }
                                 } else {
-                                    ShareLink(item: character, preview: .init("Share JSON")) {
+                                    ShareLink(item: CharacterTransferData(from: character), preview: .init("Share JSON")) {
                                         Label("Share JSON", systemImage: "square.and.arrow.up")
                                     }
                                 }
