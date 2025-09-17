@@ -19,6 +19,7 @@ struct CharactersView: View {
     @State private var selectedCharacter: Character?
     @State private var characterToDelete: Character?
     @State private var showingDeleteAlert: Bool = false
+    let onNewItem: ([Character]) -> Void
 
     let columns = [
         GridItem(.adaptive(minimum: 150)),
@@ -191,20 +192,7 @@ struct CharactersView: View {
     }
 
     func createNewChat(_ character: Character) {
-        let chat = Chat(name: nil, characters: [character])
-        modelContext.insert(chat)
-        let message = ChatMessage(
-            content: character.firstMessage,
-            fromUser: false,
-            chat: chat,
-            character: character
-        )
-        modelContext.insert(message)
-        for greeting in character.alternateGreetings {
-            let contentAlternate = ContentAlternate(string: greeting, message: message)
-            modelContext.insert(contentAlternate)
-        }
-
+        onNewItem([character])
         dismiss()
     }
 
@@ -237,7 +225,7 @@ struct CharactersView: View {
 
 #Preview {
     NavigationStack {
-        CharactersView()
+        CharactersView(onNewItem: { blah in print(blah)})
             .modelContainer(PreviewDataController.previewContainer)
             .navigationTitle("Characters")
     }

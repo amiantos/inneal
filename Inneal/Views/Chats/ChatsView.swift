@@ -79,7 +79,9 @@ struct ChatsView: View {
             HelpView()
         }
         .sheet(isPresented: $showingCharactersSheet) {
-            CharactersView()
+            CharactersView(onNewItem: { selectedCharacters in
+                addNewChat(selectedCharacters: selectedCharacters)
+            })
         }
         .sheet(isPresented: $showingPersonaSheet) {
             if userSettings != nil {
