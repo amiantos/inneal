@@ -206,7 +206,6 @@ struct CharacterTransferData: Transferable {
 
 @Model
 class Character {
-    var uuid: UUID = UUID()
     var name: String = ""
     var characterDescription: String = ""
     var personality: String = ""
