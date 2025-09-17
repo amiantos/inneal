@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4406C7282E7B210800AFC6DE /* PlatformCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4406C7272E7B210800AFC6DE /* PlatformCompatibility.swift */; };
+		4406C72A2E7B39E400AFC6DE /* Inneal Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4406C7292E7B39E400AFC6DE /* Inneal Icon.icon */; };
 		440E47BF2E79053100C6F05C /* MessageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440E47BE2E79053100C6F05C /* MessageHeader.swift */; };
 		4412EFCB2BB140B500B0E415 /* InnealApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCA2BB140B500B0E415 /* InnealApp.swift */; };
 		4412EFCF2BB140B600B0E415 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4412EFCE2BB140B600B0E415 /* Assets.xcassets */; };
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		4406C7272E7B210800AFC6DE /* PlatformCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformCompatibility.swift; sourceTree = "<group>"; };
+		4406C7292E7B39E400AFC6DE /* Inneal Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "Inneal Icon.icon"; sourceTree = "<group>"; };
 		440E47BE2E79053100C6F05C /* MessageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHeader.swift; sourceTree = "<group>"; };
 		4412EFC72BB140B500B0E415 /* Inneal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inneal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4412EFCA2BB140B500B0E415 /* InnealApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnealApp.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				44330EE82BCF205F00E5E4DF /* Inneal.entitlements */,
+				4406C7292E7B39E400AFC6DE /* Inneal Icon.icon */,
 				4412EFD82BB156CF00B0E415 /* Info.plist */,
 				4412EFCE2BB140B600B0E415 /* Assets.xcassets */,
 				44330EE62BCE363100E5E4DF /* PrivacyInfo.xcprivacy */,
@@ -327,6 +330,7 @@
 				44330EE72BCE363100E5E4DF /* PrivacyInfo.xcprivacy in Resources */,
 				4412EFD22BB140B600B0E415 /* Preview Assets.xcassets in Resources */,
 				4412EFCF2BB140B600B0E415 /* Assets.xcassets in Resources */,
+				4406C72A2E7B39E400AFC6DE /* Inneal Icon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -495,8 +499,9 @@
 		4412EFD62BB140B600B0E415 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Inneal Icon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Inneal/Inneal.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -519,6 +524,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -536,8 +542,9 @@
 		4412EFD72BB140B600B0E415 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Inneal Icon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Inneal/Inneal.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -557,6 +564,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -313,6 +313,7 @@ struct NewChatView: View {
                             text: $newMessage,
                             axis: .vertical
                         )
+                        .textFieldStyle(.roundedBorder)
                         .keyboardType(.asciiCapable)
                         .lineLimit(5)
                         .padding(
