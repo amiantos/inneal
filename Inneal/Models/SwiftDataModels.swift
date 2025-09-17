@@ -46,7 +46,7 @@ enum Services: String, Codable, CaseIterable, Identifiable {
 
 @Model
 class UserSettings {
-    var userCharacter: Character?
+    @Relationship(inverse: \Character.userSettings) var userCharacter: Character?
     var defaultUserName: String = "You"
 
     init(userCharacter: Character?, defaultUserName: String) {
@@ -75,11 +75,11 @@ class Chat {
     var dateCreated: Date = Date.now
     var dateUpdated: Date = Date.now
     @Relationship(deleteRule: .cascade, inverse: \ChatMessage.chat) var messages: [ChatMessage]? = [ChatMessage]()
-    @Relationship var characters: [Character]? = [Character]()
+    @Relationship(inverse: \Character.chats) var characters: [Character]? = [Character]()
 
     var name: String = "Unnamed Chat"
     var userName: String?
-    var userCharacter: Character?
+    @Relationship(inverse: \Character.userChats) var userCharacter: Character?
     var allowMultilineReplies: Bool = false
 
     var service: Services = Services.horde
@@ -116,7 +116,7 @@ class Chat {
 class ContentAlternate {
     private(set) var uuid: UUID = UUID()
     var string: String = ""
-    @Relationship var message: ChatMessage?
+    @Relationship(inverse: \ChatMessage.contentAlternates) var message: ChatMessage?
     var dateCreated: Date = Date.now
     var request: String?
     var response: String?
@@ -141,7 +141,7 @@ class ChatMessage {
     var request: String?
     var response: String?
 
-    @Relationship var character: Character?
+    @Relationship(inverse: \Character.messages) var character: Character?
     @Relationship(deleteRule: .cascade, inverse: \ContentAlternate.message) var contentAlternates: [ContentAlternate]? = [ContentAlternate]()
 
     init(content: String, fromUser: Bool, chat: Chat? = nil, character: Character? = nil, request: String? = nil, response: String? = nil) {
