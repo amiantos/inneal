@@ -144,15 +144,14 @@ class ChatMessage {
     @Relationship var character: Character?
     @Relationship(deleteRule: .cascade, inverse: \ContentAlternate.message) var contentAlternates: [ContentAlternate]? = [ContentAlternate]()
 
-    init(content: String, fromUser: Bool, chat: Chat? = nil, character: Character? = nil, request: String? = nil, response: String? = nil) {
+    init(content: String, fromUser: Bool, chat: Chat, character: Character? = nil, request: String? = nil, response: String? = nil) {
         self.content = content
         self.fromUser = fromUser
         self.chat = chat
-        chatUUID = chat?.uuid ?? UUID()
+        self.chatUUID = chat.uuid
         self.character = character
         self.request = request
         self.response = response
-        uuid = UUID()
     }
 
     var unwrappedContentAlternates: [ContentAlternate] {
@@ -207,6 +206,7 @@ struct CharacterTransferData: Transferable {
 
 @Model
 class Character {
+    var uuid: UUID = UUID()
     var name: String = ""
     var characterDescription: String = ""
     var personality: String = ""
@@ -223,7 +223,7 @@ class Character {
     var chubId: String = ""
     @Attribute(.externalStorage) var avatar: Data?
     @Relationship(deleteRule: .cascade, inverse: \Chat.characters) var chats: [Chat]? = [Chat]()
-    @Relationship(inverse: \Chat.userCharacter) var userChats: [Chat]? = [Chat]()
+    @Relationship(deleteRule: .cascade, inverse: \Chat.userCharacter) var userChats: [Chat]? = [Chat]()
     @Relationship(inverse: \UserSettings.userCharacter) var userSettings: [UserSettings]? = [UserSettings]()
 
     @Relationship(inverse: \ChatMessage.character) var messages: [ChatMessage]? = [ChatMessage]()

@@ -792,7 +792,6 @@ struct NewChatView: View {
                     request: response.request,
                     response: response.response
                 )
-                chat.dateUpdated = Date.now
                 modelContext.insert(newResponseMessage)
                 chat.dateUpdated = .now
             }

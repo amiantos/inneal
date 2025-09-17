@@ -59,5 +59,5 @@ struct MessageHeader: View {
 }
 
 #Preview {
-    MessageHeader(message: ChatMessage(content: "Foo", fromUser: false))
+    MessageHeader(message: ChatMessage(content: "Foo", fromUser: false, chat: Chat(name: nil, characters: [])))
 }
