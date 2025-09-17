@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct HelpView: View {
     @Environment(\.dismiss) var dismiss

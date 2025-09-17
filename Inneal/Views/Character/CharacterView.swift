@@ -8,6 +8,9 @@
 import PhotosUI
 import SwiftData
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct CharacterView: View {
     @State private var avatarItem: PhotosPickerItem?

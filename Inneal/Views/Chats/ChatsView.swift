@@ -7,6 +7,9 @@
 
 import SwiftData
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct ChatsView: View {
     @Query(sort: [SortDescriptor(\Chat.dateUpdated, order: .reverse)])

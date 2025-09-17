@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct ImportCharacterView: View {
     @Environment(\.dismiss) var dismiss

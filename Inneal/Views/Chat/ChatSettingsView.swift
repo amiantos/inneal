@@ -7,6 +7,9 @@
 
 import SwiftData
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 enum SettingsMode: String, CaseIterable, Identifiable {
     case auth = "Auth"
