@@ -334,18 +334,20 @@ struct ChatsView: View {
             .listSectionSeparator(.hidden, edges: .top)
         }
         .navigationTitle(horizontalSizeClass == .compact ? "Inneal" : "")
-        .navigationBarTitleDisplayMode(
-            horizontalSizeClass == .compact ? .large : .inline
-        )
+        .navigationSubtitle(horizontalSizeClass == .compact ? "\(chats.count) Chats" : "")
+        .navigationBarTitleDisplayMode(.inline)
         .listStyle(.inset)
         .toolbar(removing: .sidebarToggle)
         .toolbar {
-            ToolbarItemGroup(placement: .automatic) {
+            ToolbarItemGroup(placement: .secondaryAction) {
                 Button {
                     showingHelpSheet.toggle()
                 } label: {
-                    Label("Help", systemImage: "questionmark.circle")
+                    Label("About Inneal", systemImage: "questionmark.circle")
                 }
+            }
+            
+            ToolbarItemGroup(placement: .automatic) {
                 Button {
                     showingPersonaSheet.toggle()
                 } label: {
@@ -361,14 +363,14 @@ struct ChatsView: View {
                 }
             }
             if horizontalSizeClass == .compact {
-                ToolbarSpacer(.flexible, placement: .primaryAction)
-                ToolbarItemGroup(placement: .primaryAction) {
+                ToolbarSpacer(.flexible, placement: .bottomBar)
+                ToolbarItemGroup(placement: .bottomBar) {
                     Button {
                         showingSheet.toggle()
                     } label: {
                         Label("New Chat", systemImage: "square.and.pencil")
                             .labelStyle(.iconOnly).frame(width: 30, height: 30)
-                    }
+                    }.buttonStyle(.glassProminent)
                 }
             }
         }

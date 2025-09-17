@@ -49,13 +49,6 @@ struct NewChatView: View {
     @Namespace var unionNamespace
     @Namespace var buttonUnionNamespace
 
-    @FocusState private var focusedField: FocusedField?
-
-    enum FocusedField: Hashable {
-        case textField
-        case menu
-    }
-
     let onNewItem: ([Character]) -> Void
 
     init(
@@ -144,6 +137,9 @@ struct NewChatView: View {
                 }
             }
             .defaultScrollAnchor(.bottom)
+            #if os(iOS)
+                .scrollDismissesKeyboard(.interactively)
+            #endif
             .navigationTitle(chat.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -218,80 +214,50 @@ struct NewChatView: View {
                     }
 
                     HStack(alignment: .bottom) {
-                        if focusedField == .textField && keyboardShowing {
+                        Menu {
                             Button {
-                                if newMessage == "" {
-                                    focusedField = nil
-                                } else {
-                                    showingConfirmationDialog = true
-                                }
-                            } label: {
-                                Label("Close", systemImage: "xmark")
-                                    .labelStyle(
-                                        .iconOnly
-                                    ).frame(width: 30, height: 30)
-                            }
-                            .buttonStyle(.glass)
-                            .confirmationDialog(
-                                "Delete drafted message?",
-                                isPresented: $showingConfirmationDialog,
-                                titleVisibility: .visible
-                            ) {
-                                Button("Delete", role: .destructive) {
-                                    newMessage = ""
-                                    focusedField = nil
-                                }
-                                Button("Cancel", role: .cancel) {
-                                    // do nothing
-                                    print("Canceled")
-                                }
-                            }
-                        } else {
-                            Menu {
-                                Button {
-                                    requestMessage(imitation: true)
-                                } label: {
-                                    Label(
-                                        "You (Impersonate)",
-                                        systemImage: "person.bubble"
-                                    )
-                                }
-                                ForEach(
-                                    chat.unwrappedCharacters,
-                                    id: \.self
-                                ) {
-                                    character in
-                                    Button {
-                                        requestMessage(
-                                            fromCharacter: character
-                                        )
-                                    } label: {
-                                        Label(
-                                            "\(character.name)",
-                                            systemImage: "text.bubble"
-                                        )
-                                    }
-                                }
-                                Text("Generate Message")
+                                requestMessage(imitation: true)
                             } label: {
                                 Label(
-                                    "Generate Message",
-                                    systemImage: "plus.bubble"
+                                    "You (Impersonate)",
+                                    systemImage: "person.bubble"
                                 )
-                                .labelStyle(.iconOnly)
-                                .frame(width: 30, height: 30)
+                                Text("Generate a new message for yourself")
                             }
-                            .buttonStyle(.glass)
-                            .focused($focusedField, equals: .menu)
-                            .disabled(showPendingMessage || isPendingAlternate)
+                            ForEach(
+                                chat.unwrappedCharacters,
+                                id: \.self
+                            ) {
+                                character in
+                                Button {
+                                    requestMessage(
+                                        fromCharacter: character
+                                    )
+                                } label: {
+                                    Label(
+                                        "\(character.name)",
+                                        systemImage: "text.bubble"
+                                    )
+                                    Text("Generate a new message from \(character.name)")
+                                }
+                            }
+                        } label: {
+                            Label(
+                                "Generate Message",
+                                systemImage: "plus.bubble"
+                            )
+                            .labelStyle(.iconOnly)
+                            .frame(width: 30, height: 30)
                         }
+                        .buttonStyle(.glass)
+                        .disabled(showPendingMessage || isPendingAlternate)
+                    
 
                         TextField(
                             "AI Horde",
                             text: $newMessage,
                             axis: .vertical
                         )
-                        .focused($focusedField, equals: .textField)
                         .keyboardType(.asciiCapable)
                         .lineLimit(5)
                         .padding(
@@ -312,7 +278,6 @@ struct NewChatView: View {
                             if value {
                                 Log.debug("Keyboard Shown")
                                 keyboardShowing = true
-                                focusedField = .textField
                             } else {
                                 Log.debug("Keyboard Hidden")
                                 keyboardShowing = false
@@ -322,7 +287,7 @@ struct NewChatView: View {
                             in: RoundedRectangle(cornerRadius: 20)
                         )
 
-                        if focusedField == .textField, newMessage != "" {
+                        if newMessage != "" {
                             Spacer()
                             Button {
                                 requestMessage()
@@ -420,7 +385,7 @@ struct NewChatView: View {
                 }
                 .padding([.leading, .trailing], (horizontalSizeClass == .regular ? 25 : nil))
                 .padding(
-                    (focusedField == .textField && keyboardShowing
+                    (keyboardShowing
                         ? [.top, .bottom]
                         : [.top])
                 )
@@ -483,12 +448,6 @@ struct NewChatView: View {
                     }
                 }
             }
-            .onChange(
-                of: focusedField,
-                { oldValue, newValue in
-                    Log.debug("\(oldValue) \(newValue)")
-                }
-            )
             .onChange(of: currentAlternateIndex) { _, _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     withAnimation {
@@ -764,17 +723,21 @@ struct NewChatView: View {
                 character: fromCharacter,
                 imitation: imitation
             )
-            let newResponseMessage = ChatMessage(
-                content: response.text,
-                fromUser: imitation,
-                chat: chat,
-                character: imitation ? nil : response.character,
-                request: response.request,
-                response: response.response
-            )
-            chat.dateUpdated = Date.now
-            modelContext.insert(newResponseMessage)
-            chat.dateUpdated = .now
+            if imitation {
+                newMessage = response.text
+            } else {
+                let newResponseMessage = ChatMessage(
+                    content: response.text,
+                    fromUser: imitation,
+                    chat: chat,
+                    character: imitation ? nil : response.character,
+                    request: response.request,
+                    response: response.response
+                )
+                chat.dateUpdated = Date.now
+                modelContext.insert(newResponseMessage)
+                chat.dateUpdated = .now
+            }
             showPendingMessage.toggle()
         }
     }
