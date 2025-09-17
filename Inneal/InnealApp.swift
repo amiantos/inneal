@@ -19,7 +19,7 @@ struct InnealApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ChatsView().modelContainer(for: [Chat.self, APIConfiguration.self, UserSettings.self])
+            ChatsView().modelContainer(for: [Chat.self, Character.self, ChatMessage.self, ContentAlternate.self, APIConfiguration.self, UserSettings.self])
         }
     }
 }
