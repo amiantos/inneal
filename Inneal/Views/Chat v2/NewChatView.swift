@@ -228,10 +228,7 @@ struct NewChatView: View {
                                 Label("Close", systemImage: "xmark")
                                     .labelStyle(
                                         .iconOnly
-                                    ).padding(
-                                        [.top, .bottom],
-                                        7
-                                    )
+                                    ).frame(width:30, height:30)
                             }
                             .buttonStyle(.glass)
                             .confirmationDialog(
@@ -280,10 +277,8 @@ struct NewChatView: View {
                                     "Generate Message",
                                     systemImage: "plus.bubble"
                                 )
-                                .labelStyle(.iconOnly).padding(
-                                    [.top, .bottom],
-                                    5
-                                )
+                                .labelStyle(.iconOnly)
+                                .frame(width:30, height:30)
                             }
                             .buttonStyle(.glass)
                             .focused($focusedField, equals: .menu)
@@ -306,6 +301,7 @@ struct NewChatView: View {
                                 trailing: 10
                             )
                         )
+                        .frame(minHeight:30)
                         .onSubmit {
                             if newMessage != "" {
                                 requestMessage()
@@ -334,10 +330,7 @@ struct NewChatView: View {
                                     requestMessage()
                                 } label: {
                                     Label("Send", systemImage: "arrow.up")
-                                        .labelStyle(.iconOnly).padding(
-                                            [.top, .bottom],
-                                            5
-                                        )
+                                        .labelStyle(.iconOnly).frame(width:30, height:30)
                                 }
                                 .buttonStyle(.glassProminent)
                                 .disabled(
@@ -380,10 +373,7 @@ struct NewChatView: View {
                                                     "Cycle Alternates",
                                                     systemImage:
                                                         "arrow.trianglehead.2.clockwise.rotate.90"
-                                                ).labelStyle(.iconOnly).padding(
-                                                    [.top, .bottom],
-                                                    5
-                                                )
+                                                ).labelStyle(.iconOnly).frame(width:30, height:30)
                                             }
                                             .buttonStyle(.glass)
                                             .glassEffectUnion(
@@ -404,10 +394,7 @@ struct NewChatView: View {
                                                     "New Alternate",
                                                     systemImage: "dice"
                                                 )
-                                                .labelStyle(.iconOnly).padding(
-                                                    [.top, .bottom],
-                                                    5
-                                                )
+                                                .labelStyle(.iconOnly).frame(width:30, height:30)
                                             }
                                             .buttonStyle(.glass)
                                             .glassEffectUnion(

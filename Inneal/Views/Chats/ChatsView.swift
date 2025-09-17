@@ -225,9 +225,11 @@ struct ChatsView: View {
                 }
             }
             .onDelete(perform: deleteChats)
+            .listSectionSeparator(.hidden, edges: .top)
         }
         .navigationTitle("\(chats.count) Chats")
         .navigationBarTitleDisplayMode(.large)
+        .listStyle(.inset)
         .toolbar(removing: .sidebarToggle)
         .toolbar {
             if horizontalSizeClass == .compact {
