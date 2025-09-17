@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct ImportCharacterView: View {
     @Environment(\.dismiss) var dismiss
@@ -48,7 +47,9 @@ struct ImportCharacterView: View {
                 }
             }
             .navigationTitle("Import Character")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark") {

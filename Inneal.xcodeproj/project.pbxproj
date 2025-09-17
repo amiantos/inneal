@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4406C7282E7B210800AFC6DE /* PlatformCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4406C7272E7B210800AFC6DE /* PlatformCompatibility.swift */; };
 		440E47BF2E79053100C6F05C /* MessageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440E47BE2E79053100C6F05C /* MessageHeader.swift */; };
 		4412EFCB2BB140B500B0E415 /* InnealApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCA2BB140B500B0E415 /* InnealApp.swift */; };
 		4412EFCF2BB140B600B0E415 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4412EFCE2BB140B600B0E415 /* Assets.xcassets */; };
@@ -42,6 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4406C7272E7B210800AFC6DE /* PlatformCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformCompatibility.swift; sourceTree = "<group>"; };
 		440E47BE2E79053100C6F05C /* MessageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHeader.swift; sourceTree = "<group>"; };
 		4412EFC72BB140B500B0E415 /* Inneal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inneal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4412EFCA2BB140B500B0E415 /* InnealApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnealApp.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				44259EDE2BBFCC1900623171 /* Utilities.swift */,
+				4406C7272E7B210800AFC6DE /* PlatformCompatibility.swift */,
 				444441A62BC8F73E009E9F3B /* Logging.swift */,
 			);
 			path = Utils;
@@ -343,6 +346,7 @@
 				44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */,
 				4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */,
 				4412EFE92BB2750B00B0E415 /* UserSettingsView.swift in Sources */,
+				4406C7282E7B210800AFC6DE /* PlatformCompatibility.swift in Sources */,
 				4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */,
 				4412EFDE2BB1578300B0E415 /* SwiftDataModels.swift in Sources */,
 				4497E89C2BE60128007503A2 /* SelectableChatLogView.swift in Sources */,

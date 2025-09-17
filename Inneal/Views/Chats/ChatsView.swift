@@ -52,10 +52,13 @@ struct ChatsView: View {
                 ContentUnavailableView(
                     "Use sidebar navigation",
                     systemImage: "sidebar.left"
-                ).navigationTitle("Inneal").navigationBarTitleDisplayMode(
-                    .inline
-                ).toolbar {
+                ).navigationTitle("Inneal")
+#if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+#endif
+                .toolbar {
                     if horizontalSizeClass == .regular {
+                        #if os(iOS)
                         ToolbarItemGroup(placement: .topBarLeading) {
                             Button {
                                 showingSheet.toggle()
@@ -66,6 +69,18 @@ struct ChatsView: View {
                                 ).labelStyle(.titleAndIcon)
                             }
                         }
+                        #else
+                        ToolbarItemGroup(placement: .navigation) {
+                            Button {
+                                showingSheet.toggle()
+                            } label: {
+                                Label(
+                                    "New Chat",
+                                    systemImage: "square.and.pencil"
+                                ).labelStyle(.titleAndIcon)
+                            }
+                        }
+                        #endif
                     }
                 }
             }
@@ -88,9 +103,15 @@ struct ChatsView: View {
                 UserSettingsView(userSettings: userSettings!)
             }
         }
+#if os(iOS)
         .fullScreenCover(isPresented: $showingIntroSheet) {
             IntroductionView()
         }
+#else
+        .sheet(isPresented: $showingIntroSheet) {
+            IntroductionView()
+        }
+#endif
         .onChange(of: scenePhase) { _, newValue in
             switch newValue {
             case .active:
@@ -337,7 +358,9 @@ struct ChatsView: View {
         }
         .navigationTitle("Inneal")
         .navigationSubtitle("\(chats.count) Chats")
+#if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+#endif
         .listStyle(.inset)
         .toolbar(removing: .sidebarToggle)
         .toolbar {
@@ -365,6 +388,7 @@ struct ChatsView: View {
                 }
             }
             if horizontalSizeClass == .compact {
+                #if os(iOS)
                 ToolbarSpacer(.flexible, placement: .bottomBar)
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button {
@@ -374,6 +398,17 @@ struct ChatsView: View {
                             .labelStyle(.iconOnly).frame(width: 30, height: 30)
                     }.buttonStyle(.glassProminent)
                 }
+                #else
+                ToolbarSpacer(.flexible, placement: .navigation)
+                ToolbarItemGroup(placement: .navigation) {
+                    Button {
+                        showingSheet.toggle()
+                    } label: {
+                        Label("New Chat", systemImage: "square.and.pencil")
+                            .labelStyle(.iconOnly).frame(width: 30, height: 30)
+                    }.buttonStyle(.glassProminent)
+                }
+                #endif
             }
         }
     }

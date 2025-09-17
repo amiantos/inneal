@@ -29,7 +29,9 @@ struct GenerationDetailsView: View {
                 }
             }
             .navigationTitle("Generation Details")
-            .navigationBarTitleDisplayMode(.inline)
+            #if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done", systemImage: "xmark") {

@@ -7,7 +7,6 @@
 
 import SwiftData
 import SwiftUI
-import UIKit
 
 struct CreateChatView: View {
     @Environment(\.dismiss) var dismiss

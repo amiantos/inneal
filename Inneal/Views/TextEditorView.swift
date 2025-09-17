@@ -15,9 +15,11 @@ struct TextEditorView: View {
         NavigationStack {
             TextEditor(text: $text)
                 .padding()
+#if os(iOS)
                 .keyboardType(.asciiCapable)
-                .navigationTitle("Edit Message")
                 .navigationBarTitleDisplayMode(.inline)
+#endif
+                .navigationTitle("Edit Message")
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Done", systemImage: "xmark") {

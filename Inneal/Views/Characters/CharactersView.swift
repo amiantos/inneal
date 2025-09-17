@@ -8,7 +8,6 @@
 import Combine
 import SwiftData
 import SwiftUI
-import UIKit
 
 struct CharactersView: View {
     @Environment(\.dismiss) var dismiss
@@ -127,7 +126,9 @@ struct CharactersView: View {
                 .padding()
             }
             .navigationTitle("\(characters.count) Characters")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.large)
+#endif
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
                     Button {

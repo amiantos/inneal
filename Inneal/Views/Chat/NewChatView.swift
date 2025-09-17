@@ -149,6 +149,7 @@ struct NewChatView: View {
                     }
                 } else {
                     if horizontalSizeClass == .regular {
+                        #if os(iOS)
                         ToolbarItemGroup(placement: .topBarLeading) {
                             Button {
                                 showingNewChatSheet.toggle()
@@ -159,7 +160,20 @@ struct NewChatView: View {
                                 ).labelStyle(.titleAndIcon)
                             }
                         }
+                        #else
+                        ToolbarItemGroup(placement: .navigation) {
+                            Button {
+                                showingNewChatSheet.toggle()
+                            } label: {
+                                Label(
+                                    "New Chat",
+                                    systemImage: "square.and.pencil"
+                                ).labelStyle(.titleAndIcon)
+                            }
+                        }
+                        #endif
                     }
+                    #if os(iOS)
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         Menu {
                             ForEach(chat.unwrappedCharacters, id: \.self) {
@@ -196,6 +210,44 @@ struct NewChatView: View {
                             showingSettingsSheet.toggle()
                         }
                     }
+                    #else
+                    ToolbarItemGroup(placement: .navigation) {
+                        Menu {
+                            ForEach(chat.unwrappedCharacters, id: \.self) {
+                                character in
+                                Button(
+                                    "Edit \(character.name)",
+                                    systemImage: "person"
+                                ) {
+                                    selectedCharacter = character
+                                }
+                            }
+                            if chat.userCharacter != nil {
+                                Button(
+                                    "Edit \(chat.userCharacter!.name)",
+                                    systemImage: "person"
+                                ) {
+                                    selectedCharacter = chat.userCharacter!
+                                }
+                            } else if chat.userName == nil,
+                                userSettings.userCharacter != nil
+                            {
+                                Button(
+                                    "Edit \(userSettings.userCharacter!.name)",
+                                    systemImage: "person"
+                                ) {
+                                    selectedCharacter = userSettings
+                                        .userCharacter!
+                                }
+                            }
+                        } label: {
+                            Label("Edit Characters", systemImage: "person.2")
+                        }
+                        Button("Chat Settings", systemImage: "gearshape") {
+                            showingSettingsSheet.toggle()
+                        }
+                    }
+                    #endif
                     ToolbarItemGroup(placement: .secondaryAction) {
                         regularTopToolbarItems()
                     }

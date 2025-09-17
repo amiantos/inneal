@@ -43,7 +43,9 @@ struct HelpView: View {
                 }
             }
             .navigationTitle("Inneal Help")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
         }
     }
 }

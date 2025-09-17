@@ -8,7 +8,6 @@
 import Foundation
 import SwiftData
 import SwiftUI
-import UIKit
 
 struct UserSettingsView: View {
     @Environment(\.dismiss) var dismiss
