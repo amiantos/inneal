@@ -760,7 +760,7 @@ struct NewChatView: View {
             alternateContent.request = originalRequest
             currentAlternateIndex = -1
         }
-        if !newMessage.isEmpty {
+        if !newMessage.isEmpty && !imitation {
             let newUserMessage = ChatMessage(
                 content: newMessage,
                 fromUser: true,
