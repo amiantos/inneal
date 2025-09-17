@@ -337,23 +337,16 @@ extension ImportCharacterView {
                 chubId = chubId.replacingOccurrences(of: "https://chub.ai/characters/", with: "").replacingOccurrences(of: "https://www.chub.ai/characters/", with: "").replacingOccurrences(of: "https://venus.chub.ai/characters/", with: "").replacingOccurrences(of: "https://www.characterhub.org/characters/", with: "")
             }
 
-            var request = URLRequest(url: URL(string: "https://api.chub.ai/api/characters/download")!)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            var request = URLRequest(url: URL(string: "https://avatars.charhub.io/avatars/\(chubId)/chara_card_v2.png")!)
+            request.httpMethod = "GET"
             request.setValue("Inneal:1.1:https://amiantos.net", forHTTPHeaderField: "Client-Agent")
 
-            let params = ChubAPICharacterRequest(format: "tavern", fullPath: chubId, version: "main")
-            let encodedParameters = try? JSONEncoder().encode(params)
-            request.httpBody = encodedParameters
-
-            Log.debug("Requesting character from API...")
+            Log.debug("Requesting character from Chub CDN...")
             do {
                 let (data, response) = try await URLSession.shared.data(for: request)
                 if let response = response as? HTTPURLResponse {
                     if (200 ..< 300) ~= response.statusCode {
                         return await loadData(from: data)
-                    } else {
-                        Log.debug(response)
                     }
                 }
 
