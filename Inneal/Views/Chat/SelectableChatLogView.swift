@@ -30,7 +30,6 @@ struct SelectableChatLogView: View {
     var body: some View {
         NavigationStack {
             TextEditor(text: $text)
-                .ignoresSafeArea(.container)
                 .contentMargins(.horizontal, 15.0, for: .scrollContent)
 #if os(iOS)
                 .keyboardType(.asciiCapable)
