@@ -370,17 +370,13 @@ struct ChatsView: View {
             .navigationBarTitleDisplayMode(.inline)
         #endif
         .listStyle(.inset)
-        .toolbar(removing: .sidebarToggle)
         .toolbar {
-            ToolbarItemGroup(placement: .secondaryAction) {
+            ToolbarItemGroup(placement: .automatic) {
                 Button {
                     showingHelpSheet.toggle()
                 } label: {
                     Label("About Inneal", systemImage: "questionmark.circle")
                 }
-            }
-
-            ToolbarItemGroup(placement: .automatic) {
                 Button {
                     showingPersonaSheet.toggle()
                 } label: {
