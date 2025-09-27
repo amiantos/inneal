@@ -40,6 +40,8 @@ struct ChatSettingsView: View {
 
     @State var settingsMode: SettingsMode = .basic
     @State var customUserName: String = ""
+    
+    @FocusState var apiKeyEntryFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -292,22 +294,43 @@ struct ChatSettingsView: View {
                                 currentHordeConfigObject?.configurationData = viewModel.apiKey.data(using: .utf8)!
                             }
                             .submitLabel(.done)
-                            Button("Remove API Key") {
-                                showingAPIKeyDeleteAlert = true
-                            }
-                            .disabled(viewModel.apiKey == "0000000000")
-                            .alert("Delete API Key?", isPresented: $showingAPIKeyDeleteAlert) {
-                                Button("OK", role: .destructive) {
-                                    currentHordeConfigObject?.configurationData = "0000000000".data(using: .utf8)!
-                                    viewModel.apiKey = "0000000000"
-                                    viewModel.currentKudos = nil
-                                    viewModel.currentUserName = nil
-                                    viewModel.onAppear()
+                            .focused($apiKeyEntryFocused)
+                            
+                            Group {
+                                if viewModel.apiKey != "0000000000" && viewModel.currentKudos == "∞" {
+                                    Button("Save API Key") {
+                                        viewModel.currentUserName = nil
+                                        viewModel.onAppear()
+                                        currentHordeConfigObject?.configurationData = viewModel.apiKey.data(using: .utf8)!
+                                    }
                                 }
-                                Button("Cancel", role: .cancel) {}
-                            } message: {
-                                Text("This is not recoverable, and applies to the encrypted cloud storage of your API key in Inneal, so be sure you have stored your API key somewhere else safe!")
+                                if viewModel.apiKey == "0000000000" {
+                                    Button("Set API Key") {
+                                        viewModel.apiKey = ""
+                                        apiKeyEntryFocused = true
+                                    }
+                                }
+                                if viewModel.apiKey != "0000000000" && viewModel.currentKudos != "∞" {
+                                    Button("Remove API Key") {
+                                        showingAPIKeyDeleteAlert = true
+                                    }
+                                    .disabled(viewModel.apiKey == "0000000000")
+                                    .alert("Delete API Key?", isPresented: $showingAPIKeyDeleteAlert) {
+                                        Button("OK", role: .destructive) {
+                                            currentHordeConfigObject?.configurationData = "0000000000".data(using: .utf8)!
+                                            viewModel.apiKey = "0000000000"
+                                            viewModel.currentKudos = nil
+                                            viewModel.currentUserName = nil
+                                            viewModel.onAppear()
+                                        }
+                                        Button("Cancel", role: .cancel) {}
+                                    } message: {
+                                        Text("This is not recoverable, and applies to the encrypted cloud storage of your API key in Inneal, so be sure you have stored your API key somewhere else safe!")
+                                    }
+                                    
+                                }
                             }
+                            
                         }
 
                         Section(header: Text("AI Horde User Info"), footer: Text("Kudos is spent on generations and determines your order in the request queue, so the more kudos you have, the faster you get respones.\n\nAnonymous accounts do not have kudos and are effectively at the back of the line.\n\nYou can get more kudos by hosting your own horde workers, either for image generation or text generation. Visit the AI Horde website for more information.")) {
