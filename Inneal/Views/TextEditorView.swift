@@ -21,8 +21,8 @@ struct TextEditorView: View {
 #endif
                 .navigationTitle("Edit Message")
                 .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Done", systemImage: "xmark") {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done", systemImage: "checkmark") {
                             dismiss()
                         }
                     }

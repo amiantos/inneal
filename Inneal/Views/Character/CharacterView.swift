@@ -134,13 +134,13 @@ struct CharacterView: View {
                         }
                     }
                 } else {
-                    ToolbarItem(placement: .primaryAction) {
+                    ToolbarItem(placement: .cancellationAction) {
                         Button("Help", systemImage: "questionmark.circle") {
                             showingHelpSheet.toggle()
                         }
                     }
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Close", systemImage: "xmark") {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done", systemImage: "checkmark") {
                             dismiss()
                         }
                     }

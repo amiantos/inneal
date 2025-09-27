@@ -30,6 +30,7 @@ struct ChatSettingsView: View {
     @State var viewModel: ChatSettingsView.ViewModel = .init()
     @State var showingContextPicker: Bool = false
     @State var showingGeneratePicker: Bool = false
+    @State var showingWarningAlert = false
     @State var service: Services = .horde
 
     @State var hordeRequest: HordeRequest
@@ -354,7 +355,16 @@ struct ChatSettingsView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark") {
-                        dismiss()
+                        showingWarningAlert.toggle()
+                    }
+                    .foregroundStyle(.red)
+                    .alert("Lose Unsaved Changes?", isPresented: $showingWarningAlert) {
+                        Button("OK", role: .destructive) {
+                            dismiss()
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("If you've made changes to your chat settings, this will discard them.")
                     }
                 }
                 ToolbarItemGroup(placement: .confirmationAction) {
