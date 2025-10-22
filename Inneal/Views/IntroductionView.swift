@@ -7,6 +7,9 @@
 
 import SwiftData
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct IntroductionView: View {
     @Environment(\.horizontalSizeClass) private var sizeClass

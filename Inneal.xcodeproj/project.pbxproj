@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4406C7282E7B210800AFC6DE /* PlatformCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4406C7272E7B210800AFC6DE /* PlatformCompatibility.swift */; };
+		4406C72A2E7B39E400AFC6DE /* Inneal Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4406C7292E7B39E400AFC6DE /* Inneal Icon.icon */; };
+		4406C7482E7B6C6F00AFC6DE /* inneal-gradient.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4406C7472E7B6C6F00AFC6DE /* inneal-gradient.icon */; };
+		440E47BF2E79053100C6F05C /* MessageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440E47BE2E79053100C6F05C /* MessageHeader.swift */; };
 		4412EFCB2BB140B500B0E415 /* InnealApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCA2BB140B500B0E415 /* InnealApp.swift */; };
-		4412EFCD2BB140B500B0E415 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFCC2BB140B500B0E415 /* ChatView.swift */; };
 		4412EFCF2BB140B600B0E415 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4412EFCE2BB140B600B0E415 /* Assets.xcassets */; };
 		4412EFD22BB140B600B0E415 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4412EFD12BB140B600B0E415 /* Preview Assets.xcassets */; };
 		4412EFDA2BB1571A00B0E415 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412EFD92BB1571A00B0E415 /* MessageCell.swift */; };
@@ -29,22 +32,25 @@
 		44330EE72BCE363100E5E4DF /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 44330EE62BCE363100E5E4DF /* PrivacyInfo.xcprivacy */; };
 		44330EEA2BCF762A00E5E4DF /* IntroductionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44330EE92BCF762A00E5E4DF /* IntroductionView.swift */; };
 		444441A72BC8F73E009E9F3B /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444441A62BC8F73E009E9F3B /* Logging.swift */; };
-		444ED2C32BDCBC3700EA6CEE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444ED2C22BDCBC3700EA6CEE /* ContentView.swift */; };
 		4492E4382BC3B3B800B130F2 /* ChatSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */; };
 		4493BDA82BC670DD0043D523 /* HordeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDA72BC670DD0043D523 /* HordeModels.swift */; };
 		4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDA92BC6719C0043D523 /* TavernModels.swift */; };
 		4493BDAD2BC671C10043D523 /* ChubModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAC2BC671C10043D523 /* ChubModels.swift */; };
 		4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4493BDAE2BC671E70043D523 /* OpenAIModels.swift */; };
 		4497E89C2BE60128007503A2 /* SelectableChatLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */; };
+		44D8FDBF2E639A23005B6B72 /* NewChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D8FDBE2E639A23005B6B72 /* NewChatView.swift */; };
 		44ED93CC2BBE99EA001F6E72 /* CharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */; };
 		44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79422BD777AC0000C79C /* CharacterHelpView.swift */; };
 		44FA79452BD9D10A0000C79C /* GenerationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4406C7272E7B210800AFC6DE /* PlatformCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformCompatibility.swift; sourceTree = "<group>"; };
+		4406C7292E7B39E400AFC6DE /* Inneal Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "Inneal Icon.icon"; sourceTree = "<group>"; };
+		4406C7472E7B6C6F00AFC6DE /* inneal-gradient.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "inneal-gradient.icon"; sourceTree = "<group>"; };
+		440E47BE2E79053100C6F05C /* MessageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHeader.swift; sourceTree = "<group>"; };
 		4412EFC72BB140B500B0E415 /* Inneal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inneal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4412EFCA2BB140B500B0E415 /* InnealApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnealApp.swift; sourceTree = "<group>"; };
-		4412EFCC2BB140B500B0E415 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		4412EFCE2BB140B600B0E415 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4412EFD12BB140B600B0E415 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4412EFD82BB156CF00B0E415 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -67,13 +73,13 @@
 		44330EE82BCF205F00E5E4DF /* Inneal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Inneal.entitlements; sourceTree = "<group>"; };
 		44330EE92BCF762A00E5E4DF /* IntroductionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionView.swift; sourceTree = "<group>"; };
 		444441A62BC8F73E009E9F3B /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
-		444ED2C22BDCBC3700EA6CEE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSettingsView.swift; sourceTree = "<group>"; };
 		4493BDA72BC670DD0043D523 /* HordeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HordeModels.swift; sourceTree = "<group>"; };
 		4493BDA92BC6719C0043D523 /* TavernModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TavernModels.swift; sourceTree = "<group>"; };
 		4493BDAC2BC671C10043D523 /* ChubModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChubModels.swift; sourceTree = "<group>"; };
 		4493BDAE2BC671E70043D523 /* OpenAIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModels.swift; sourceTree = "<group>"; };
 		4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableChatLogView.swift; sourceTree = "<group>"; };
+		44D8FDBE2E639A23005B6B72 /* NewChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChatView.swift; sourceTree = "<group>"; };
 		44ED93CB2BBE99EA001F6E72 /* CharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterView.swift; sourceTree = "<group>"; };
 		44FA79422BD777AC0000C79C /* CharacterHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterHelpView.swift; sourceTree = "<group>"; };
 		44FA79442BD9D10A0000C79C /* GenerationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationDetailsView.swift; sourceTree = "<group>"; };
@@ -110,6 +116,8 @@
 			isa = PBXGroup;
 			children = (
 				44330EE82BCF205F00E5E4DF /* Inneal.entitlements */,
+				4406C7292E7B39E400AFC6DE /* Inneal Icon.icon */,
+				4406C7472E7B6C6F00AFC6DE /* inneal-gradient.icon */,
 				4412EFD82BB156CF00B0E415 /* Info.plist */,
 				4412EFCE2BB140B600B0E415 /* Assets.xcassets */,
 				44330EE62BCE363100E5E4DF /* PrivacyInfo.xcprivacy */,
@@ -135,9 +143,10 @@
 		4412EFE12BB220C900B0E415 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				4412EFCC2BB140B500B0E415 /* ChatView.swift */,
-				4412EFDF2BB157BE00B0E415 /* ViewModel.swift */,
+				44D8FDBE2E639A23005B6B72 /* NewChatView.swift */,
+				440E47BE2E79053100C6F05C /* MessageHeader.swift */,
 				4412EFD92BB1571A00B0E415 /* MessageCell.swift */,
+				4412EFDF2BB157BE00B0E415 /* ViewModel.swift */,
 				4492E4372BC3B3B800B130F2 /* ChatSettingsView.swift */,
 				4497E89B2BE60128007503A2 /* SelectableChatLogView.swift */,
 			);
@@ -147,7 +156,6 @@
 		4412EFE22BB220E400B0E415 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				444ED2C22BDCBC3700EA6CEE /* ContentView.swift */,
 				4412EFE72BB235DE00B0E415 /* Chats */,
 				4412EFE12BB220C900B0E415 /* Chat */,
 				44259EDD2BBFCB6600623171 /* Characters */,
@@ -210,6 +218,7 @@
 			isa = PBXGroup;
 			children = (
 				44259EDE2BBFCC1900623171 /* Utilities.swift */,
+				4406C7272E7B210800AFC6DE /* PlatformCompatibility.swift */,
 				444441A62BC8F73E009E9F3B /* Logging.swift */,
 			);
 			path = Utils;
@@ -323,7 +332,9 @@
 			files = (
 				44330EE72BCE363100E5E4DF /* PrivacyInfo.xcprivacy in Resources */,
 				4412EFD22BB140B600B0E415 /* Preview Assets.xcassets in Resources */,
+				4406C7482E7B6C6F00AFC6DE /* inneal-gradient.icon in Resources */,
 				4412EFCF2BB140B600B0E415 /* Assets.xcassets in Resources */,
+				4406C72A2E7B39E400AFC6DE /* Inneal Icon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,18 +347,19 @@
 			files = (
 				4412EFE42BB2238C00B0E415 /* ChatsView.swift in Sources */,
 				4493BDA82BC670DD0043D523 /* HordeModels.swift in Sources */,
-				444ED2C32BDCBC3700EA6CEE /* ContentView.swift in Sources */,
+				44D8FDBF2E639A23005B6B72 /* NewChatView.swift in Sources */,
 				4412EFE62BB2356E00B0E415 /* CreateChatView.swift in Sources */,
 				44259EE32BC0963B00623171 /* Preferences.swift in Sources */,
 				44259EDF2BBFCC1900623171 /* Utilities.swift in Sources */,
 				44FA79432BD777AC0000C79C /* CharacterHelpView.swift in Sources */,
 				4493BDAF2BC671E70043D523 /* OpenAIModels.swift in Sources */,
 				4412EFE92BB2750B00B0E415 /* UserSettingsView.swift in Sources */,
-				4412EFCD2BB140B500B0E415 /* ChatView.swift in Sources */,
+				4406C7282E7B210800AFC6DE /* PlatformCompatibility.swift in Sources */,
 				4493BDAA2BC6719C0043D523 /* TavernModels.swift in Sources */,
 				4412EFDE2BB1578300B0E415 /* SwiftDataModels.swift in Sources */,
 				4497E89C2BE60128007503A2 /* SelectableChatLogView.swift in Sources */,
 				44330EEA2BCF762A00E5E4DF /* IntroductionView.swift in Sources */,
+				440E47BF2E79053100C6F05C /* MessageHeader.swift in Sources */,
 				444441A72BC8F73E009E9F3B /* Logging.swift in Sources */,
 				44259EDA2BBFC7FC00623171 /* CharactersView.swift in Sources */,
 				44329E912BD5C0670011A2C8 /* TextEditorView.swift in Sources */,
@@ -491,32 +503,40 @@
 		4412EFD62BB140B600B0E415 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "inneal-gradient";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Inneal/Inneal.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Inneal/Preview Content\"";
 				DEVELOPMENT_TEAM = 2Y9M69QJKZ;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Inneal/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Inneal;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				REGISTER_APP_GROUPS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -527,8 +547,9 @@
 		4412EFD72BB140B600B0E415 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "inneal-gradient";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Inneal/Inneal.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -537,22 +558,25 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Inneal/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Inneal;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = net.amiantos.Inneal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

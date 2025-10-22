@@ -21,11 +21,15 @@ struct CharacterHelpView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: { Text("Done") }
+                    Button("Done", systemImage: "xmark") {
+                        dismiss()
+                    }
                 }
             }
             .navigationTitle("Character Editor FAQ")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
         }
     }
 }

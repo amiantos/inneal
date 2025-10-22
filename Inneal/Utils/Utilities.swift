@@ -188,6 +188,7 @@ extension Data {
 
 extension View {
     var keyboardPublisher: AnyPublisher<Bool, Never> {
+        #if os(iOS)
         Publishers
             .Merge(
                 NotificationCenter
@@ -201,6 +202,11 @@ extension View {
             )
             .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .eraseToAnyPublisher()
+        #else
+        // On macOS, there's no virtual keyboard, so always return false
+        Just(false)
+            .eraseToAnyPublisher()
+        #endif
     }
 }
 

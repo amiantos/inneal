@@ -17,17 +17,9 @@ struct InnealApp: App {
         Log.info("App initialized...")
     }
 
-    var sharedModelContainer: ModelContainer = {
-        do {
-            return try ModelContainer(for: Chat.self, APIConfiguration.self, UserSettings.self)
-        } catch {
-            fatalError()
-        }
-    }()
-
     var body: some Scene {
         WindowGroup {
-            ContentView(container: sharedModelContainer)
+            ChatsView().modelContainer(for: [Chat.self, Character.self, ChatMessage.self, ContentAlternate.self, APIConfiguration.self, UserSettings.self])
         }
     }
 }

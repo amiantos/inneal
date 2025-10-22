@@ -8,6 +8,9 @@
 import PhotosUI
 import SwiftData
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct CharacterView: View {
     @State private var avatarItem: PhotosPickerItem?
@@ -95,7 +98,7 @@ struct CharacterView: View {
             .toolbar {
                 if newCharacterMode {
                     ToolbarItemGroup(placement: .cancellationAction) {
-                        Button("Cancel", role: .destructive) {
+                        Button("Cancel", systemImage: "xmark") {
                             showingWarningAlert.toggle()
                         }
                         .foregroundStyle(.red)
@@ -113,7 +116,9 @@ struct CharacterView: View {
                         Button("Help", systemImage: "questionmark.circle") {
                             showingHelpSheet.toggle()
                         }
-                        Button {
+                    }
+                    ToolbarItemGroup(placement: .confirmationAction) {
+                        Button("Save", systemImage: "checkmark") {
                             Log.debug("Save requested")
                             if character.name.isEmpty || character.characterDescription.isEmpty {
                                 showingValidationAlert.toggle()
@@ -121,8 +126,6 @@ struct CharacterView: View {
                                 modelContext.insert(character)
                                 dismiss()
                             }
-                        } label: {
-                            Text("Save")
                         }
                         .alert("Incomplete Character!", isPresented: $showingValidationAlert) {
                             Button("OK", role: .cancel) {}
@@ -131,13 +134,13 @@ struct CharacterView: View {
                         }
                     }
                 } else {
-                    ToolbarItem(placement: .primaryAction) {
+                    ToolbarItem(placement: .cancellationAction) {
                         Button("Help", systemImage: "questionmark.circle") {
                             showingHelpSheet.toggle()
                         }
                     }
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Done") {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done", systemImage: "checkmark") {
                             dismiss()
                         }
                     }

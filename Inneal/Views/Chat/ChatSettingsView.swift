@@ -7,6 +7,9 @@
 
 import SwiftData
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 enum SettingsMode: String, CaseIterable, Identifiable {
     case auth = "Auth"
@@ -27,6 +30,7 @@ struct ChatSettingsView: View {
     @State var viewModel: ChatSettingsView.ViewModel = .init()
     @State var showingContextPicker: Bool = false
     @State var showingGeneratePicker: Bool = false
+    @State var showingWarningAlert = false
     @State var service: Services = .horde
 
     @State var hordeRequest: HordeRequest
@@ -37,6 +41,8 @@ struct ChatSettingsView: View {
 
     @State var settingsMode: SettingsMode = .basic
     @State var customUserName: String = ""
+    
+    @FocusState var apiKeyEntryFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -289,22 +295,43 @@ struct ChatSettingsView: View {
                                 currentHordeConfigObject?.configurationData = viewModel.apiKey.data(using: .utf8)!
                             }
                             .submitLabel(.done)
-                            Button("Remove API Key") {
-                                showingAPIKeyDeleteAlert = true
-                            }
-                            .disabled(viewModel.apiKey == "0000000000")
-                            .alert("Delete API Key?", isPresented: $showingAPIKeyDeleteAlert) {
-                                Button("OK", role: .destructive) {
-                                    currentHordeConfigObject?.configurationData = "0000000000".data(using: .utf8)!
-                                    viewModel.apiKey = "0000000000"
-                                    viewModel.currentKudos = nil
-                                    viewModel.currentUserName = nil
-                                    viewModel.onAppear()
+                            .focused($apiKeyEntryFocused)
+                            
+                            Group {
+                                if viewModel.apiKey != "0000000000" && viewModel.currentKudos == "∞" {
+                                    Button("Save API Key") {
+                                        viewModel.currentUserName = nil
+                                        viewModel.onAppear()
+                                        currentHordeConfigObject?.configurationData = viewModel.apiKey.data(using: .utf8)!
+                                    }
                                 }
-                                Button("Cancel", role: .cancel) {}
-                            } message: {
-                                Text("This is not recoverable, and applies to the encrypted cloud storage of your API key in Inneal, so be sure you have stored your API key somewhere else safe!")
+                                if viewModel.apiKey == "0000000000" {
+                                    Button("Set API Key") {
+                                        viewModel.apiKey = ""
+                                        apiKeyEntryFocused = true
+                                    }
+                                }
+                                if viewModel.apiKey != "0000000000" && viewModel.currentKudos != "∞" {
+                                    Button("Remove API Key") {
+                                        showingAPIKeyDeleteAlert = true
+                                    }
+                                    .disabled(viewModel.apiKey == "0000000000")
+                                    .alert("Delete API Key?", isPresented: $showingAPIKeyDeleteAlert) {
+                                        Button("OK", role: .destructive) {
+                                            currentHordeConfigObject?.configurationData = "0000000000".data(using: .utf8)!
+                                            viewModel.apiKey = "0000000000"
+                                            viewModel.currentKudos = nil
+                                            viewModel.currentUserName = nil
+                                            viewModel.onAppear()
+                                        }
+                                        Button("Cancel", role: .cancel) {}
+                                    } message: {
+                                        Text("This is not recoverable, and applies to the encrypted cloud storage of your API key in Inneal, so be sure you have stored your API key somewhere else safe!")
+                                    }
+                                    
+                                }
                             }
+                            
                         }
 
                         Section(header: Text("AI Horde User Info"), footer: Text("Kudos is spent on generations and determines your order in the request queue, so the more kudos you have, the faster you get respones.\n\nAnonymous accounts do not have kudos and are effectively at the back of the line.\n\nYou can get more kudos by hosting your own horde workers, either for image generation or text generation. Visit the AI Horde website for more information.")) {
@@ -327,12 +354,21 @@ struct ChatSettingsView: View {
             .navigationTitle("Chat Settings")
             .toolbar {
                 ToolbarItemGroup(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
+                    Button("Cancel", systemImage: "xmark") {
+                        showingWarningAlert.toggle()
+                    }
+                    .foregroundStyle(.red)
+                    .alert("Lose Unsaved Changes?", isPresented: $showingWarningAlert) {
+                        Button("OK", role: .destructive) {
+                            dismiss()
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("If you've made changes to your chat settings, this will discard them.")
                     }
                 }
                 ToolbarItemGroup(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button("Save", systemImage: "checkmark") {
                         saveSettingsToChat()
                         dismiss()
                     }
@@ -471,7 +507,6 @@ extension ChatSettingsView {
                 let message = ChatMessage(content: "Lorem ipsum dolor sit amet. {{user}}? {{char}}? {{User}}? {{Char}}? consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", fromUser: i % 2 == 0 ? true : false, chat: chat, character: character)
                 container.mainContext.insert(message)
             }
-            try? container.mainContext.save()
 
             return ChatSettingsView(userSettings: UserSettings(userCharacter: nil, defaultUserName: "You"), chat: chat, hordeRequest: hordeRequest, hordeParams: hordeParams).modelContainer(container)
         }

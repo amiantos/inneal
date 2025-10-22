@@ -14,14 +14,15 @@ struct TextEditorView: View {
     var body: some View {
         NavigationStack {
             TextEditor(text: $text)
-                .ignoresSafeArea(.container)
-                .contentMargins(.horizontal, 15.0, for: .scrollContent)
+                .padding()
+#if os(iOS)
                 .keyboardType(.asciiCapable)
-                .navigationTitle("Edit Message")
                 .navigationBarTitleDisplayMode(.inline)
+#endif
+                .navigationTitle("Edit Message")
                 .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Done") {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done", systemImage: "checkmark") {
                             dismiss()
                         }
                     }

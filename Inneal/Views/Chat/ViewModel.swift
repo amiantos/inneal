@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-extension ChatView {
+extension NewChatView {
     struct ViewModelResponse {
         let text: String
         let character: Character?
@@ -169,11 +169,10 @@ extension ChatView {
                 let hordeModels = await hordeAPI.getModels()
                 Log.debug("Found \(hordeModels.count) models.")
 
-                var modelStubs: [String] = ["pygmalion-6", "pygmalion-v8", "pygmalion-2", "hermes", "airoboros", "chrono", "llama", "wizard", "mantis", "myth", "xwin", "spicyboros", "mlewd", "mxlewd", "mistral", "maid", "mixtral", "estopia", "fighter", "fimbul"]
-                var modelStubsBackups: [String] = ["pygmalion", "janeway", "nerys", "erebus", "nerybus", "opt", "vicuna", "manticore", "alpaca"]
+                var modelStubs: [String] = ["gpt4all","supercot","pygmalion-6","pygmalion-v8","pygmalion-2","hermes","airoboros","chrono","wizard","mantis","vicuna","manticore","alpaca","myth","xwin","spicyboros","mlewd","mxlewd","westlake","anubis","skyfall","llama2","llama3","llama-2","llama-3-","llama-3.","mistral","maid","mixtral","estopia","fighter","fimbul","euryale","nemo","gemma","lunaris","stheno","magnum","cydonia","qwen2.5-32b","behemoth","exaone","glm4","glm-4","tutu","deepseek"]
+                let ignoredModelStubs: [String] = ["tinyllama","debug-","-1b"]
 
                 if chat.preferredModel != .any {
-                    modelStubsBackups.append(contentsOf: modelStubs)
                     switch chat.preferredModel {
                     case .any:
                         break
@@ -192,20 +191,24 @@ extension ChatView {
                     }
                 }
 
+                let isNotIgnored: (String) -> Bool = { lname in
+                    !ignoredModelStubs.contains { lname.contains($0) }
+                }
+
                 var selectedModels = hordeModels.filter { model in
-                    modelStubs.contains { modelStub in
-                        model.name.lowercased().contains(modelStub)
-                    }
+                    let lname = model.name.lowercased()
+                    let matchesPrimary = modelStubs.contains { lname.contains($0) }
+                    return matchesPrimary && isNotIgnored(lname)
                 }
 
                 if selectedModels.isEmpty {
-                    Log.debug("Model list is empty, using backup model stub list.")
+                    Log.debug("Model list is empty after primary selection, falling back to all models (excluding ignored stubs).")
                     selectedModels = hordeModels.filter { model in
-                        modelStubsBackups.contains { modelStub in
-                            model.name.lowercased().contains(modelStub)
-                        }
+                        let lname = model.name.lowercased()
+                        return isNotIgnored(lname)
                     }
                 }
+
                 if selectedModels.isEmpty {
                     Log.debug("Model list still empty, weird.")
                     if let firstModel = hordeModels.first {
@@ -606,3 +609,4 @@ extension ChatView {
         }
     }
 }
+

@@ -8,7 +8,6 @@
 import Foundation
 import SwiftData
 import SwiftUI
-import UIKit
 
 struct UserSettingsView: View {
     @Environment(\.dismiss) var dismiss
@@ -44,7 +43,9 @@ struct UserSettingsView: View {
             .navigationTitle("About You")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: { Text("Done") }
+                    Button("Done", systemImage: "xmark") {
+                        dismiss()
+                    }
                 }
             }
             .onChange(of: userSettings.userCharacter) {

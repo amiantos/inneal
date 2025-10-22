@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct HelpView: View {
     @Environment(\.dismiss) var dismiss
@@ -37,11 +40,15 @@ struct HelpView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: { Text("Done") }
+                    Button("Cancel", systemImage: "xmark") {
+                        dismiss()
+                    }
                 }
             }
             .navigationTitle("Inneal Help")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
         }
     }
 }

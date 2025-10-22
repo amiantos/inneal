@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 struct ImportCharacterView: View {
     @Environment(\.dismiss) var dismiss
@@ -48,15 +50,17 @@ struct ImportCharacterView: View {
                 }
             }
             .navigationTitle("Import Character")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    Button("Cancel", role: .destructive) {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", systemImage: "xmark") {
                         dismiss()
-                    }.foregroundStyle(.red)
+                    }
                 }
-                ToolbarItemGroup(placement: .primaryAction) {
-                    Button("Add") {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add", systemImage: "checkmark") {
                         let character = viewModel.getCharacter()
                         modelContext.insert(character)
                         dismiss()
@@ -126,6 +130,7 @@ extension ImportCharacterView {
         var showErrorAlert: Bool = false
 
         func detectTypeAndImport(string: String) async {
+            Log.debug(string)
             if string.contains("{") {
                 await tryLoading(string)
             } else if string.contains("chub.ai") {
@@ -336,16 +341,11 @@ extension ImportCharacterView {
                 chubId = chubId.replacingOccurrences(of: "https://chub.ai/characters/", with: "").replacingOccurrences(of: "https://www.chub.ai/characters/", with: "").replacingOccurrences(of: "https://venus.chub.ai/characters/", with: "").replacingOccurrences(of: "https://www.characterhub.org/characters/", with: "")
             }
 
-            var request = URLRequest(url: URL(string: "https://api.chub.ai/api/characters/download")!)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            var request = URLRequest(url: URL(string: "https://avatars.charhub.io/avatars/\(chubId)/chara_card_v2.png")!)
+            request.httpMethod = "GET"
             request.setValue("Inneal:1.1:https://amiantos.net", forHTTPHeaderField: "Client-Agent")
 
-            let params = ChubAPICharacterRequest(format: "tavern", fullPath: chubId, version: "main")
-            let encodedParameters = try? JSONEncoder().encode(params)
-            request.httpBody = encodedParameters
-
-            Log.debug("Requesting character from API...")
+            Log.debug("Requesting character from Chub CDN...")
             do {
                 let (data, response) = try await URLSession.shared.data(for: request)
                 if let response = response as? HTTPURLResponse {
@@ -378,6 +378,8 @@ extension ImportCharacterView {
                 postHistoryInstructions = imageData.postHistoryInstructions
                 creator = imageData.creator
                 characterVersion = imageData.characterVersion
+            } else {
+                Log.debug("\(data)")
             }
         }
 
