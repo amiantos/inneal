@@ -13,7 +13,7 @@ jobs:
       - name: Build archive without code signing
         run: |
           xcodebuild archive \
-            -project Inneal.xcproject \
+            -project Inneal.xcodeproj \
             -scheme Inneal \
             -sdk iphoneos \
             -configuration Release \
