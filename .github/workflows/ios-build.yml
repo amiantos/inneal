@@ -10,33 +10,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set Default Scheme
-        id: set-scheme
+      - name: Build archive with Swift 5 compatibility
         run: |
-          scheme_list=$(xcodebuild -list -json | tr -d "\n")
-          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
-          echo "default_scheme=$default" >> $GITHUB_OUTPUT
-          echo "Using default scheme: $default"
-
-      - name: Build Archive
-        run: |
-          # Auto-detect .xcodeproj
-          project_file=$(ls -A | grep -i \\.xcodeproj\$ | head -1)
           xcodebuild archive \
-            -project "$project_file" \
-            -scheme "${{ steps.set-scheme.outputs.default_scheme }}" \
+            -project Inneal.xcodeproj \
+            -scheme Inneal \
             -sdk iphoneos \
             -configuration Release \
             -archivePath Inneal.xcarchive \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            SWIFT_VERSION=5.0 \
+            SWIFT_STRICT_CONCURRENCY=minimal
 
-      - name: Create IPA
+      - name: Create Payload folder and copy .app
         run: |
           mkdir -p Payload
-          cp -R Inneal.xcarchive/Products/Applications/*.app Payload/
-          zip -r Inneal.ipa Payload
+          cp -R Inneal.xcarchive/Products/Applications/Inneal.app Payload/
 
-      - name: Upload IPA
+      - name: Zip into IPA
+        run: zip -r Inneal.ipa Payload
+
+      - name: Upload IPA as artifact
         uses: actions/upload-artifact@v4
         with:
           name: Inneal-unsigned
