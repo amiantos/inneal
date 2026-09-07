@@ -57,7 +57,7 @@ class UserSettings {
 
 @Model
 class APIConfiguration {
-    let serviceName: String = "horde"
+    var serviceName: String = "horde"  // FIX: Changed from let to var
     @Attribute(.allowsCloudEncryption) var configurationData: Data?
 
     init(serviceName: String, configurationData: Data) {
@@ -71,7 +71,7 @@ class APIConfiguration {
 
 @Model
 class Chat {
-    var uuid: UUID = UUID()
+    var uuid: UUID = UUID()  // Already var - good
     var dateCreated: Date = Date.now
     var dateUpdated: Date = Date.now
     @Relationship(deleteRule: .cascade, inverse: \ChatMessage.chat) var messages: [ChatMessage]? = [ChatMessage]()
@@ -114,7 +114,7 @@ class Chat {
 
 @Model
 class ContentAlternate {
-    let uuid: UUID = UUID()
+    var uuid: UUID = UUID()  // FIX: Changed from let to var
     var string: String = ""
     @Relationship var message: ChatMessage?
     var dateCreated: Date = Date.now
@@ -162,6 +162,7 @@ class ChatMessage {
 }
 
 @Model
+@unchecked Sendable  // FIX: Added @unchecked Sendable
 class Character: Transferable {
     var name: String = ""
     var characterDescription: String = ""
@@ -215,6 +216,7 @@ class Character: Transferable {
     var suggestedFileName: String { "\(name).json" }
 }
 
+@unchecked Sendable  // FIX: Added @unchecked Sendable
 class CharacterPNGExporter: Transferable {
     let character: Character
 

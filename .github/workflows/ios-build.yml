@@ -1,0 +1,37 @@
+name: Build Unsigned iOS IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build archive with Swift 5 compatibility
+        run: |
+          xcodebuild archive \
+            -project Inneal.xcodeproj \
+            -scheme Inneal \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath Inneal.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            SWIFT_VERSION=5.0 \
+            SWIFT_STRICT_CONCURRENCY=minimal
+
+      - name: Create Payload folder and copy .app
+        run: |
+          mkdir -p Payload
+          cp -R Inneal.xcarchive/Products/Applications/Inneal.app Payload/
+
+      - name: Zip into IPA
+        run: zip -r Inneal.ipa Payload
+
+      - name: Upload IPA as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Inneal-unsigned
+          path: Inneal.ipa
